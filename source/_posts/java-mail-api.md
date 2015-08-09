@@ -68,39 +68,39 @@ categories: java
 
 另外send方法也可以使用Transport的静态接口`Transport.send()`
 
-import javax.mail.Address;
-import javax.mail.Message.RecipientType;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import java.io.UnsupportedEncodingException;
-import java.util.Properties;
+    import javax.mail.Address;
+    import javax.mail.Message.RecipientType;
+    import javax.mail.MessagingException;
+    import javax.mail.Session;
+    import javax.mail.Transport;
+    import javax.mail.internet.InternetAddress;
+    import javax.mail.internet.MimeMessage;
+    import java.io.UnsupportedEncodingException;
+    import java.util.Properties;
 
-public class Main {
-    public static void main(String[] args) {
-        Properties props = new Properties();
-        props.put("mail.smtp.host", "smtp.163.com");
-        props.put("mail.transport.protocol", "smtps");
+    public class Main {
+        public static void main(String[] args) {
+            Properties props = new Properties();
+            props.put("mail.smtp.host", "smtp.163.com");
+            props.put("mail.transport.protocol", "smtps");
 
-        Session session = Session.getInstance(props);
-        MimeMessage msg = new MimeMessage(session);
+            Session session = Session.getInstance(props);
+            MimeMessage msg = new MimeMessage(session);
 
-        try {
-            Address brother18Address = new InternetAddress("zhangya_no1@163.com", "Brother18");
-            Address zhangyaAddress = new InternetAddress("zhangya@cvte.cn", "Arthur Zhang");
+            try {
+                Address brother18Address = new InternetAddress("zhangya_no1@163.com", "Brother18");
+                Address zhangyaAddress = new InternetAddress("zhangya@cvte.cn", "Arthur Zhang");
 
-            msg.setFrom(brother18Address);
-            msg.setRecipient(RecipientType.TO, zhangyaAddress);
-            msg.setSubject("You must comply.");
-            msg.setText("hahah");
-            Transport.send(msg, "zhangya_no1@163.com", "***");
-        } catch (UnsupportedEncodingException | MessagingException e) {
-            e.printStackTrace();
+                msg.setFrom(brother18Address);
+                msg.setRecipient(RecipientType.TO, zhangyaAddress);
+                msg.setSubject("You must comply.");
+                msg.setText("hahah");
+                Transport.send(msg, "zhangya_no1@163.com", "***");
+            } catch (UnsupportedEncodingException | MessagingException e) {
+                e.printStackTrace();
+            }
         }
     }
-}
 
 
 
