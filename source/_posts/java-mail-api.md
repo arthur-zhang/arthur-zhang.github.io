@@ -67,7 +67,6 @@ categories: java
 因为JavaMail API要兼容 java6，所以Transport没有实现AutoCloseable接口
 另外send方法也可以使用Transport的静态接口Transport.send()
 
-
     import javax.mail.Address;
     import javax.mail.Message.RecipientType;
     import javax.mail.MessagingException;
