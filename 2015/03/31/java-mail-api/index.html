@@ -37,28 +37,16 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
 
 
-<meta name="description" content="1. 集成maven,目前最新为1.5.2&amp;lt;dependency&amp;gt;
-    &amp;lt;groupId&amp;gt;javax.mail&amp;lt;/groupId&amp;gt;
-    &amp;lt;artifactId&amp;gt;javax.mail-api&amp;lt;/artifactId&amp;gt;
-    &amp;lt;version&amp;gt;1.5.2&amp;lt;/version&amp;gt;
-&amp;lt;/dependency&amp;g">
+<meta name="description" content="1. 集成maven,目前最新为1.5.212345678910&amp;lt;dependency&amp;gt;    &amp;lt;groupId&amp;gt;javax.mail&amp;lt;/groupId&amp;gt;    &amp;lt;artifactId&amp;gt;javax.mail-api&amp;lt;/artifactId&amp;gt;    &amp;lt;version&amp;gt;1.5.2&amp;lt;/version&amp;gt;&amp;lt;/depen">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JavaMail API使用">
 <meta property="og:url" content="http://yoursite.com/2015/03/31/java-mail-api/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="1. 集成maven,目前最新为1.5.2&amp;lt;dependency&amp;gt;
-    &amp;lt;groupId&amp;gt;javax.mail&amp;lt;/groupId&amp;gt;
-    &amp;lt;artifactId&amp;gt;javax.mail-api&amp;lt;/artifactId&amp;gt;
-    &amp;lt;version&amp;gt;1.5.2&amp;lt;/version&amp;gt;
-&amp;lt;/dependency&amp;g">
-<meta property="og:updated_time" content="2015-08-09T13:20:43.000Z">
+<meta property="og:description" content="1. 集成maven,目前最新为1.5.212345678910&amp;lt;dependency&amp;gt;    &amp;lt;groupId&amp;gt;javax.mail&amp;lt;/groupId&amp;gt;    &amp;lt;artifactId&amp;gt;javax.mail-api&amp;lt;/artifactId&amp;gt;    &amp;lt;version&amp;gt;1.5.2&amp;lt;/version&amp;gt;&amp;lt;/depen">
+<meta property="og:updated_time" content="2015-08-09T13:24:13.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JavaMail API使用">
-<meta name="twitter:description" content="1. 集成maven,目前最新为1.5.2&amp;lt;dependency&amp;gt;
-    &amp;lt;groupId&amp;gt;javax.mail&amp;lt;/groupId&amp;gt;
-    &amp;lt;artifactId&amp;gt;javax.mail-api&amp;lt;/artifactId&amp;gt;
-    &amp;lt;version&amp;gt;1.5.2&amp;lt;/version&amp;gt;
-&amp;lt;/dependency&amp;g">
+<meta name="twitter:description" content="1. 集成maven,目前最新为1.5.212345678910&amp;lt;dependency&amp;gt;    &amp;lt;groupId&amp;gt;javax.mail&amp;lt;/groupId&amp;gt;    &amp;lt;artifactId&amp;gt;javax.mail-api&amp;lt;/artifactId&amp;gt;    &amp;lt;version&amp;gt;1.5.2&amp;lt;/version&amp;gt;&amp;lt;/depen">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -202,62 +190,26 @@
       
 
       
-        <span itemprop="articleBody"><h4 id="1-_集成maven,目前最新为1-5-2">1. 集成maven,目前最新为1.5.2</h4><pre><code><span class="tag">&lt;<span class="title">dependency</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">groupId</span>&gt;</span>javax.mail<span class="tag">&lt;/<span class="title">groupId</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">artifactId</span>&gt;</span>javax.mail-api<span class="tag">&lt;/<span class="title">artifactId</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">version</span>&gt;</span>1.5.2<span class="tag">&lt;/<span class="title">version</span>&gt;</span>
-<span class="tag">&lt;/<span class="title">dependency</span>&gt;</span>
-<span class="tag">&lt;<span class="title">dependency</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">groupId</span>&gt;</span>com.sun.mail<span class="tag">&lt;/<span class="title">groupId</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">artifactId</span>&gt;</span>javax.mail<span class="tag">&lt;/<span class="title">artifactId</span>&gt;</span>
-    <span class="tag">&lt;<span class="title">version</span>&gt;</span>1.5.2<span class="tag">&lt;/<span class="title">version</span>&gt;</span>
-<span class="tag">&lt;/<span class="title">dependency</span>&gt;</span>
-</code></pre><p>最基本的发送代码如下：</p>
-<pre><code><span class="preprocessor"><span class="keyword">import</span> javax.mail.Address;</span>
-<span class="preprocessor"><span class="keyword">import</span> javax.mail.Message;</span>
-<span class="preprocessor"><span class="keyword">import</span> javax.mail.Message.RecipientType;</span>
-<span class="preprocessor"><span class="keyword">import</span> javax.mail.MessagingException;</span>
-<span class="preprocessor"><span class="keyword">import</span> javax.mail.Session;</span>
-<span class="preprocessor"><span class="keyword">import</span> javax.mail.Transport;</span>
-<span class="preprocessor"><span class="keyword">import</span> javax.mail.internet.InternetAddress;</span>
-<span class="preprocessor"><span class="keyword">import</span> javax.mail.internet.MimeMessage;</span>
-<span class="preprocessor"><span class="keyword">import</span> java.io.UnsupportedEncodingException;</span>
-<span class="preprocessor"><span class="keyword">import</span> java.util.Properties;</span>
+        <span itemprop="articleBody"><h4 id="1-_集成maven,目前最新为1-5-2">1. 集成maven,目前最新为1.5.2</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">groupId</span>&gt;</span>javax.mail<span class="tag">&lt;/<span class="title">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">artifactId</span>&gt;</span>javax.mail-api<span class="tag">&lt;/<span class="title">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">version</span>&gt;</span>1.5.2<span class="tag">&lt;/<span class="title">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">groupId</span>&gt;</span>com.sun.mail<span class="tag">&lt;/<span class="title">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">artifactId</span>&gt;</span>javax.mail<span class="tag">&lt;/<span class="title">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">version</span>&gt;</span>1.5.2<span class="tag">&lt;/<span class="title">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>最基本的发送代码如下：<br><figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">    <span class="preprocessor"><span class="keyword">import</span> javax.mail.Address;</span></span><br><span class="line">    <span class="preprocessor"><span class="keyword">import</span> javax.mail.Message;</span></span><br><span class="line">    <span class="preprocessor"><span class="keyword">import</span> javax.mail.Message.RecipientType;</span></span><br><span class="line">    <span class="preprocessor"><span class="keyword">import</span> javax.mail.MessagingException;</span></span><br><span class="line">    <span class="preprocessor"><span class="keyword">import</span> javax.mail.Session;</span></span><br><span class="line">    <span class="preprocessor"><span class="keyword">import</span> javax.mail.Transport;</span></span><br><span class="line">    <span class="preprocessor"><span class="keyword">import</span> javax.mail.internet.InternetAddress;</span></span><br><span class="line">    <span class="preprocessor"><span class="keyword">import</span> javax.mail.internet.MimeMessage;</span></span><br><span class="line">    <span class="preprocessor"><span class="keyword">import</span> java.io.UnsupportedEncodingException;</span></span><br><span class="line">    <span class="preprocessor"><span class="keyword">import</span> java.util.Properties;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main(String[] args) &#123;</span><br><span class="line">            Properties props = <span class="keyword">new</span> Properties();</span><br><span class="line">            Session session = Session.getDefaultInstance(props);</span><br><span class="line">            Message msg = <span class="keyword">new</span> MimeMessage(session);</span><br><span class="line"></span><br><span class="line">            Transport transport = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Address brother18Address = <span class="keyword">new</span> InternetAddress(<span class="string">"xxoo@cvte.com"</span>, <span class="string">"Brother18"</span>);</span><br><span class="line">                Address zhangyaAddress = <span class="keyword">new</span> InternetAddress(<span class="string">"zhangya@cvte.cn"</span>, <span class="string">"Arthur Zhang"</span>);</span><br><span class="line"></span><br><span class="line">                msg.setFrom(brother18Address);</span><br><span class="line">                msg.setRecipient(RecipientType.TO, zhangyaAddress);</span><br><span class="line">                msg.setSubject(<span class="string">"You must comply."</span>);</span><br><span class="line">                msg.setText(<span class="string">"hahah"</span>);</span><br><span class="line">                transport = session.getTransport(<span class="string">"smtp"</span>);</span><br><span class="line">                transport.connect(<span class="string">"mail.cvte.com"</span>, <span class="number">25</span>, <span class="string">"zhangya@cvte.com"</span>, <span class="string">"xxx"</span>);</span><br><span class="line">                transport.sendMessage(msg, msg.getAllRecipients());</span><br><span class="line">            &#125; <span class="keyword">catch</span> (UnsupportedEncodingException | MessagingException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (transport != <span class="literal">null</span>) &#123;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        transport.close();</span><br><span class="line">                    &#125; <span class="keyword">catch</span> (MessagingException e) &#123;</span><br><span class="line">                        e.printStackTrace();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">因为JavaMail API要兼容 java6，所以Transport没有实现AutoCloseable接口</span><br><span class="line">另外send方法也可以使用Transport的静态接口Transport.send()</span><br></pre></td></tr></table></figure></p>
+<p>import javax.mail.Address;<br>import javax.mail.Message.RecipientType;<br>import javax.mail.MessagingException;<br>import javax.mail.Session;<br>import javax.mail.Transport;<br>import javax.mail.internet.InternetAddress;<br>import javax.mail.internet.MimeMessage;<br>import java.io.UnsupportedEncodingException;<br>import java.util.Properties;</p>
+<p>public class Main {<br>    public static void main(String[] args) {<br>    Properties props = new Properties();<br>    props.put(“mail.smtp.host”, “smtp.163.com”);<br>    props.put(“mail.transport.protocol”, “smtps”);</p>
+<pre><code>Session session = Session.getInstance<span class="params">(props)</span>;
+MimeMessage msg = new MimeMessage<span class="params">(session)</span>;
 
-<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>{
-    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main(String[] args) {
-        Properties props = <span class="keyword">new</span> Properties();
-        Session session = Session.getDefaultInstance(props);
-        Message msg = <span class="keyword">new</span> MimeMessage(session);
+try {
+    Address brother18Address = new InternetAddress<span class="params">(<span class="string">"zhangya_no1@163.com"</span>, <span class="string">"Brother18"</span>)</span>;
+    Address zhangyaAddress = new InternetAddress<span class="params">(<span class="string">"zhangya@cvte.cn"</span>, <span class="string">"Arthur Zhang"</span>)</span>;
 
-        Transport transport = <span class="literal">null</span>;
-
-        <span class="keyword">try</span> {
-            Address brother18Address = <span class="keyword">new</span> InternetAddress(<span class="string">"xxoo@cvte.com"</span>, <span class="string">"Brother18"</span>);
-            Address zhangyaAddress = <span class="keyword">new</span> InternetAddress(<span class="string">"zhangya@cvte.cn"</span>, <span class="string">"Arthur Zhang"</span>);
-
-            msg.setFrom(brother18Address);
-            msg.setRecipient(RecipientType.TO, zhangyaAddress);
-            msg.setSubject(<span class="string">"You must comply."</span>);
-            msg.setText(<span class="string">"hahah"</span>);
-            transport = session.getTransport(<span class="string">"smtp"</span>);
-            transport.connect(<span class="string">"mail.cvte.com"</span>, <span class="number">25</span>, <span class="string">"zhangya@cvte.com"</span>, <span class="string">"xxx"</span>);
-            transport.sendMessage(msg, msg.getAllRecipients());
-        } <span class="keyword">catch</span> (UnsupportedEncodingException | MessagingException e) {
-            e.printStackTrace();
-        } <span class="keyword">finally</span> {
-            <span class="keyword">if</span> (transport != <span class="literal">null</span>) {
-                <span class="keyword">try</span> {
-                    transport.close();
-                } <span class="keyword">catch</span> (MessagingException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
+    msg.setFrom<span class="params">(brother18Address)</span>;
+    msg.setRecipient<span class="params">(RecipientType.TO, zhangyaAddress)</span>;
+    msg.setSubject<span class="params">(<span class="string">"You must comply."</span>)</span>;
+    msg.setText<span class="params">(<span class="string">"hahah"</span>)</span>;
+    Transport.send<span class="params">(msg, <span class="string">"zhangya_no1@163.com"</span>, <span class="string">"***"</span>)</span>;
+} catch <span class="params">(UnsupportedEncodingException | MessagingException e)</span> {
+    e.printStackTrace<span class="params">()</span>;
 }
-</code></pre><p>因为JavaMail API要兼容 java6，所以Transport没有实现AutoCloseable接口<br>另外send方法也可以使用Transport的静态接口Transport.send()</p>
-<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="preprocessor"><span class="keyword">import</span> javax.mail.Address;</span></span><br><span class="line"><span class="preprocessor"><span class="keyword">import</span> javax.mail.Message.RecipientType;</span></span><br><span class="line"><span class="preprocessor"><span class="keyword">import</span> javax.mail.MessagingException;</span></span><br><span class="line"><span class="preprocessor"><span class="keyword">import</span> javax.mail.Session;</span></span><br><span class="line"><span class="preprocessor"><span class="keyword">import</span> javax.mail.Transport;</span></span><br><span class="line"><span class="preprocessor"><span class="keyword">import</span> javax.mail.internet.InternetAddress;</span></span><br><span class="line"><span class="preprocessor"><span class="keyword">import</span> javax.mail.internet.MimeMessage;</span></span><br><span class="line"><span class="preprocessor"><span class="keyword">import</span> java.io.UnsupportedEncodingException;</span></span><br><span class="line"><span class="preprocessor"><span class="keyword">import</span> java.util.Properties;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main(String[] args) &#123;</span><br><span class="line">        Properties props = <span class="keyword">new</span> Properties();</span><br><span class="line">        props.put(<span class="string">"mail.smtp.host"</span>, <span class="string">"smtp.163.com"</span>);</span><br><span class="line">        props.put(<span class="string">"mail.transport.protocol"</span>, <span class="string">"smtps"</span>);</span><br><span class="line"></span><br><span class="line">        Session session = Session.getInstance(props);</span><br><span class="line">        MimeMessage msg = <span class="keyword">new</span> MimeMessage(session);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Address brother18Address = <span class="keyword">new</span> InternetAddress(<span class="string">"zhangya_no1@163.com"</span>, <span class="string">"Brother18"</span>);</span><br><span class="line">            Address zhangyaAddress = <span class="keyword">new</span> InternetAddress(<span class="string">"zhangya@cvte.cn"</span>, <span class="string">"Arthur Zhang"</span>);</span><br><span class="line"></span><br><span class="line">            msg.setFrom(brother18Address);</span><br><span class="line">            msg.setRecipient(RecipientType.TO, zhangyaAddress);</span><br><span class="line">            msg.setSubject(<span class="string">"You must comply."</span>);</span><br><span class="line">            msg.setText(<span class="string">"hahah"</span>);</span><br><span class="line">            Transport.send(msg, <span class="string">"zhangya_no1@163.com"</span>, <span class="string">"***"</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (UnsupportedEncodingException | MessagingException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</code></pre><p>}<br>```</p>
 </span>
       
     </div>
@@ -330,7 +282,7 @@
 
           <div class="site-state-item site-state-categories">
             <a href="/categories">
-              <span class="site-state-item-count">1</span>
+              <span class="site-state-item-count">10</span>
               <span class="site-state-item-name">分类</span>
               </a>
           </div>
