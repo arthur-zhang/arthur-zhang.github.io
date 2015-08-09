@@ -69,6 +69,6 @@ theme: hexo-theme-next
 # Deployment
 ## Docs: http://hexo.io/docs/deployment.html
 deploy:
-  type:git
-  repository:git@github.com:arthur-zhang/arthur-zhang.github.io.git
-  branch:master
+  type: git
+  repository: git@github.com:arthur-zhang/arthur-zhang.github.io.git
+  branch: master

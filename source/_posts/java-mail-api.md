@@ -7,7 +7,7 @@ categories: java
 
 ####1. 集成maven,目前最新为1.5.2
 
-     <dependency>
+    <dependency>
         <groupId>javax.mail</groupId>
         <artifactId>javax.mail-api</artifactId>
         <version>1.5.2</version>
@@ -65,8 +65,8 @@ categories: java
     }
     
 因为JavaMail API要兼容 java6，所以Transport没有实现AutoCloseable接口
+另外send方法也可以使用Transport的静态接口Transport.send()
 
-另外send方法也可以使用Transport的静态接口`Transport.send()`
 
     import javax.mail.Address;
     import javax.mail.Message.RecipientType;
@@ -101,26 +101,3 @@ categories: java
             }
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
