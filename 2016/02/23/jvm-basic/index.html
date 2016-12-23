@@ -37,31 +37,33 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
 
 
-<meta name="description" content="二者区别：
+<meta name="description" content="栈帧的组成结构
 
-&amp;lt;init&amp;gt;是实例的构造器方法,用于非静态变量的初始化
-&amp;lt;clinit&amp;gt;是类或者接口静态初始化方法
 
-123456789101112131415class X &amp;#123;   static Log log = LogFactory.getLog(); // &amp;lt;clinit&amp;gt;   private int x = 1;   // &amp;lt;init&amp;g">
+局部变量表
+操作数栈
+当前方法所在类的运行时常量池的引用">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JVM中 &lt;init&gt; &lt;clinit&gt;的区别">
-<meta property="og:url" content="http://yoursite.com/2016/02/23/jvm-init-clinit/index.html">
+<meta property="og:title" content="JVM基础">
+<meta property="og:url" content="http://yoursite.com/2016/02/23/jvm-basic/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="二者区别：
+<meta property="og:description" content="栈帧的组成结构
 
-&amp;lt;init&amp;gt;是实例的构造器方法,用于非静态变量的初始化
-&amp;lt;clinit&amp;gt;是类或者接口静态初始化方法
 
-123456789101112131415class X &amp;#123;   static Log log = LogFactory.getLog(); // &amp;lt;clinit&amp;gt;   private int x = 1;   // &amp;lt;init&amp;g">
-<meta property="og:updated_time" content="2016-02-23T14:45:54.000Z">
+局部变量表
+操作数栈
+当前方法所在类的运行时常量池的引用">
+<meta property="og:image" content="http://yoursite.com/images/frame-structure.png">
+<meta property="og:image" content="http://yoursite.com/images/frame-structure.png">
+<meta property="og:updated_time" content="2016-03-01T06:39:58.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="JVM中 &lt;init&gt; &lt;clinit&gt;的区别">
-<meta name="twitter:description" content="二者区别：
+<meta name="twitter:title" content="JVM基础">
+<meta name="twitter:description" content="栈帧的组成结构
 
-&amp;lt;init&amp;gt;是实例的构造器方法,用于非静态变量的初始化
-&amp;lt;clinit&amp;gt;是类或者接口静态初始化方法
 
-123456789101112131415class X &amp;#123;   static Log log = LogFactory.getLog(); // &amp;lt;clinit&amp;gt;   private int x = 1;   // &amp;lt;init&amp;g">
+局部变量表
+操作数栈
+当前方法所在类的运行时常量池的引用">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -71,7 +73,7 @@
   };
 </script>
 
-  <title> JVM中 &lt;init&gt; &lt;clinit&gt;的区别 | Arthur Blog </title>
+  <title> JVM基础 | Arthur Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
@@ -162,7 +164,7 @@
           
           
             
-              JVM中 &lt;init&gt; &lt;clinit&gt;的区别
+              JVM基础
             
           
         </h1>
@@ -205,12 +207,15 @@
       
 
       
-        <span itemprop="articleBody"><p>二者区别：</p>
+        <span itemprop="articleBody"><blockquote>
+<p>栈帧的组成结构</p>
+</blockquote>
 <ul>
-<li>&lt;init&gt;是实例的构造器方法,用于非静态变量的初始化</li>
-<li>&lt;clinit&gt;是类或者接口静态初始化方法</li>
+<li>局部变量表</li>
+<li>操作数栈</li>
+<li>当前方法所在类的运行时常量池的引用</li>
 </ul>
-<figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">X</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">static</span> Log log = LogFactory.getLog(); <span class="comment">// &lt;clinit&gt;</span></span><br><span class="line"></span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">int</span> x = <span class="number">1</span>;   <span class="comment">// &lt;init&gt;</span></span><br><span class="line"></span><br><span class="line">   X()&#123;</span><br><span class="line">      <span class="comment">// &lt;init&gt;</span></span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">static</span> &#123;</span><br><span class="line">      <span class="comment">// &lt;clinit&gt;</span></span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="images/frame-structure.png"><br><img src="/images/frame-structure.png" alt=""></p>
 </span>
       
     </div>
@@ -222,13 +227,13 @@
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/08/31/lru-cache/" rel="prev">LRC cache 实现</a>
+              <a href="/2016/02/23/jvm-init-clinit/" rel="prev">JVM中 &lt;init&gt; &lt;clinit&gt;的区别</a>
             
           </div>
 
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/02/23/jvm-basic/" rel="next">JVM基础</a>
+              <a href="/2015/03/31/java-mail-api/" rel="next">JavaMail API使用</a>
             
           </div>
         </div>

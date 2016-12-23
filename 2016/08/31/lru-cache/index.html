@@ -37,31 +37,19 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
 
 
-<meta name="description" content="二者区别：
-
-&amp;lt;init&amp;gt;是实例的构造器方法,用于非静态变量的初始化
-&amp;lt;clinit&amp;gt;是类或者接口静态初始化方法
-
-123456789101112131415class X &amp;#123;   static Log log = LogFactory.getLog(); // &amp;lt;clinit&amp;gt;   private int x = 1;   // &amp;lt;init&amp;g">
+<meta name="description" content="leetcode 题目：https://leetcode.com/problems/lru-cache/
+1234567891011121314151617181920212223public class LRUCache &amp;#123;        private LinkedHashMap&amp;lt;Integer, Integer&amp;gt; map;    public LRUCache(fina">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JVM中 &lt;init&gt; &lt;clinit&gt;的区别">
-<meta property="og:url" content="http://yoursite.com/2016/02/23/jvm-init-clinit/index.html">
+<meta property="og:title" content="LRC cache 实现">
+<meta property="og:url" content="http://yoursite.com/2016/08/31/lru-cache/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="二者区别：
-
-&amp;lt;init&amp;gt;是实例的构造器方法,用于非静态变量的初始化
-&amp;lt;clinit&amp;gt;是类或者接口静态初始化方法
-
-123456789101112131415class X &amp;#123;   static Log log = LogFactory.getLog(); // &amp;lt;clinit&amp;gt;   private int x = 1;   // &amp;lt;init&amp;g">
-<meta property="og:updated_time" content="2016-02-23T14:45:54.000Z">
+<meta property="og:description" content="leetcode 题目：https://leetcode.com/problems/lru-cache/
+1234567891011121314151617181920212223public class LRUCache &amp;#123;        private LinkedHashMap&amp;lt;Integer, Integer&amp;gt; map;    public LRUCache(fina">
+<meta property="og:updated_time" content="2016-08-31T14:57:49.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="JVM中 &lt;init&gt; &lt;clinit&gt;的区别">
-<meta name="twitter:description" content="二者区别：
-
-&amp;lt;init&amp;gt;是实例的构造器方法,用于非静态变量的初始化
-&amp;lt;clinit&amp;gt;是类或者接口静态初始化方法
-
-123456789101112131415class X &amp;#123;   static Log log = LogFactory.getLog(); // &amp;lt;clinit&amp;gt;   private int x = 1;   // &amp;lt;init&amp;g">
+<meta name="twitter:title" content="LRC cache 实现">
+<meta name="twitter:description" content="leetcode 题目：https://leetcode.com/problems/lru-cache/
+1234567891011121314151617181920212223public class LRUCache &amp;#123;        private LinkedHashMap&amp;lt;Integer, Integer&amp;gt; map;    public LRUCache(fina">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -71,7 +59,7 @@
   };
 </script>
 
-  <title> JVM中 &lt;init&gt; &lt;clinit&gt;的区别 | Arthur Blog </title>
+  <title> LRC cache 实现 | Arthur Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
@@ -162,7 +150,7 @@
           
           
             
-              JVM中 &lt;init&gt; &lt;clinit&gt;的区别
+              LRC cache 实现
             
           
         </h1>
@@ -171,8 +159,8 @@
       <div class="post-meta">
         <span class="post-time">
           发表于
-          <time itemprop="dateCreated" datetime="2016-02-23T21:17:43+08:00" content="2016-02-23">
-            2016-02-23
+          <time itemprop="dateCreated" datetime="2016-08-31T21:17:43+08:00" content="2016-08-31">
+            2016-08-31
           </time>
         </span>
 
@@ -181,8 +169,8 @@
             &nbsp; | &nbsp; 分类于
             
               <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/jvm/" itemprop="url" rel="index">
-                  <span itemprop="name">jvm</span>
+                <a href="/categories/leetcode-java-lru/" itemprop="url" rel="index">
+                  <span itemprop="name">leetcode java lru</span>
                 </a>
               </span>
 
@@ -205,13 +193,11 @@
       
 
       
-        <span itemprop="articleBody"><p>二者区别：</p>
-<ul>
-<li>&lt;init&gt;是实例的构造器方法,用于非静态变量的初始化</li>
-<li>&lt;clinit&gt;是类或者接口静态初始化方法</li>
-</ul>
-<figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">X</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">static</span> Log log = LogFactory.getLog(); <span class="comment">// &lt;clinit&gt;</span></span><br><span class="line"></span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">int</span> x = <span class="number">1</span>;   <span class="comment">// &lt;init&gt;</span></span><br><span class="line"></span><br><span class="line">   X()&#123;</span><br><span class="line">      <span class="comment">// &lt;init&gt;</span></span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">static</span> &#123;</span><br><span class="line">      <span class="comment">// &lt;clinit&gt;</span></span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</span>
+        <span itemprop="articleBody"><p>leetcode 题目：<a href="https://leetcode.com/problems/lru-cache/" target="_blank" rel="external">https://leetcode.com/problems/lru-cache/</a></p>
+<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> class LRUCache &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> LinkedHashMap&lt;Integer, Integer&gt; <span class="built_in">map</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> LRUCache(<span class="keyword">final</span> <span class="built_in">int</span> capacity) &#123;</span><br><span class="line">        <span class="built_in">map</span> = <span class="keyword">new</span> LinkedHashMap&lt;Integer, Integer&gt;(capacity, <span class="number">0.75</span>f, <span class="keyword">true</span>)&#123;</span><br><span class="line">            @Override</span><br><span class="line">            <span class="keyword">protected</span> <span class="built_in">boolean</span> removeEldestEntry(Map.Entry eldest) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="built_in">map</span>.<span class="built_in">size</span>() &gt; capacity;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> <span class="built_in">get</span>(<span class="built_in">int</span> <span class="variable">key</span>) &#123;</span><br><span class="line">        Integer val = <span class="built_in">map</span>.<span class="built_in">get</span>(<span class="variable">key</span>);</span><br><span class="line">        <span class="keyword">if</span> (val == <span class="keyword">null</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">return</span> val;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="built_in">set</span>(<span class="built_in">int</span> <span class="variable">key</span>, <span class="built_in">int</span> value) &#123;</span><br><span class="line">        <span class="built_in">map</span>.put(<span class="variable">key</span>, value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="LinkedHashMap">LinkedHashMap</h4><figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="built_in">get</span>() &#123;</span><br><span class="line">    LinkedHashMap&lt;<span class="keyword">String</span>, Integer&gt; <span class="built_in">map</span> = <span class="keyword">new</span> LinkedHashMap&lt;&gt;(<span class="number">10</span>, <span class="number">0.75</span>f, <span class="keyword">true</span>);</span><br><span class="line">    <span class="built_in">map</span>.put(<span class="string">"k1"</span>, <span class="number">1</span>);</span><br><span class="line">    <span class="built_in">map</span>.put(<span class="string">"k2"</span>, <span class="number">2</span>);</span><br><span class="line">    <span class="built_in">map</span>.put(<span class="string">"k3"</span>, <span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">    System.out.<span class="built_in">println</span>(<span class="string">"before get: "</span> + <span class="built_in">map</span>);</span><br><span class="line">    <span class="built_in">int</span> v2 = <span class="built_in">map</span>.<span class="built_in">get</span>(<span class="string">"k2"</span>);</span><br><span class="line">    System.out.<span class="built_in">println</span>(<span class="string">"after get : "</span> + <span class="built_in">map</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight inform7"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">before get: &#123;k1=1, k2=2, k3=3&#125;</span><br><span class="line">after get : &#123;k1=1, k3=3, k2=2&#125;</span><br></pre></td></tr></table></figure></span>
       
     </div>
 
@@ -222,13 +208,11 @@
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/08/31/lru-cache/" rel="prev">LRC cache 实现</a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/02/23/jvm-basic/" rel="next">JVM基础</a>
+              <a href="/2016/02/23/jvm-init-clinit/" rel="next">JVM中 &lt;init&gt; &lt;clinit&gt;的区别</a>
             
           </div>
         </div>
@@ -332,7 +316,7 @@
           <div class="post-toc">
             
             
-              <p class="post-toc-empty">此文章未包含目录</p>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#LinkedHashMap"><span class="nav-number">1.</span> <span class="nav-text">LinkedHashMap</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
