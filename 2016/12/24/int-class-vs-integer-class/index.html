@@ -37,16 +37,31 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
 
 
-<meta name="description" content="int long equals的坑123456789101112131415Integer s = new Integer(9);Integer t = new Integer(9);Long u = new Long(9);System.out.println(s == u); // 编译错误System.out.println(s == t); // false,指向不同对象System.ou">
+<meta name="description" content="下面的代码输出什么？
+(⊙o⊙)…先不要怀疑int.class这样写是不是有语法错误。。。
+12345Class&amp;lt;Integer&amp;gt;  a = int.class;Class&amp;lt;Integer&amp;gt;  b = Integer.class;System.out.println(a == b);输出 false
+下面来分析一下为什么。
+先来看字节码
+12345678 Object a">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java int long equals的坑">
-<meta property="og:url" content="http://yoursite.com/2016/09/01/int-long-equals/index.html">
+<meta property="og:title" content="int.class和Integer.class">
+<meta property="og:url" content="http://yoursite.com/2016/12/24/int-class-vs-integer-class/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="int long equals的坑123456789101112131415Integer s = new Integer(9);Integer t = new Integer(9);Long u = new Long(9);System.out.println(s == u); // 编译错误System.out.println(s == t); // false,指向不同对象System.ou">
-<meta property="og:updated_time" content="2016-10-28T10:14:33.000Z">
+<meta property="og:description" content="下面的代码输出什么？
+(⊙o⊙)…先不要怀疑int.class这样写是不是有语法错误。。。
+12345Class&amp;lt;Integer&amp;gt;  a = int.class;Class&amp;lt;Integer&amp;gt;  b = Integer.class;System.out.println(a == b);输出 false
+下面来分析一下为什么。
+先来看字节码
+12345678 Object a">
+<meta property="og:updated_time" content="2016-12-23T23:27:15.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Java int long equals的坑">
-<meta name="twitter:description" content="int long equals的坑123456789101112131415Integer s = new Integer(9);Integer t = new Integer(9);Long u = new Long(9);System.out.println(s == u); // 编译错误System.out.println(s == t); // false,指向不同对象System.ou">
+<meta name="twitter:title" content="int.class和Integer.class">
+<meta name="twitter:description" content="下面的代码输出什么？
+(⊙o⊙)…先不要怀疑int.class这样写是不是有语法错误。。。
+12345Class&amp;lt;Integer&amp;gt;  a = int.class;Class&amp;lt;Integer&amp;gt;  b = Integer.class;System.out.println(a == b);输出 false
+下面来分析一下为什么。
+先来看字节码
+12345678 Object a">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -56,7 +71,7 @@
   };
 </script>
 
-  <title> Java int long equals的坑 | Arthur Blog </title>
+  <title> int.class和Integer.class | Arthur Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
@@ -147,7 +162,7 @@
           
           
             
-              Java int long equals的坑
+              int.class和Integer.class
             
           
         </h1>
@@ -156,11 +171,26 @@
       <div class="post-meta">
         <span class="post-time">
           发表于
-          <time itemprop="dateCreated" datetime="2016-09-01T21:17:43+08:00" content="2016-09-01">
-            2016-09-01
+          <time itemprop="dateCreated" datetime="2016-12-24T21:17:43+08:00" content="2016-12-24">
+            2016-12-24
           </time>
         </span>
 
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/Java再入门/" itemprop="url" rel="index">
+                  <span itemprop="name">Java再入门</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
         
 
         
@@ -175,7 +205,21 @@
       
 
       
-        <span itemprop="articleBody"><h4 id="int_long_equals的坑">int long equals的坑</h4><figure class="highlight openscad"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Integer s = new Integer<span class="params">(<span class="number">9</span>)</span>;</span><br><span class="line">Integer t = new Integer<span class="params">(<span class="number">9</span>)</span>;</span><br><span class="line">Long u = new Long<span class="params">(<span class="number">9</span>)</span>;</span><br><span class="line">System.out.println<span class="params">(s == u)</span>; <span class="comment">// 编译错误</span></span><br><span class="line">System.out.println<span class="params">(s == t)</span>; <span class="comment">// false,指向不同对象</span></span><br><span class="line">System.out.println<span class="params">(s.equals<span class="params">(u)</span>)</span>; <span class="comment">// false, Integer的equals方法首先判断是不是Integer类型,如果不是,直接return false</span></span><br><span class="line"></span><br><span class="line">System.out.println<span class="params">(s.equals<span class="params">(new Integer<span class="params">(<span class="number">9</span>)</span>)</span>)</span>; <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line">System.out.println<span class="params">(s.equals<span class="params">(<span class="number">9</span>)</span>)</span>; <span class="comment">// true</span></span><br><span class="line">System.out.println<span class="params">(u.equals<span class="params">(<span class="number">9</span>)</span>)</span>; <span class="comment">// false</span></span><br><span class="line">System.out.println<span class="params">(u.equals<span class="params">(<span class="number">9</span>L)</span>)</span>; <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line">System.out.println<span class="params">(u == <span class="number">9</span>)</span>; <span class="comment">// true</span></span><br><span class="line">System.out.println<span class="params">(u == <span class="number">9</span>L)</span>; <span class="comment">// true</span></span><br></pre></td></tr></table></figure></span>
+        <span itemprop="articleBody"><p>下面的代码输出什么？</p>
+<p>(⊙o⊙)…先不要怀疑<code>int.class</code>这样写是不是有语法错误。。。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Class&lt;Integer&gt;  a = <span class="keyword">int</span>.class;</span><br><span class="line">Class&lt;Integer&gt;  b = Integer.class;</span><br><span class="line">System.out.println(a == b);</span><br><span class="line"></span><br><span class="line">输出 <span class="keyword">false</span></span><br></pre></td></tr></table></figure>
+<p>下面来分析一下为什么。</p>
+<p>先来看字节码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"> Object a = <span class="keyword">int</span>.class;</span><br><span class="line"> Object b = Integer.class;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span>.class</span><br><span class="line"> <span class="number">0</span>: getstatic     #<span class="number">2</span>   <span class="comment">// Field java/lang/Integer.TYPE:Ljava/lang/Class;</span></span><br><span class="line"> </span><br><span class="line">Integer.class</span><br><span class="line"><span class="number">4</span>: ldc           #<span class="number">3</span>   <span class="comment">// class java/lang/Integer</span></span><br></pre></td></tr></table></figure>
+<hr>
+<p>可见</p>
+<p><code>int.class=Integer.TYPE</code></p>
+<p>实际上是<code>Integer</code>类的一个静态常量<code>TYPE</code>，最终的值是<code>Class.getPrimitiveClass(&quot;int&quot;)</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> * The &#123;<span class="doctag">@code</span> Class&#125; instance representing the primitive type</span><br><span class="line"> * &#123;<span class="doctag">@code</span> int&#125;.</span><br><span class="line"> *</span><br><span class="line"> * <span class="doctag">@since</span>   JDK1.1</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Class&lt;Integer&gt;  TYPE = (Class&lt;Integer&gt;) Class.getPrimitiveClass(<span class="string">"int"</span>);</span><br></pre></td></tr></table></figure>
+<p><code>Integer.class</code>这个大家就比较清楚了，是<code>java.lang.Integer</code>的class对象，实际上代表 <code>Class.forName(&quot;java.lang.Integer&quot;)</code></p>
+<p>你可能会想，知道这个有毛用？这么偏门的知识。</p>
+<p>在反射中，搞错了这两个，你可能要调试n长时间，找不到方法等，不要问我是怎么知道的。</p>
+</span>
       
     </div>
 
@@ -186,11 +230,11 @@
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/12/23/try-with-resource-byte-code/" rel="prev">有趣的try-with-resource实现</a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/23/try-with-resource-byte-code/" rel="next">有趣的try-with-resource实现</a>
             
           </div>
         </div>
@@ -294,7 +338,7 @@
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#int_long_equals的坑"><span class="nav-number">1.</span> <span class="nav-text">int long equals的坑</span></a></li></ol></div>
+              <p class="post-toc-empty">此文章未包含目录</p>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
