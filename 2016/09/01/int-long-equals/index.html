@@ -37,19 +37,16 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
 
 
-<meta name="description" content="leetcode 题目：https://leetcode.com/problems/lru-cache/
-1234567891011121314151617181920212223public class LRUCache &amp;#123;        private LinkedHashMap&amp;lt;Integer, Integer&amp;gt; map;    public LRUCache(fina">
+<meta name="description" content="int long equals的坑123456789101112131415Integer s = new Integer(9);Integer t = new Integer(9);Long u = new Long(9);System.out.println(s == u); // 编译错误System.out.println(s == t); // false,指向不同对象System.ou">
 <meta property="og:type" content="article">
-<meta property="og:title" content="LRC cache 实现">
-<meta property="og:url" content="http://yoursite.com/2016/08/31/lru-cache/index.html">
+<meta property="og:title" content="Java int long equals的坑">
+<meta property="og:url" content="http://yoursite.com/2016/09/01/int-long-equals/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="leetcode 题目：https://leetcode.com/problems/lru-cache/
-1234567891011121314151617181920212223public class LRUCache &amp;#123;        private LinkedHashMap&amp;lt;Integer, Integer&amp;gt; map;    public LRUCache(fina">
-<meta property="og:updated_time" content="2016-08-31T14:57:49.000Z">
+<meta property="og:description" content="int long equals的坑123456789101112131415Integer s = new Integer(9);Integer t = new Integer(9);Long u = new Long(9);System.out.println(s == u); // 编译错误System.out.println(s == t); // false,指向不同对象System.ou">
+<meta property="og:updated_time" content="2016-10-28T10:14:33.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="LRC cache 实现">
-<meta name="twitter:description" content="leetcode 题目：https://leetcode.com/problems/lru-cache/
-1234567891011121314151617181920212223public class LRUCache &amp;#123;        private LinkedHashMap&amp;lt;Integer, Integer&amp;gt; map;    public LRUCache(fina">
+<meta name="twitter:title" content="Java int long equals的坑">
+<meta name="twitter:description" content="int long equals的坑123456789101112131415Integer s = new Integer(9);Integer t = new Integer(9);Long u = new Long(9);System.out.println(s == u); // 编译错误System.out.println(s == t); // false,指向不同对象System.ou">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -59,7 +56,7 @@
   };
 </script>
 
-  <title> LRC cache 实现 | Arthur Blog </title>
+  <title> Java int long equals的坑 | Arthur Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
@@ -150,7 +147,7 @@
           
           
             
-              LRC cache 实现
+              Java int long equals的坑
             
           
         </h1>
@@ -159,26 +156,11 @@
       <div class="post-meta">
         <span class="post-time">
           发表于
-          <time itemprop="dateCreated" datetime="2016-08-31T21:17:43+08:00" content="2016-08-31">
-            2016-08-31
+          <time itemprop="dateCreated" datetime="2016-09-01T21:17:43+08:00" content="2016-09-01">
+            2016-09-01
           </time>
         </span>
 
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/leetcode-java-lru/" itemprop="url" rel="index">
-                  <span itemprop="name">leetcode java lru</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
         
 
         
@@ -193,11 +175,7 @@
       
 
       
-        <span itemprop="articleBody"><p>leetcode 题目：<a href="https://leetcode.com/problems/lru-cache/" target="_blank" rel="external">https://leetcode.com/problems/lru-cache/</a></p>
-<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> class LRUCache &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> LinkedHashMap&lt;Integer, Integer&gt; <span class="built_in">map</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> LRUCache(<span class="keyword">final</span> <span class="built_in">int</span> capacity) &#123;</span><br><span class="line">        <span class="built_in">map</span> = <span class="keyword">new</span> LinkedHashMap&lt;Integer, Integer&gt;(capacity, <span class="number">0.75</span>f, <span class="keyword">true</span>)&#123;</span><br><span class="line">            @Override</span><br><span class="line">            <span class="keyword">protected</span> <span class="built_in">boolean</span> removeEldestEntry(Map.Entry eldest) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="built_in">map</span>.<span class="built_in">size</span>() &gt; capacity;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> <span class="built_in">get</span>(<span class="built_in">int</span> <span class="variable">key</span>) &#123;</span><br><span class="line">        Integer val = <span class="built_in">map</span>.<span class="built_in">get</span>(<span class="variable">key</span>);</span><br><span class="line">        <span class="keyword">if</span> (val == <span class="keyword">null</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">return</span> val;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="built_in">set</span>(<span class="built_in">int</span> <span class="variable">key</span>, <span class="built_in">int</span> value) &#123;</span><br><span class="line">        <span class="built_in">map</span>.put(<span class="variable">key</span>, value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="LinkedHashMap">LinkedHashMap</h4><figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="built_in">get</span>() &#123;</span><br><span class="line">    LinkedHashMap&lt;<span class="keyword">String</span>, Integer&gt; <span class="built_in">map</span> = <span class="keyword">new</span> LinkedHashMap&lt;&gt;(<span class="number">10</span>, <span class="number">0.75</span>f, <span class="keyword">true</span>);</span><br><span class="line">    <span class="built_in">map</span>.put(<span class="string">"k1"</span>, <span class="number">1</span>);</span><br><span class="line">    <span class="built_in">map</span>.put(<span class="string">"k2"</span>, <span class="number">2</span>);</span><br><span class="line">    <span class="built_in">map</span>.put(<span class="string">"k3"</span>, <span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">    System.out.<span class="built_in">println</span>(<span class="string">"before get: "</span> + <span class="built_in">map</span>);</span><br><span class="line">    <span class="built_in">int</span> v2 = <span class="built_in">map</span>.<span class="built_in">get</span>(<span class="string">"k2"</span>);</span><br><span class="line">    System.out.<span class="built_in">println</span>(<span class="string">"after get : "</span> + <span class="built_in">map</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight inform7"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">before get: &#123;k1=1, k2=2, k3=3&#125;</span><br><span class="line">after get : &#123;k1=1, k3=3, k2=2&#125;</span><br></pre></td></tr></table></figure></span>
+        <span itemprop="articleBody"><h4 id="int_long_equals的坑">int long equals的坑</h4><figure class="highlight openscad"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Integer s = new Integer<span class="params">(<span class="number">9</span>)</span>;</span><br><span class="line">Integer t = new Integer<span class="params">(<span class="number">9</span>)</span>;</span><br><span class="line">Long u = new Long<span class="params">(<span class="number">9</span>)</span>;</span><br><span class="line">System.out.println<span class="params">(s == u)</span>; <span class="comment">// 编译错误</span></span><br><span class="line">System.out.println<span class="params">(s == t)</span>; <span class="comment">// false,指向不同对象</span></span><br><span class="line">System.out.println<span class="params">(s.equals<span class="params">(u)</span>)</span>; <span class="comment">// false, Integer的equals方法首先判断是不是Integer类型,如果不是,直接return false</span></span><br><span class="line"></span><br><span class="line">System.out.println<span class="params">(s.equals<span class="params">(new Integer<span class="params">(<span class="number">9</span>)</span>)</span>)</span>; <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line">System.out.println<span class="params">(s.equals<span class="params">(<span class="number">9</span>)</span>)</span>; <span class="comment">// true</span></span><br><span class="line">System.out.println<span class="params">(u.equals<span class="params">(<span class="number">9</span>)</span>)</span>; <span class="comment">// false</span></span><br><span class="line">System.out.println<span class="params">(u.equals<span class="params">(<span class="number">9</span>L)</span>)</span>; <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line">System.out.println<span class="params">(u == <span class="number">9</span>)</span>; <span class="comment">// true</span></span><br><span class="line">System.out.println<span class="params">(u == <span class="number">9</span>L)</span>; <span class="comment">// true</span></span><br></pre></td></tr></table></figure></span>
       
     </div>
 
@@ -208,11 +186,11 @@
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2016/12/23/try-with-resource-byte-code/" rel="prev">有趣的try-with-resource实现</a>
+            
           </div>
 
           <div class="post-nav-next post-nav-item">
-            
-              <a href="/2016/02/23/jvm-init-clinit/" rel="next">JVM中 &lt;init&gt; &lt;clinit&gt;的区别</a>
             
           </div>
         </div>
@@ -274,14 +252,14 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/">
-              <span class="site-state-item-count">4</span>
+              <span class="site-state-item-count">2</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
 
           <div class="site-state-item site-state-categories">
             <a href="/categories">
-              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-count">1</span>
               <span class="site-state-item-name">分类</span>
               </a>
           </div>
@@ -316,7 +294,7 @@
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#LinkedHashMap"><span class="nav-number">1.</span> <span class="nav-text">LinkedHashMap</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#int_long_equals的坑"><span class="nav-number">1.</span> <span class="nav-text">int long equals的坑</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
