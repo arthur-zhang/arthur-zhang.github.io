@@ -37,22 +37,22 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
 
 
-<meta name="description" content="Java 7中的 try-with-resource的语义在Java 6中的等价实现是什么？这个问题目测99%的人都写不完全正确，不信来战。
+<meta name="description" content="Java 7中的 try-with-resource，在没有这个语法糖的情况下的等价实现是什么？以下面的demo为例，这个问题目测99%的人都写不完全正确，不信来战。
 
-123456789public static void foo() throws Exception &amp;#123;    try (AutoCloseable c = dummy()) &amp;#123;        bar();    &amp;#125;&amp;#125">
+123456789public static void foo() throws Exception &amp;#123;    try (AutoCloseable c = dummy()) &amp;#123;        bar();">
 <meta property="og:type" content="article">
 <meta property="og:title" content="有趣的try-with-resource实现">
 <meta property="og:url" content="http://yoursite.com/2016/12/23/try-with-resource-byte-code/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="Java 7中的 try-with-resource的语义在Java 6中的等价实现是什么？这个问题目测99%的人都写不完全正确，不信来战。
+<meta property="og:description" content="Java 7中的 try-with-resource，在没有这个语法糖的情况下的等价实现是什么？以下面的demo为例，这个问题目测99%的人都写不完全正确，不信来战。
 
-123456789public static void foo() throws Exception &amp;#123;    try (AutoCloseable c = dummy()) &amp;#123;        bar();    &amp;#125;&amp;#125">
-<meta property="og:updated_time" content="2016-12-23T15:49:22.000Z">
+123456789public static void foo() throws Exception &amp;#123;    try (AutoCloseable c = dummy()) &amp;#123;        bar();">
+<meta property="og:updated_time" content="2016-12-23T16:17:16.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="有趣的try-with-resource实现">
-<meta name="twitter:description" content="Java 7中的 try-with-resource的语义在Java 6中的等价实现是什么？这个问题目测99%的人都写不完全正确，不信来战。
+<meta name="twitter:description" content="Java 7中的 try-with-resource，在没有这个语法糖的情况下的等价实现是什么？以下面的demo为例，这个问题目测99%的人都写不完全正确，不信来战。
 
-123456789public static void foo() throws Exception &amp;#123;    try (AutoCloseable c = dummy()) &amp;#123;        bar();    &amp;#125;&amp;#125">
+123456789public static void foo() throws Exception &amp;#123;    try (AutoCloseable c = dummy()) &amp;#123;        bar();">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -196,7 +196,7 @@
       
 
       
-        <span itemprop="articleBody"><p><code>Java 7</code>中的 <code>try-with-resource</code>的语义在<code>Java 6</code>中的等价实现是什么？<br>这个问题目测<code>99%</code>的人都写不完全正确，不信来战。</p>
+        <span itemprop="articleBody"><p><code>Java 7</code>中的 <code>try-with-resource</code>，在没有这个语法糖的情况下的等价实现是什么？<br>以下面的demo为例，这个问题目测<code>99%</code>的人都写不完全正确，不信来战。</p>
 <hr>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">foo</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> (AutoCloseable c = dummy()) &#123;</span><br><span class="line">        bar();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">bar</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// may throw exception</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <hr>
