@@ -37,31 +37,25 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
 
 
-<meta name="description" content="下面的代码输出什么？
-(⊙o⊙)…先不要怀疑int.class这样写是不是有语法错误。。。
-12345Class&amp;lt;Integer&amp;gt;  a = int.class;Class&amp;lt;Integer&amp;gt;  b = Integer.class;System.out.println(a == b);输出 false
-下面来分析一下为什么。
-先来看字节码
-12345678 Object a">
+<meta name="description" content="我们在把数组转list时，最常看到的实用方式是Arrays.asList
+比如
+1234String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&quot;jerry&quot;        &amp;#125;;List&amp;lt;String&amp;gt; list =  Arrays.asList(receivers);
+然后看下Arrays.asList">
 <meta property="og:type" content="article">
-<meta property="og:title" content="int.class和Integer.class">
-<meta property="og:url" content="http://yoursite.com/2016/12/24/int-class-vs-integer-class/index.html">
+<meta property="og:title" content="重新认识Arrays.asList（冷知识）">
+<meta property="og:url" content="http://yoursite.com/2016/12/24/arrays-aslist/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="下面的代码输出什么？
-(⊙o⊙)…先不要怀疑int.class这样写是不是有语法错误。。。
-12345Class&amp;lt;Integer&amp;gt;  a = int.class;Class&amp;lt;Integer&amp;gt;  b = Integer.class;System.out.println(a == b);输出 false
-下面来分析一下为什么。
-先来看字节码
-12345678 Object a">
-<meta property="og:updated_time" content="2016-12-23T23:27:15.000Z">
+<meta property="og:description" content="我们在把数组转list时，最常看到的实用方式是Arrays.asList
+比如
+1234String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&quot;jerry&quot;        &amp;#125;;List&amp;lt;String&amp;gt; list =  Arrays.asList(receivers);
+然后看下Arrays.asList">
+<meta property="og:updated_time" content="2016-12-24T02:53:51.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="int.class和Integer.class">
-<meta name="twitter:description" content="下面的代码输出什么？
-(⊙o⊙)…先不要怀疑int.class这样写是不是有语法错误。。。
-12345Class&amp;lt;Integer&amp;gt;  a = int.class;Class&amp;lt;Integer&amp;gt;  b = Integer.class;System.out.println(a == b);输出 false
-下面来分析一下为什么。
-先来看字节码
-12345678 Object a">
+<meta name="twitter:title" content="重新认识Arrays.asList（冷知识）">
+<meta name="twitter:description" content="我们在把数组转list时，最常看到的实用方式是Arrays.asList
+比如
+1234String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&quot;jerry&quot;        &amp;#125;;List&amp;lt;String&amp;gt; list =  Arrays.asList(receivers);
+然后看下Arrays.asList">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -73,7 +67,7 @@
 
 <script type="text/javascript" src="http://tajs.qq.com/stats?sId=60116635" charset="UTF-8"></script>
 
-  <title> int.class和Integer.class | Arthur Blog </title>
+  <title> 重新认识Arrays.asList（冷知识） | Arthur Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
@@ -164,7 +158,7 @@
           
           
             
-              int.class和Integer.class
+              重新认识Arrays.asList（冷知识）
             
           
         </h1>
@@ -207,20 +201,24 @@
       
 
       
-        <span itemprop="articleBody"><p>下面的代码输出什么？</p>
-<p>(⊙o⊙)…先不要怀疑<code>int.class</code>这样写是不是有语法错误。。。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Class&lt;Integer&gt;  a = <span class="keyword">int</span>.class;</span><br><span class="line">Class&lt;Integer&gt;  b = Integer.class;</span><br><span class="line">System.out.println(a == b);</span><br><span class="line"></span><br><span class="line">输出 <span class="keyword">false</span></span><br></pre></td></tr></table></figure>
-<p>下面来分析一下为什么。</p>
-<p>先来看字节码</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"> Object a = <span class="keyword">int</span>.class;</span><br><span class="line"> Object b = Integer.class;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span>.class</span><br><span class="line"> <span class="number">0</span>: getstatic     #<span class="number">2</span>   <span class="comment">// Field java/lang/Integer.TYPE:Ljava/lang/Class;</span></span><br><span class="line"> </span><br><span class="line">Integer.class</span><br><span class="line"><span class="number">4</span>: ldc           #<span class="number">3</span>   <span class="comment">// class java/lang/Integer</span></span><br></pre></td></tr></table></figure>
-<hr>
-<p>可见</p>
-<p><code>int.class=Integer.TYPE</code></p>
-<p>实际上是<code>Integer</code>类的一个静态常量<code>TYPE</code>，最终的值是<code>Class.getPrimitiveClass(&quot;int&quot;)</code></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> * The &#123;<span class="doctag">@code</span> Class&#125; instance representing the primitive type</span><br><span class="line"> * &#123;<span class="doctag">@code</span> int&#125;.</span><br><span class="line"> *</span><br><span class="line"> * <span class="doctag">@since</span>   JDK1.1</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Class&lt;Integer&gt;  TYPE = (Class&lt;Integer&gt;) Class.getPrimitiveClass(<span class="string">"int"</span>);</span><br></pre></td></tr></table></figure>
-<p><code>Integer.class</code>这个大家就比较清楚了，是<code>java.lang.Integer</code>的class对象，实际上代表 <code>Class.forName(&quot;java.lang.Integer&quot;)</code></p>
-<p>你可能会想，知道这个有毛用？这么偏门的知识。</p>
-<p>在反射中，搞错了这两个，你可能要调试n长时间，找不到方法等，不要问我是怎么知道的。</p>
+        <span itemprop="articleBody"><p>我们在把数组转list时，最常看到的实用方式是<code>Arrays.asList</code></p>
+<p>比如</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String[] receivers  = <span class="keyword">new</span> String [] &#123;</span><br><span class="line">                <span class="string">"tom"</span>,<span class="string">"jerry"</span></span><br><span class="line">        &#125;;</span><br><span class="line">List&lt;String&gt; list =  Arrays.asList(receivers);</span><br></pre></td></tr></table></figure>
+<p>然后看下<code>Arrays.asList</code>的源码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">List&lt;T&gt; <span class="title">asList</span><span class="params">(T... a)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ArrayList&lt;&gt;(a);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>是不是跟你想的一样，这个方法把<code>array</code>转为了<code>java.util.ArrayList</code>？</p>
+<p>我都这么说了，肯定不是的啦，不信我们来测试一下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 正常</span></span><br><span class="line">    List&lt;String&gt; foo = foo();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 正常</span></span><br><span class="line">    List&lt;String&gt; bar = bar();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 正常</span></span><br><span class="line">    java.util.ArrayList&lt;String&gt; foo1 = (java.util.ArrayList&lt;String&gt;) foo();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 挂掉 java.lang.ClassCastException: java.util.Arrays$ArrayList cannot be cast to java.util.ArrayList</span></span><br><span class="line">    java.util.ArrayList&lt;String&gt; bar1 = (java.util.ArrayList&lt;String&gt;) bar();</span><br><span class="line"></span><br><span class="line">    System.out.println(foo().getClass()); <span class="comment">// class java.util.ArrayList</span></span><br><span class="line">    System.out.println(bar().getClass()); <span class="comment">// class java.util.Arrays$ArrayList</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;String&gt; <span class="title">foo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    List&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    list.add(<span class="string">"tom"</span>);</span><br><span class="line">    <span class="keyword">return</span> list;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;String&gt; <span class="title">bar</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Arrays.asList(<span class="string">"tom"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在我们知道了<code>Arrays.asList</code>返回的并不是<code>java.util.ArrayList</code>,而是Arrays的静态内部类<code>Arrays.ArrayList</code>，源码如下：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">Arrays</span> &#123;</span></span><br><span class="line">    public static &lt;<span class="type">T</span>&gt; <span class="type">List</span>&lt;<span class="type">T</span>&gt; asList(<span class="type">T</span>... a) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="type">ArrayList</span>&lt;&gt;(a);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> static <span class="class"><span class="keyword">class</span> <span class="title">ArrayList&lt;E&gt;</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">AbstractList&lt;E&gt;</span> &#123;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可能你又要想了，有什么关系，不影响我使用。加入你想再add或删除一个元素，那么就悲剧了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; bar = Arrays.asList(<span class="string">"hello"</span>);</span><br><span class="line">bar.add(<span class="string">"world"</span>); <span class="comment">// java.lang.UnsupportedOperationException</span></span><br></pre></td></tr></table></figure>
+<p>因为Arrays.ArrayList的内部实现是一个<code>固定大小</code>的数组，正如它文档所说</p>
+<blockquote>
+<p>Returns a fixed-size list backed by the specified array</p>
+</blockquote>
+<p>那么要把array转换为一个可变大小的list，要怎么处理？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ArrayList&lt;String&gt; arrayList = <span class="keyword">new</span> ArrayList&lt;String&gt;(Arrays.asList(arr));</span><br></pre></td></tr></table></figure>
 </span>
       
     </div>
@@ -232,13 +230,11 @@
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/12/24/arrays-aslist/" rel="prev">重新认识Arrays.asList（冷知识）</a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/12/23/try-with-resource-byte-code/" rel="next">有趣的try-with-resource实现</a>
+              <a href="/2016/12/24/int-class-vs-integer-class/" rel="next">int.class和Integer.class</a>
             
           </div>
         </div>
