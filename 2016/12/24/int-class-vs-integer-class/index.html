@@ -37,33 +37,31 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
 
 
-<meta name="description" content="栈帧的组成结构
-
-
-局部变量表
-操作数栈
-当前方法所在类的运行时常量池的引用">
+<meta name="description" content="下面的代码输出什么？
+(⊙o⊙)…先不要怀疑int.class这样写是不是有语法错误。。。
+Class&amp;lt;Integer&amp;gt;  a = int.class;Class&amp;lt;Integer&amp;gt;  b = Integer.class;System.out.println(a == b);输出 false
+下面来分析一下为什么。
+先来看字节码
+ Object a = int.class;">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JVM基础">
-<meta property="og:url" content="http://yoursite.com/2016/02/23/jvm-basic/index.html">
+<meta property="og:title" content="int.class和Integer.class">
+<meta property="og:url" content="http://yoursite.com/2016/12/24/int-class-vs-integer-class/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="栈帧的组成结构
-
-
-局部变量表
-操作数栈
-当前方法所在类的运行时常量池的引用">
-<meta property="og:image" content="http://yoursite.com/images/frame-structure.png">
-<meta property="og:image" content="http://yoursite.com/images/frame-structure.png">
-<meta property="og:updated_time" content="2016-03-01T06:39:58.000Z">
+<meta property="og:description" content="下面的代码输出什么？
+(⊙o⊙)…先不要怀疑int.class这样写是不是有语法错误。。。
+Class&amp;lt;Integer&amp;gt;  a = int.class;Class&amp;lt;Integer&amp;gt;  b = Integer.class;System.out.println(a == b);输出 false
+下面来分析一下为什么。
+先来看字节码
+ Object a = int.class;">
+<meta property="og:updated_time" content="2016-12-23T23:27:15.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="JVM基础">
-<meta name="twitter:description" content="栈帧的组成结构
-
-
-局部变量表
-操作数栈
-当前方法所在类的运行时常量池的引用">
+<meta name="twitter:title" content="int.class和Integer.class">
+<meta name="twitter:description" content="下面的代码输出什么？
+(⊙o⊙)…先不要怀疑int.class这样写是不是有语法错误。。。
+Class&amp;lt;Integer&amp;gt;  a = int.class;Class&amp;lt;Integer&amp;gt;  b = Integer.class;System.out.println(a == b);输出 false
+下面来分析一下为什么。
+先来看字节码
+ Object a = int.class;">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -73,7 +71,9 @@
   };
 </script>
 
-  <title> JVM基础 | Arthur Blog </title>
+<script type="text/javascript" src="http://tajs.qq.com/stats?sId=60116635" charset="UTF-8"></script>
+
+  <title> int.class和Integer.class | Arthur Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
@@ -164,7 +164,7 @@
           
           
             
-              JVM基础
+              int.class和Integer.class
             
           
         </h1>
@@ -173,8 +173,8 @@
       <div class="post-meta">
         <span class="post-time">
           发表于
-          <time itemprop="dateCreated" datetime="2016-02-23T21:17:43+08:00" content="2016-02-23">
-            2016-02-23
+          <time itemprop="dateCreated" datetime="2016-12-24T21:17:43+08:00" content="2016-12-24">
+            2016-12-24
           </time>
         </span>
 
@@ -183,8 +183,8 @@
             &nbsp; | &nbsp; 分类于
             
               <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/jvm/" itemprop="url" rel="index">
-                  <span itemprop="name">jvm</span>
+                <a href="/categories/Java再入门/" itemprop="url" rel="index">
+                  <span itemprop="name">Java再入门</span>
                 </a>
               </span>
 
@@ -207,15 +207,20 @@
       
 
       
-        <span itemprop="articleBody"><blockquote>
-<p>栈帧的组成结构</p>
-</blockquote>
-<ul>
-<li>局部变量表</li>
-<li>操作数栈</li>
-<li>当前方法所在类的运行时常量池的引用</li>
-</ul>
-<p><img src="images/frame-structure.png"><br><img src="/images/frame-structure.png" alt=""></p>
+        <span itemprop="articleBody"><p>下面的代码输出什么？</p>
+<p>(⊙o⊙)…先不要怀疑<code>int.class</code>这样写是不是有语法错误。。。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Class&lt;Integer&gt;  a = <span class="keyword">int</span>.class;</span><br><span class="line">Class&lt;Integer&gt;  b = Integer.class;</span><br><span class="line">System.out.println(a == b);</span><br><span class="line"></span><br><span class="line">输出 <span class="keyword">false</span></span><br></pre></td></tr></table></figure>
+<p>下面来分析一下为什么。</p>
+<p>先来看字节码</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"> Object a = <span class="keyword">int</span>.class;</span><br><span class="line"> Object b = Integer.class;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span>.class</span><br><span class="line"> <span class="number">0</span>: getstatic     #<span class="number">2</span>   <span class="comment">// Field java/lang/Integer.TYPE:Ljava/lang/Class;</span></span><br><span class="line"> </span><br><span class="line">Integer.class</span><br><span class="line"><span class="number">4</span>: ldc           #<span class="number">3</span>   <span class="comment">// class java/lang/Integer</span></span><br></pre></td></tr></table></figure>
+<hr>
+<p>可见</p>
+<p><code>int.class=Integer.TYPE</code></p>
+<p>实际上是<code>Integer</code>类的一个静态常量<code>TYPE</code>，最终的值是<code>Class.getPrimitiveClass(&quot;int&quot;)</code></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> * The &#123;<span class="doctag">@code</span> Class&#125; instance representing the primitive type</span><br><span class="line"> * &#123;<span class="doctag">@code</span> int&#125;.</span><br><span class="line"> *</span><br><span class="line"> * <span class="doctag">@since</span>   JDK1.1</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Class&lt;Integer&gt;  TYPE = (Class&lt;Integer&gt;) Class.getPrimitiveClass(<span class="string">"int"</span>);</span><br></pre></td></tr></table></figure>
+<p><code>Integer.class</code>这个大家就比较清楚了，是<code>java.lang.Integer</code>的class对象，实际上代表 <code>Class.forName(&quot;java.lang.Integer&quot;)</code></p>
+<p>你可能会想，知道这个有毛用？这么偏门的知识。</p>
+<p>在反射中，搞错了这两个，你可能要调试n长时间，找不到方法等，不要问我是怎么知道的。</p>
 </span>
       
     </div>
@@ -227,13 +232,13 @@
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/02/23/jvm-init-clinit/" rel="prev">JVM中 &lt;init&gt; &lt;clinit&gt;的区别</a>
+              <a href="/2016/12/24/arrays-aslist/" rel="prev">重新认识Arrays.asList（冷知识）</a>
             
           </div>
 
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2015/03/31/java-mail-api/" rel="next">JavaMail API使用</a>
+              <a href="/2016/12/23/try-with-resource-byte-code/" rel="next">有趣的try-with-resource实现</a>
             
           </div>
         </div>
@@ -302,7 +307,7 @@
 
           <div class="site-state-item site-state-categories">
             <a href="/categories">
-              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-count">1</span>
               <span class="site-state-item-name">分类</span>
               </a>
           </div>

@@ -37,31 +37,25 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
 
 
-<meta name="description" content="二者区别：
-
-&amp;lt;init&amp;gt;是实例的构造器方法,用于非静态变量的初始化
-&amp;lt;clinit&amp;gt;是类或者接口静态初始化方法
-
-123456789101112131415class X &amp;#123;   static Log log = LogFactory.getLog(); // &amp;lt;clinit&amp;gt;   private int x = 1;   // &amp;lt;init&amp;g">
+<meta name="description" content="我们在把数组转list时，最常看到的实用方式是Arrays.asList
+比如
+String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&quot;jerry&quot;        &amp;#125;;List&amp;lt;String&amp;gt; list =  Arrays.asList(receivers);
+然后看下Arrays.asList的源码">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JVM中 &lt;init&gt; &lt;clinit&gt;的区别">
-<meta property="og:url" content="http://yoursite.com/2016/02/23/jvm-init-clinit/index.html">
+<meta property="og:title" content="重新认识Arrays.asList（冷知识）">
+<meta property="og:url" content="http://yoursite.com/2016/12/24/arrays-aslist/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="二者区别：
-
-&amp;lt;init&amp;gt;是实例的构造器方法,用于非静态变量的初始化
-&amp;lt;clinit&amp;gt;是类或者接口静态初始化方法
-
-123456789101112131415class X &amp;#123;   static Log log = LogFactory.getLog(); // &amp;lt;clinit&amp;gt;   private int x = 1;   // &amp;lt;init&amp;g">
-<meta property="og:updated_time" content="2016-02-23T14:45:54.000Z">
+<meta property="og:description" content="我们在把数组转list时，最常看到的实用方式是Arrays.asList
+比如
+String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&quot;jerry&quot;        &amp;#125;;List&amp;lt;String&amp;gt; list =  Arrays.asList(receivers);
+然后看下Arrays.asList的源码">
+<meta property="og:updated_time" content="2016-12-24T02:53:51.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="JVM中 &lt;init&gt; &lt;clinit&gt;的区别">
-<meta name="twitter:description" content="二者区别：
-
-&amp;lt;init&amp;gt;是实例的构造器方法,用于非静态变量的初始化
-&amp;lt;clinit&amp;gt;是类或者接口静态初始化方法
-
-123456789101112131415class X &amp;#123;   static Log log = LogFactory.getLog(); // &amp;lt;clinit&amp;gt;   private int x = 1;   // &amp;lt;init&amp;g">
+<meta name="twitter:title" content="重新认识Arrays.asList（冷知识）">
+<meta name="twitter:description" content="我们在把数组转list时，最常看到的实用方式是Arrays.asList
+比如
+String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&quot;jerry&quot;        &amp;#125;;List&amp;lt;String&amp;gt; list =  Arrays.asList(receivers);
+然后看下Arrays.asList的源码">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -71,7 +65,9 @@
   };
 </script>
 
-  <title> JVM中 &lt;init&gt; &lt;clinit&gt;的区别 | Arthur Blog </title>
+<script type="text/javascript" src="http://tajs.qq.com/stats?sId=60116635" charset="UTF-8"></script>
+
+  <title> 重新认识Arrays.asList（冷知识） | Arthur Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
@@ -162,7 +158,7 @@
           
           
             
-              JVM中 &lt;init&gt; &lt;clinit&gt;的区别
+              重新认识Arrays.asList（冷知识）
             
           
         </h1>
@@ -171,8 +167,8 @@
       <div class="post-meta">
         <span class="post-time">
           发表于
-          <time itemprop="dateCreated" datetime="2016-02-23T21:17:43+08:00" content="2016-02-23">
-            2016-02-23
+          <time itemprop="dateCreated" datetime="2016-12-24T21:17:43+08:00" content="2016-12-24">
+            2016-12-24
           </time>
         </span>
 
@@ -181,8 +177,8 @@
             &nbsp; | &nbsp; 分类于
             
               <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/jvm/" itemprop="url" rel="index">
-                  <span itemprop="name">jvm</span>
+                <a href="/categories/Java再入门/" itemprop="url" rel="index">
+                  <span itemprop="name">Java再入门</span>
                 </a>
               </span>
 
@@ -205,12 +201,24 @@
       
 
       
-        <span itemprop="articleBody"><p>二者区别：</p>
-<ul>
-<li>&lt;init&gt;是实例的构造器方法,用于非静态变量的初始化</li>
-<li>&lt;clinit&gt;是类或者接口静态初始化方法</li>
-</ul>
-<figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">X</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">static</span> Log log = LogFactory.getLog(); <span class="comment">// &lt;clinit&gt;</span></span><br><span class="line"></span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">int</span> x = <span class="number">1</span>;   <span class="comment">// &lt;init&gt;</span></span><br><span class="line"></span><br><span class="line">   X()&#123;</span><br><span class="line">      <span class="comment">// &lt;init&gt;</span></span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">static</span> &#123;</span><br><span class="line">      <span class="comment">// &lt;clinit&gt;</span></span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <span itemprop="articleBody"><p>我们在把数组转list时，最常看到的实用方式是<code>Arrays.asList</code></p>
+<p>比如</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String[] receivers  = <span class="keyword">new</span> String [] &#123;</span><br><span class="line">                <span class="string">"tom"</span>,<span class="string">"jerry"</span></span><br><span class="line">        &#125;;</span><br><span class="line">List&lt;String&gt; list =  Arrays.asList(receivers);</span><br></pre></td></tr></table></figure>
+<p>然后看下<code>Arrays.asList</code>的源码</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">List&lt;T&gt; <span class="title">asList</span><span class="params">(T... a)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ArrayList&lt;&gt;(a);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>是不是跟你想的一样，这个方法把<code>array</code>转为了<code>java.util.ArrayList</code>？</p>
+<p>我都这么说了，肯定不是的啦，不信我们来测试一下。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 正常</span></span><br><span class="line">    List&lt;String&gt; foo = foo();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 正常</span></span><br><span class="line">    List&lt;String&gt; bar = bar();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 正常</span></span><br><span class="line">    java.util.ArrayList&lt;String&gt; foo1 = (java.util.ArrayList&lt;String&gt;) foo();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 挂掉 java.lang.ClassCastException: java.util.Arrays$ArrayList cannot be cast to java.util.ArrayList</span></span><br><span class="line">    java.util.ArrayList&lt;String&gt; bar1 = (java.util.ArrayList&lt;String&gt;) bar();</span><br><span class="line"></span><br><span class="line">    System.out.println(foo().getClass()); <span class="comment">// class java.util.ArrayList</span></span><br><span class="line">    System.out.println(bar().getClass()); <span class="comment">// class java.util.Arrays$ArrayList</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;String&gt; <span class="title">foo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    List&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    list.add(<span class="string">"tom"</span>);</span><br><span class="line">    <span class="keyword">return</span> list;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;String&gt; <span class="title">bar</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Arrays.asList(<span class="string">"tom"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在我们知道了<code>Arrays.asList</code>返回的并不是<code>java.util.ArrayList</code>,而是Arrays的静态内部类<code>Arrays.ArrayList</code>，源码如下：</p>
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">Arrays</span> &#123;</span></span><br><span class="line">    public static &lt;<span class="type">T</span>&gt; <span class="type">List</span>&lt;<span class="type">T</span>&gt; asList(<span class="type">T</span>... a) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="type">ArrayList</span>&lt;&gt;(a);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> static <span class="class"><span class="keyword">class</span> <span class="title">ArrayList&lt;E&gt;</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">AbstractList&lt;E&gt;</span> &#123;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可能你又要想了，有什么关系，不影响我使用。加入你想再add或删除一个元素，那么就悲剧了</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">List&lt;String&gt; bar = Arrays.asList(<span class="string">"hello"</span>);</span><br><span class="line">bar.add(<span class="string">"world"</span>); <span class="comment">// java.lang.UnsupportedOperationException</span></span><br></pre></td></tr></table></figure>
+<p>因为Arrays.ArrayList的内部实现是一个<code>固定大小</code>的数组，正如它文档所说</p>
+<blockquote>
+<p>Returns a fixed-size list backed by the specified array</p>
+</blockquote>
+<p>那么要把array转换为一个可变大小的list，要怎么处理？</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">ArrayList&lt;String&gt; arrayList = <span class="keyword">new</span> ArrayList&lt;String&gt;(Arrays.asList(arr));</span><br></pre></td></tr></table></figure>
 </span>
       
     </div>
@@ -222,13 +230,11 @@
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/08/31/lru-cache/" rel="prev">LRC cache 实现</a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/02/23/jvm-basic/" rel="next">JVM基础</a>
+              <a href="/2016/12/24/int-class-vs-integer-class/" rel="next">int.class和Integer.class</a>
             
           </div>
         </div>
@@ -297,7 +303,7 @@
 
           <div class="site-state-item site-state-categories">
             <a href="/categories">
-              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-count">1</span>
               <span class="site-state-item-name">分类</span>
               </a>
           </div>
