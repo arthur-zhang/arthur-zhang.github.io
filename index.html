@@ -104,7 +104,7 @@
     motion: false,
     duoshuo: {
       userId: 'undefined',
-      author: '博主'
+      author: 'Author'
     },
     algolia: {
       applicationID: '',
@@ -124,7 +124,7 @@
 
 
 
-  <title> Arthur Blog </title>
+  <title> Archive | Arthur Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
@@ -154,9 +154,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left 
-   page-home 
- ">
+  <div class="container one-collumn sidebar-position-left  page-archive  ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -191,11 +189,11 @@
       
         
         <li class="menu-item menu-item-home">
-          <a href="/archives" rel="section">
+          <a href="/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
-            首页
+            Home
           </a>
         </li>
       
@@ -205,7 +203,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
             
-            分类
+            Categories
           </a>
         </li>
       
@@ -215,7 +213,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
             
-            关于
+            About
           </a>
         </li>
       
@@ -237,602 +235,178 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
-    
+
+  <section id="posts" class="posts-collapse">
+    <span class="archive-move-on"></span>
+
+    <span class="archive-page-counter">
       
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/12/24/arrays-aslist/">
-
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Arthur Zhang">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/default_avatar.jpg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="Arthur Blog">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="Arthur Blog" src="">
+      
+      
+        
+      
+      Um..! 4 posts in total. Keep on posting.
     </span>
-  </span>
 
     
-      <header class="post-header">
 
+      
+      
+      
+
+      
         
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/12/24/arrays-aslist/" itemprop="url">
-                  重新认识Arrays.asList（冷知识）
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-12-24T21:17:43+08:00">
-                2016-12-24
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java再入门/" itemprop="url" rel="index">
-                    <span itemprop="name">Java再入门</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-
-          
-
+        <div class="collection-title">
+          <h2 class="archive-year motion-element" id="archive-year-2016">2016</h2>
         </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
       
       
 
       
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <h1 class="post-title">
         
-          
-            <p>我们在把数组转list时，最常看到的实用方式是<code>Arrays.asList</code></p>
-<p>比如</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String[] receivers  = <span class="keyword">new</span> String [] &#123;</span><br><span class="line">                <span class="string">"tom"</span>,<span class="string">"jerry"</span></span><br><span class="line">        &#125;;</span><br><span class="line">List&lt;String&gt; list =  Arrays.asList(receivers);</span><br></pre></td></tr></table></figure>
-<p>然后看下<code>Arrays.asList</code>的源码</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">List&lt;T&gt; <span class="title">asList</span><span class="params">(T... a)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ArrayList&lt;&gt;(a);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>是不是跟你想的一样，这个方法把<code>array</code>转为了<code>java.util.ArrayList</code>？</p>
-<p>我都这么说了，肯定不是的啦，不信我们来测试一下。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 正常</span></span><br><span class="line">    List&lt;String&gt; foo = foo();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 正常</span></span><br><span class="line">    List&lt;String&gt; bar = bar();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 正常</span></span><br><span class="line">    java.util.ArrayList&lt;String&gt; foo1 = (java.util.ArrayList&lt;String&gt;) foo();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 挂掉 java.lang.ClassCastException: java.util.Arrays$ArrayList cannot be cast to java.util.ArrayList</span></span><br><span class="line">    java.util.ArrayList&lt;String&gt; bar1 = (java.util.ArrayList&lt;String&gt;) bar();</span><br><span class="line"></span><br><span class="line">    System.out.println(foo().getClass()); <span class="comment">// class java.util.ArrayList</span></span><br><span class="line">    System.out.println(bar().getClass()); <span class="comment">// class java.util.Arrays$ArrayList</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;String&gt; <span class="title">foo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    List&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    list.add(<span class="string">"tom"</span>);</span><br><span class="line">    <span class="keyword">return</span> list;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;String&gt; <span class="title">bar</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Arrays.asList(<span class="string">"tom"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>现在我们知道了<code>Arrays.asList</code>返回的并不是<code>java.util.ArrayList</code>,而是Arrays的静态内部类<code>Arrays.ArrayList</code>，源码如下：</p>
-<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">Arrays</span> &#123;</span></span><br><span class="line">    public static &lt;<span class="type">T</span>&gt; <span class="type">List</span>&lt;<span class="type">T</span>&gt; asList(<span class="type">T</span>... a) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="type">ArrayList</span>&lt;&gt;(a);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> static <span class="class"><span class="keyword">class</span> <span class="title">ArrayList&lt;E&gt;</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">AbstractList&lt;E&gt;</span> &#123;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可能你又要想了，有什么关系，不影响我使用。加入你想再add或删除一个元素，那么就悲剧了</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">List&lt;String&gt; bar = Arrays.asList(<span class="string">"hello"</span>);</span><br><span class="line">bar.add(<span class="string">"world"</span>); <span class="comment">// java.lang.UnsupportedOperationException</span></span><br></pre></td></tr></table></figure>
-<p>因为Arrays.ArrayList的内部实现是一个<code>固定大小</code>的数组，正如它文档所说</p>
-<blockquote>
-<p>Returns a fixed-size list backed by the specified array</p>
-</blockquote>
-<p>那么要把array转换为一个可变大小的list，要怎么处理？</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">ArrayList&lt;String&gt; arrayList = <span class="keyword">new</span> ArrayList&lt;String&gt;(Arrays.asList(arr));</span><br></pre></td></tr></table></figure>
-
-          
+            <a class="post-title-link" href="/2016/12/24/arrays-aslist/" itemprop="url">
+              
+                <span itemprop="name">重新认识Arrays.asList（冷知识）</span>
+              
+            </a>
         
-      
-    </div>
+      </h1>
 
-    <div>
-      
-    </div>
+      <div class="post-meta">
+        <time class="post-time" itemprop="dateCreated"
+              datetime="2016-12-24T21:17:43+08:00"
+              content="2016-12-24" >
+          12-24
+        </time>
+      </div>
 
-    <div>
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
+    </header>
   </article>
 
 
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/12/24/int-class-vs-integer-class/">
-
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Arthur Zhang">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/default_avatar.jpg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="Arthur Blog">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="Arthur Blog" src="">
-    </span>
-  </span>
 
     
-      <header class="post-header">
 
+      
+      
+      
+
+      
+      
+
+      
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <h1 class="post-title">
         
+            <a class="post-title-link" href="/2016/12/24/int-class-vs-integer-class/" itemprop="url">
+              
+                <span itemprop="name">int.class和Integer.class</span>
+              
+            </a>
         
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/12/24/int-class-vs-integer-class/" itemprop="url">
-                  int.class和Integer.class
-                </a>
-              
-            
-          </h1>
-        
+      </h1>
 
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-12-24T21:17:43+08:00">
-                2016-12-24
-              </time>
-            
+      <div class="post-meta">
+        <time class="post-time" itemprop="dateCreated"
+              datetime="2016-12-24T21:17:43+08:00"
+              content="2016-12-24" >
+          12-24
+        </time>
+      </div>
 
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java再入门/" itemprop="url" rel="index">
-                    <span itemprop="name">Java再入门</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>下面的代码输出什么？</p>
-<p>(⊙o⊙)…先不要怀疑<code>int.class</code>这样写是不是有语法错误。。。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Class&lt;Integer&gt;  a = <span class="keyword">int</span>.class;</span><br><span class="line">Class&lt;Integer&gt;  b = Integer.class;</span><br><span class="line">System.out.println(a == b);</span><br><span class="line"></span><br><span class="line">输出 <span class="keyword">false</span></span><br></pre></td></tr></table></figure>
-<p>下面来分析一下为什么。</p>
-<p>先来看字节码</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"> Object a = <span class="keyword">int</span>.class;</span><br><span class="line"> Object b = Integer.class;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span>.class</span><br><span class="line"> <span class="number">0</span>: getstatic     #<span class="number">2</span>   <span class="comment">// Field java/lang/Integer.TYPE:Ljava/lang/Class;</span></span><br><span class="line"> </span><br><span class="line">Integer.class</span><br><span class="line"><span class="number">4</span>: ldc           #<span class="number">3</span>   <span class="comment">// class java/lang/Integer</span></span><br></pre></td></tr></table></figure>
-<hr>
-<p>可见</p>
-<p><code>int.class=Integer.TYPE</code></p>
-<p>实际上是<code>Integer</code>类的一个静态常量<code>TYPE</code>，最终的值是<code>Class.getPrimitiveClass(&quot;int&quot;)</code></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> * The &#123;<span class="doctag">@code</span> Class&#125; instance representing the primitive type</span><br><span class="line"> * &#123;<span class="doctag">@code</span> int&#125;.</span><br><span class="line"> *</span><br><span class="line"> * <span class="doctag">@since</span>   JDK1.1</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Class&lt;Integer&gt;  TYPE = (Class&lt;Integer&gt;) Class.getPrimitiveClass(<span class="string">"int"</span>);</span><br></pre></td></tr></table></figure>
-<p><code>Integer.class</code>这个大家就比较清楚了，是<code>java.lang.Integer</code>的class对象，实际上代表 <code>Class.forName(&quot;java.lang.Integer&quot;)</code></p>
-<p>你可能会想，知道这个有毛用？这么偏门的知识。</p>
-<p>在反射中，搞错了这两个，你可能要调试n长时间，找不到方法等，不要问我是怎么知道的。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
+    </header>
   </article>
 
 
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/12/23/try-with-resource-byte-code/">
-
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Arthur Zhang">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/default_avatar.jpg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="Arthur Blog">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="Arthur Blog" src="">
-    </span>
-  </span>
 
     
-      <header class="post-header">
 
+      
+      
+      
+
+      
+      
+
+      
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <h1 class="post-title">
         
+            <a class="post-title-link" href="/2016/12/23/try-with-resource-byte-code/" itemprop="url">
+              
+                <span itemprop="name">有趣的try-with-resource实现</span>
+              
+            </a>
         
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/12/23/try-with-resource-byte-code/" itemprop="url">
-                  有趣的try-with-resource实现
-                </a>
-              
-            
-          </h1>
-        
+      </h1>
 
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-12-23T21:17:43+08:00">
-                2016-12-23
-              </time>
-            
+      <div class="post-meta">
+        <time class="post-time" itemprop="dateCreated"
+              datetime="2016-12-23T21:17:43+08:00"
+              content="2016-12-23" >
+          12-23
+        </time>
+      </div>
 
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java再入门/" itemprop="url" rel="index">
-                    <span itemprop="name">Java再入门</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p><code>Java 7</code>中的 <code>try-with-resource</code>，在没有这个语法糖的情况下的等价实现是什么？<br>以下面的demo为例，这个问题目测<code>99%</code>的人都写不完全正确，不信来战。</p>
-<hr>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">foo</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> (AutoCloseable c = dummy()) &#123;</span><br><span class="line">        bar();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">bar</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// may throw exception</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<p>我们凭第一感觉来写一下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">foo</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line"></span><br><span class="line">     AutoCloseable c = <span class="keyword">null</span>;</span><br><span class="line">     <span class="keyword">try</span> &#123;</span><br><span class="line">         c = dummy();</span><br><span class="line">         bar();</span><br><span class="line">     &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">         <span class="keyword">if</span> (c != <span class="keyword">null</span>) &#123;</span><br><span class="line">             c.close();</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-<p>看起来没什么问题，但是仔细想一下，如果<code>bar()</code>抛出了异常<code>e1</code>，<code>c.close()</code>也抛出了异常<code>e2</code>，调用者会收到哪个呢？</p>
-<p>我们来回顾一下Java基础，<code>try catch finally</code>部分</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">foo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"in try"</span>);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"in finally"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>调用<code>foo()</code>函数最终会抛出什么异常呢？</p>
-<p>运行一下：<br><code>Exception in thread &quot;main&quot; java.lang.RuntimeException: in finally</code></p>
-<p><code>try</code>中抛出的异常，就被<code>finally</code>中抛出的异常淹没掉了。</p>
-<p>回到刚刚的问题，如果 <code>bar()</code> 和 <code>c.close()</code>同时抛了异常，那么调用端应该会收到<code>c.close()</code>抛出的异常<code>e2</code>, 往往这并不是我们想要的。那么怎么样抛出try中的异常，同时又不丢掉finally中的异常呢？</p>
-<blockquote>
-<p>Java 7 中 为 <code>Throwable</code> 类 增 加 的 <code>addSuppressed</code> 方 法。当 一 个异 常 被 抛 出 的 时 候 , 可 能 有 其 他 异 常 因 为 该 异 常 而 被 抑 制 住 , 从 而 无 法 正 常 抛 出 。 这时 可 以 通 过<code>addSuppressed</code> 方 法 把 这 些 被 抑 制 的 方 法 记 录 下 来 。 被 抑 制 的 异 常 会 出 现在 抛 出 的 异 常 的 堆 栈 信 息 中 , 也 可 以 通 过 <code>getSuppressed</code> 方 法 来 获 取 这 些 异 常 。 这 样做 的 好 处 是 不 会 丢 失 任 何 异 常 , 方 便 开 发 人 员 进 行 调 试 。</p>
-</blockquote>
-<p>有了上述概念，我们进行改写</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">foo</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    AutoCloseable c = <span class="keyword">null</span>;</span><br><span class="line">    Exception tmpException = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        c = dummy();</span><br><span class="line">        bar();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        tmpException = e;</span><br><span class="line">        <span class="keyword">throw</span> e;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (c != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (tmpException != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    c.close();</span><br><span class="line">                &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                    tmpException.addSuppressed(e);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                c.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>验证我们的想法 <code>javap -c</code>查看字节码：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">foo</span><span class="params">()</span> <span class="keyword">throws</span> java.lang.Exception</span>;</span><br><span class="line">  Code:</span><br><span class="line">     <span class="number">0</span>: invokestatic  #<span class="number">2</span>                  <span class="comment">// Method dummy:()Ljava/lang/AutoCloseable;</span></span><br><span class="line">     <span class="number">3</span>: astore_0</span><br><span class="line">     <span class="number">4</span>: aconst_null</span><br><span class="line">     <span class="number">5</span>: astore_1</span><br><span class="line">     </span><br><span class="line">     <span class="number">6</span>: invokestatic  #<span class="number">3</span>                  <span class="comment">// Method bar:()V</span></span><br><span class="line">     </span><br><span class="line">     <span class="number">9</span>: aload_0</span><br><span class="line">    <span class="number">10</span>: ifnull        <span class="number">86</span></span><br><span class="line">    <span class="number">13</span>: aload_1</span><br><span class="line">    <span class="number">14</span>: ifnull        <span class="number">35</span></span><br><span class="line">    </span><br><span class="line">    <span class="number">17</span>: aload_0</span><br><span class="line">    <span class="number">18</span>: invokeinterface #<span class="number">4</span>,  <span class="number">1</span>            <span class="comment">// InterfaceMethod java/lang/AutoCloseable.close:()V</span></span><br><span class="line">    <span class="number">23</span>: goto          <span class="number">86</span></span><br><span class="line">    </span><br><span class="line">    <span class="number">26</span>: astore_2</span><br><span class="line">    <span class="number">27</span>: aload_1</span><br><span class="line">    <span class="number">28</span>: aload_2</span><br><span class="line">    <span class="number">29</span>: invokevirtual #<span class="number">6</span>                  <span class="comment">// Method java/lang/Throwable.addSuppressed:(Ljava/lang/Throwable;)V</span></span><br><span class="line">    <span class="number">32</span>: goto          <span class="number">86</span></span><br><span class="line">    <span class="number">35</span>: aload_0</span><br><span class="line">    <span class="number">36</span>: invokeinterface #<span class="number">4</span>,  <span class="number">1</span>            <span class="comment">// InterfaceMethod java/lang/AutoCloseable.close:()V</span></span><br><span class="line">    <span class="number">41</span>: goto          <span class="number">86</span></span><br><span class="line">    </span><br><span class="line">    <span class="number">44</span>: astore_2</span><br><span class="line">    <span class="number">45</span>: aload_2</span><br><span class="line">    <span class="number">46</span>: astore_1</span><br><span class="line">    <span class="number">47</span>: aload_2</span><br><span class="line">    <span class="number">48</span>: athrow</span><br><span class="line">    </span><br><span class="line">    <span class="number">49</span>: astore_3</span><br><span class="line">    <span class="number">50</span>: aload_0</span><br><span class="line">    <span class="number">51</span>: ifnull        <span class="number">84</span></span><br><span class="line">    <span class="number">54</span>: aload_1</span><br><span class="line">    <span class="number">55</span>: ifnull        <span class="number">78</span></span><br><span class="line">    </span><br><span class="line">    <span class="number">58</span>: aload_0</span><br><span class="line">    <span class="number">59</span>: invokeinterface #<span class="number">4</span>,  <span class="number">1</span>            <span class="comment">// InterfaceMethod java/lang/AutoCloseable.close:()V</span></span><br><span class="line">    <span class="number">64</span>: goto          <span class="number">84</span></span><br><span class="line">    </span><br><span class="line">    <span class="number">67</span>: astore        <span class="number">4</span></span><br><span class="line">    <span class="number">69</span>: aload_1</span><br><span class="line">    <span class="number">70</span>: aload         <span class="number">4</span></span><br><span class="line">    <span class="number">72</span>: invokevirtual #<span class="number">6</span>                  <span class="comment">// Method java/lang/Throwable.addSuppressed:(Ljava/lang/Throwable;)V</span></span><br><span class="line">    <span class="number">75</span>: goto          <span class="number">84</span></span><br><span class="line">    <span class="number">78</span>: aload_0</span><br><span class="line">    <span class="number">79</span>: invokeinterface #<span class="number">4</span>,  <span class="number">1</span>            <span class="comment">// InterfaceMethod java/lang/AutoCloseable.close:()V</span></span><br><span class="line">    <span class="number">84</span>: aload_3</span><br><span class="line">    <span class="number">85</span>: athrow</span><br><span class="line">    <span class="number">86</span>: <span class="keyword">return</span></span><br><span class="line">  Exception table:</span><br><span class="line">     from    to  target type</span><br><span class="line">        <span class="number">17</span>    <span class="number">23</span>    <span class="number">26</span>   Class java/lang/Throwable</span><br><span class="line">         <span class="number">6</span>     <span class="number">9</span>    <span class="number">44</span>   Class java/lang/Throwable</span><br><span class="line">         <span class="number">6</span>     <span class="number">9</span>    <span class="number">49</span>   any</span><br><span class="line">        <span class="number">58</span>    <span class="number">64</span>    <span class="number">67</span>   Class java/lang/Throwable</span><br><span class="line">        <span class="number">44</span>    <span class="number">50</span>    <span class="number">49</span>   any</span><br></pre></td></tr></table></figure>
-<p>从字节码逻辑，基本跟我们最后的逻辑一致。</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
+    </header>
   </article>
 
 
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/09/01/int-long-equals/">
-
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Arthur Zhang">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/default_avatar.jpg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="Arthur Blog">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="Arthur Blog" src="">
-    </span>
-  </span>
 
     
-      <header class="post-header">
 
+      
+      
+      
+
+      
+      
+
+      
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <h1 class="post-title">
         
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
+            <a class="post-title-link" href="/2016/09/01/int-long-equals/" itemprop="url">
               
-                
-                <a class="post-title-link" href="/2016/09/01/int-long-equals/" itemprop="url">
-                  Java int long equals的坑
-                </a>
+                <span itemprop="name">Java int long equals的坑</span>
               
-            
-          </h1>
+            </a>
         
+      </h1>
 
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-09-01T21:17:43+08:00">
-                2016-09-01
-              </time>
-            
+      <div class="post-meta">
+        <time class="post-time" itemprop="dateCreated"
+              datetime="2016-09-01T21:17:43+08:00"
+              content="2016-09-01" >
+          09-01
+        </time>
+      </div>
 
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h4 id="int_long_equals的坑">int long equals的坑</h4><figure class="highlight openscad"><table><tr><td class="code"><pre><span class="line">Integer s = new Integer<span class="params">(<span class="number">9</span>)</span>;</span><br><span class="line">Integer t = new Integer<span class="params">(<span class="number">9</span>)</span>;</span><br><span class="line">Long u = new Long<span class="params">(<span class="number">9</span>)</span>;</span><br><span class="line">System.out.println<span class="params">(s == u)</span>; <span class="comment">// 编译错误</span></span><br><span class="line">System.out.println<span class="params">(s == t)</span>; <span class="comment">// false,指向不同对象</span></span><br><span class="line">System.out.println<span class="params">(s.equals<span class="params">(u)</span>)</span>; <span class="comment">// false, Integer的equals方法首先判断是不是Integer类型,如果不是,直接return false</span></span><br><span class="line"></span><br><span class="line">System.out.println<span class="params">(s.equals<span class="params">(new Integer<span class="params">(<span class="number">9</span>)</span>)</span>)</span>; <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line">System.out.println<span class="params">(s.equals<span class="params">(<span class="number">9</span>)</span>)</span>; <span class="comment">// true</span></span><br><span class="line">System.out.println<span class="params">(u.equals<span class="params">(<span class="number">9</span>)</span>)</span>; <span class="comment">// false</span></span><br><span class="line">System.out.println<span class="params">(u.equals<span class="params">(<span class="number">9</span>L)</span>)</span>; <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line">System.out.println<span class="params">(u == <span class="number">9</span>)</span>; <span class="comment">// true</span></span><br><span class="line">System.out.println<span class="params">(u == <span class="number">9</span>L)</span>; <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
+    </header>
   </article>
 
 
+
     
+
   </section>
 
   
+
 
 
           </div>
@@ -874,7 +448,7 @@
             <div class="site-state-item site-state-posts">
               <a href="/">
                 <span class="site-state-item-count">4</span>
-                <span class="site-state-item-name">日志</span>
+                <span class="site-state-item-name">posts</span>
               </a>
             </div>
           
@@ -883,7 +457,7 @@
             <div class="site-state-item site-state-categories">
               <a href="/categories">
                 <span class="site-state-item-count">1</span>
-                <span class="site-state-item-name">分类</span>
+                <span class="site-state-item-name">categories</span>
               </a>
             </div>
           
@@ -996,6 +570,8 @@
   
 
   
+  
+
 
   
 
