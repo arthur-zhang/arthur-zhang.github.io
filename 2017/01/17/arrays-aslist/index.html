@@ -82,28 +82,28 @@
 
 
 
-<meta name="description" content="把null强转为原始类型会抛出空指针异常，也比较容易出错
+<meta name="description" content="把null强转为原始类型会抛出空指针异常，比较容易出错
 常见的场景
 String ip = &quot;172.19.1.1&quot;;Integer port = null;// 经过一段逻辑，port，没有被赋值，调用下面的函数就会抛出空指针异常foo(ip, port);void foo(String ip, int port) &amp;#123;&amp;#125;
 再比如
-Map&amp;lt;String, Object&amp;">
+Map&amp;lt;String, Object&amp;g">
 <meta property="og:type" content="article">
 <meta property="og:title" content="null强转为原始类型的隐式空指针异常（陷阱与缺陷）">
 <meta property="og:url" content="http://yoursite.com/2017/01/17/arrays-aslist/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="把null强转为原始类型会抛出空指针异常，也比较容易出错
+<meta property="og:description" content="把null强转为原始类型会抛出空指针异常，比较容易出错
 常见的场景
 String ip = &quot;172.19.1.1&quot;;Integer port = null;// 经过一段逻辑，port，没有被赋值，调用下面的函数就会抛出空指针异常foo(ip, port);void foo(String ip, int port) &amp;#123;&amp;#125;
 再比如
-Map&amp;lt;String, Object&amp;">
-<meta property="og:updated_time" content="2017-01-17T09:44:05.000Z">
+Map&amp;lt;String, Object&amp;g">
+<meta property="og:updated_time" content="2017-01-17T09:46:17.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="null强转为原始类型的隐式空指针异常（陷阱与缺陷）">
-<meta name="twitter:description" content="把null强转为原始类型会抛出空指针异常，也比较容易出错
+<meta name="twitter:description" content="把null强转为原始类型会抛出空指针异常，比较容易出错
 常见的场景
 String ip = &quot;172.19.1.1&quot;;Integer port = null;// 经过一段逻辑，port，没有被赋值，调用下面的函数就会抛出空指针异常foo(ip, port);void foo(String ip, int port) &amp;#123;&amp;#125;
 再比如
-Map&amp;lt;String, Object&amp;">
+Map&amp;lt;String, Object&amp;g">
 
 
 
@@ -356,7 +356,7 @@ Map&amp;lt;String, Object&amp;">
       
 
       
-        <p>把<code>null</code>强转为原始类型会抛出空指针异常，也比较容易出错</p>
+        <p>把<code>null</code>强转为原始类型会抛出空指针异常，比较容易出错</p>
 <p>常见的场景</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String ip = <span class="string">"172.19.1.1"</span>;</span><br><span class="line">Integer port = <span class="keyword">null</span>;</span><br><span class="line"><span class="comment">// 经过一段逻辑，port，没有被赋值，调用下面的函数就会抛出空指针异常</span></span><br><span class="line">foo(ip, port);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">(String ip, <span class="keyword">int</span> port)</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
 <p>再比如</p>
