@@ -92,7 +92,7 @@ github地址 https://github.com/arthur-zhang/redis-server
 <meta property="og:description" content="我们来一步一步用Java写一个redis的服务器，短期目标是实现所有的单机版本功能，长期目标是实现集群、类codis proxy功能。纯业余学习项目，一起来看看网络编程、NIO、并发、分布式的一些知识。
 github地址 https://github.com/arthur-zhang/redis-server
 今天的目标实现用redis-cli连接我们的服务器，完成redis-cli发送ping命">
-<meta property="og:updated_time" content="2017-03-15T15:49:50.000Z">
+<meta property="og:updated_time" content="2017-03-16T00:35:36.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一起来写个redis server（day01）">
 <meta name="twitter:description" content="我们来一步一步用Java写一个redis的服务器，短期目标是实现所有的单机版本功能，长期目标是实现集群、类codis proxy功能。纯业余学习项目，一起来看看网络编程、NIO、并发、分布式的一些知识。
@@ -368,7 +368,7 @@ github地址 https://github.com/arthur-zhang/redis-server
 <li>多条批量回复（multi bulk reply）的第一个字节是 “*”</li>
 </ul>
 <p>这里的 <code>*1\r\n$4\r\nping\r\n</code></p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">┌───────────────┐</span><br><span class="line">│argument count │</span><br><span class="line">└───────────────┘</span><br><span class="line">      ▲</span><br><span class="line">      │</span><br><span class="line">      │</span><br><span class="line">┌───┬─┴─┬────┬───┬──┬────┬────┬────┐</span><br><span class="line">│ * │ 1 │<span class="command">\r</span><span class="command">\n</span>│ <span class="formula">$ │4 │<span class="command">\r</span><span class="command">\n</span>│ping│<span class="command">\r</span><span class="command">\n</span>│</span><br><span class="line">└───┴───┴────┴───┴┬─┴────┴────┴────┘</span><br><span class="line">                  │</span><br><span class="line">                  │</span><br><span class="line">                  │</span><br><span class="line">                  ▼</span><br><span class="line">      ┌──────────────────────────┐</span><br><span class="line">      │   argument<span class="special">#</span>1 byte size   │</span><br><span class="line">      └──────────────────────────┘</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">┌───────────────┐</span><br><span class="line">│argument count │</span><br><span class="line">└───────────────┘</span><br><span class="line">        ▲</span><br><span class="line">        │</span><br><span class="line">        │</span><br><span class="line">  ┌───┬─┴─┬────┬───┬──┬────┬────┬────┐</span><br><span class="line">  │ * │ 1 │<span class="command">\r</span><span class="command">\n</span>│ <span class="formula">$ │4 │<span class="command">\r</span><span class="command">\n</span>│ping│<span class="command">\r</span><span class="command">\n</span>│</span><br><span class="line">  └───┴───┴────┴───┴┬─┴────┴────┴────┘</span><br><span class="line">                    │</span><br><span class="line">                    │</span><br><span class="line">                    │</span><br><span class="line">                    ▼</span><br><span class="line">        ┌──────────────────────────┐</span><br><span class="line">        │   argument<span class="special">#</span>1 byte size   │</span><br><span class="line">        └──────────────────────────┘</span></span><br></pre></td></tr></table></figure>
 <p>基本代码如下，监听6397，顺序处理请求，用<code>redis-cli</code>请求我们的server</p>
 <figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="tag">redis-cli</span> <span class="tag">-p</span> 6397</span><br><span class="line">127<span class="class">.0</span><span class="class">.0</span><span class="class">.1</span><span class="pseudo">:6397</span>&gt; <span class="tag">ping</span></span><br><span class="line"><span class="tag">pong</span></span><br></pre></td></tr></table></figure>
 <p>部分代码如下</p>
@@ -423,6 +423,10 @@ github地址 https://github.com/arthur-zhang/redis-server
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/21/redis-server-day02/" rel="prev" title="一起来写个redis server（day02）">
+                一起来写个redis server（day02） <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -483,7 +487,7 @@ github地址 https://github.com/arthur-zhang/redis-server
           
             <div class="site-state-item site-state-posts">
               <a href="/">
-                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-count">9</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
