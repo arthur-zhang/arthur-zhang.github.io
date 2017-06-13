@@ -82,16 +82,49 @@
 
 
 
-<meta name="description" content="int long equals的坑Integer s = new Integer(9);Integer t = new Integer(9);Long u = new Long(9);System.out.println(s == u); // 编译错误System.out.println(s == t); // false,指向不同对象System.out.println(s.equals(u)">
+<meta name="description" content="工具分析
+dump内存
+
+jmap -dump:format=b,file=dump.hprof  &amp;lt;pid&amp;gt;
+
+YourKit使用
+
+常见内存泄露的原因
+
+资源未关闭切记在finally中关闭一切继承了Closeable接口的对象
+
+try &amp;#123;	RecordWriter recordWriter;	recordWriter.write(record);	recordWrit">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java int long equals的坑">
-<meta property="og:url" content="http://yoursite.com/2016/09/01/int-long-equals/index.html">
+<meta property="og:title" content="Java内存泄露排查方法">
+<meta property="og:url" content="http://yoursite.com/2017/07/13/java-memory-leaks/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="int long equals的坑Integer s = new Integer(9);Integer t = new Integer(9);Long u = new Long(9);System.out.println(s == u); // 编译错误System.out.println(s == t); // false,指向不同对象System.out.println(s.equals(u)">
-<meta property="og:updated_time" content="2016-10-28T10:14:33.000Z">
+<meta property="og:description" content="工具分析
+dump内存
+
+jmap -dump:format=b,file=dump.hprof  &amp;lt;pid&amp;gt;
+
+YourKit使用
+
+常见内存泄露的原因
+
+资源未关闭切记在finally中关闭一切继承了Closeable接口的对象
+
+try &amp;#123;	RecordWriter recordWriter;	recordWriter.write(record);	recordWrit">
+<meta property="og:updated_time" content="2017-06-13T01:32:06.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Java int long equals的坑">
-<meta name="twitter:description" content="int long equals的坑Integer s = new Integer(9);Integer t = new Integer(9);Long u = new Long(9);System.out.println(s == u); // 编译错误System.out.println(s == t); // false,指向不同对象System.out.println(s.equals(u)">
+<meta name="twitter:title" content="Java内存泄露排查方法">
+<meta name="twitter:description" content="工具分析
+dump内存
+
+jmap -dump:format=b,file=dump.hprof  &amp;lt;pid&amp;gt;
+
+YourKit使用
+
+常见内存泄露的原因
+
+资源未关闭切记在finally中关闭一切继承了Closeable接口的对象
+
+try &amp;#123;	RecordWriter recordWriter;	recordWriter.write(record);	recordWrit">
 
 
 
@@ -119,13 +152,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2016/09/01/int-long-equals/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/07/13/java-memory-leaks/"/>
 
 
 
 
 
-  <title> Java int long equals的坑 | Arthur Blog </title>
+  <title> Java内存泄露排查方法 | Arthur Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
@@ -247,7 +280,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/09/01/int-long-equals/">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/13/java-memory-leaks/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="Arthur Zhang">
@@ -271,7 +304,7 @@
             
             
               
-                Java int long equals的坑
+                Java内存泄露排查方法
               
             
           </h1>
@@ -286,8 +319,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-09-01T21:17:43+08:00">
-                2016-09-01
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-07-13T21:17:43+08:00">
+                2017-07-13
               </time>
             
 
@@ -296,6 +329,28 @@
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -322,7 +377,45 @@
       
 
       
-        <h4 id="int_long_equals的坑">int long equals的坑</h4><figure class="highlight openscad"><table><tr><td class="code"><pre><span class="line">Integer s = new Integer<span class="params">(<span class="number">9</span>)</span>;</span><br><span class="line">Integer t = new Integer<span class="params">(<span class="number">9</span>)</span>;</span><br><span class="line">Long u = new Long<span class="params">(<span class="number">9</span>)</span>;</span><br><span class="line">System.out.println<span class="params">(s == u)</span>; <span class="comment">// 编译错误</span></span><br><span class="line">System.out.println<span class="params">(s == t)</span>; <span class="comment">// false,指向不同对象</span></span><br><span class="line">System.out.println<span class="params">(s.equals<span class="params">(u)</span>)</span>; <span class="comment">// false, Integer的equals方法首先判断是不是Integer类型,如果不是,直接return false</span></span><br><span class="line"></span><br><span class="line">System.out.println<span class="params">(s.equals<span class="params">(new Integer<span class="params">(<span class="number">9</span>)</span>)</span>)</span>; <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line">System.out.println<span class="params">(s.equals<span class="params">(<span class="number">9</span>)</span>)</span>; <span class="comment">// true</span></span><br><span class="line">System.out.println<span class="params">(u.equals<span class="params">(<span class="number">9</span>)</span>)</span>; <span class="comment">// false</span></span><br><span class="line">System.out.println<span class="params">(u.equals<span class="params">(<span class="number">9</span>L)</span>)</span>; <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line">System.out.println<span class="params">(u == <span class="number">9</span>)</span>; <span class="comment">// true</span></span><br><span class="line">System.out.println<span class="params">(u == <span class="number">9</span>L)</span>; <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+        <h2 id="工具分析">工具分析</h2><ul>
+<li>dump内存</li>
+</ul>
+<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">jmap -dump:format=<span class="tag">b</span>,file=dump<span class="class">.hprof</span>  &lt;pid&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>YourKit使用</li>
+</ul>
+<h3 id="常见内存泄露的原因">常见内存泄露的原因</h3><hr>
+<ul>
+<li>资源未关闭<br>切记在<code>finally</code>中关闭一切继承了<code>Closeable</code>接口的对象</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">	RecordWriter recordWriter;</span><br><span class="line">	recordWriter.write(record);</span><br><span class="line">	recordWriter.close();</span><br><span class="line">&#125; <span class="keyword">catch</span> (TunnelException e) &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码中<code>RecordWriter</code>继承了<code>Closeable</code>，并在<code>close</code>方法中做了很多清理的工作。这段代码平时工作都没有问题，但是在<code>write</code>抛异常的情况下，就会导致<code>close</code> 方法没有调用，导致资源未释放</p>
+<hr>
+<ul>
+<li>应该单例的地方没有单例<br>典型例子<br>OkHttpClient，应该被单例来使用，OkHttpClient内部维护了一个请求连接池</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">OkHttpClient client = <span class="keyword">new</span> OkHttpClient();</span><br><span class="line">Response response = client.newCall(request)</span><br></pre></td></tr></table></figure>
+<hr>
+<ul>
+<li>单例模式没有考虑并发场景</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> OdpsService <span class="title">getOdpsService</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(<span class="keyword">null</span> == odpsService)&#123;</span><br><span class="line">		odpsService = <span class="keyword">new</span> OdpsServiceImpl();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> odpsService;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<ul>
+<li>静态域或者集合</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> ArrayList list = <span class="keyword">new</span> ArrayList(<span class="number">100</span>);</span><br></pre></td></tr></table></figure>
+<hr>
+<ul>
+<li>未重写或者不正确的<code>hashCode()</code>和<code>equals()</code><br>在HashSet或者HashMap等结构中</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MemLeak</span> </span>&#123;</span><br><span class="line">   <span class="comment">// no hashCode or equals();</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> String key;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MemLeak</span><span class="params">(String key)</span> </span>&#123;<span class="keyword">this</span>.key =key;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Map map = System.getProperties();</span><br><span class="line">            <span class="keyword">for</span>(;;) &#123;</span><br><span class="line">                map.put(<span class="keyword">new</span> MemLeak(<span class="string">"key"</span>), <span class="string">"value"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span>(Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<ul>
+<li>其它<br>classloader泄露、ThreadLocal泄露</li>
+</ul>
+<hr>
+
       
     </div>
 
@@ -363,8 +456,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/04/03/integer-cache/" rel="next" title="理解Java Integer的缓存策略">
-                <i class="fa fa-chevron-left"></i> 理解Java Integer的缓存策略
+              <a href="/2017/06/13/queue-batch-get-with-timeout/" rel="next" title="BlockingQueue带超时的批量取">
+                <i class="fa fa-chevron-left"></i> BlockingQueue带超时的批量取
               </a>
             
           </div>
@@ -372,10 +465,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/12/23/try-with-resource-byte-code/" rel="prev" title="有趣的try-with-resource实现">
-                有趣的try-with-resource实现 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -491,7 +580,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#int_long_equals的坑"><span class="nav-number">1.</span> <span class="nav-text">int long equals的坑</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#工具分析"><span class="nav-number">1.</span> <span class="nav-text">工具分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#常见内存泄露的原因"><span class="nav-number">1.1.</span> <span class="nav-text">常见内存泄露的原因</span></a></li></ol></li></ol></div>
             
 
           </div>

@@ -82,16 +82,28 @@
 
 
 
-<meta name="description" content="int long equals的坑Integer s = new Integer(9);Integer t = new Integer(9);Long u = new Long(9);System.out.println(s == u); // 编译错误System.out.println(s == t); // false,指向不同对象System.out.println(s.equals(u)">
+<meta name="description" content="我们常见的一种场景是合并上报，指定时间还没达到批量的阈值，有多少条报多少条，现在基于BlockingQueue实现了一种简单的方式去实习这个特性。
+
+Add 方法
+
+queue.offer(logItem, 10, TimeUnit.MILLISECONDS) // 如果队列已满，需要超时等待一段时间，使用此方法queue.offer(logItem) // 如果队列已满，直接需要返回add失败，">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java int long equals的坑">
-<meta property="og:url" content="http://yoursite.com/2016/09/01/int-long-equals/index.html">
+<meta property="og:title" content="BlockingQueue带超时的批量取">
+<meta property="og:url" content="http://yoursite.com/2017/06/13/queue-batch-get-with-timeout/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="int long equals的坑Integer s = new Integer(9);Integer t = new Integer(9);Long u = new Long(9);System.out.println(s == u); // 编译错误System.out.println(s == t); // false,指向不同对象System.out.println(s.equals(u)">
-<meta property="og:updated_time" content="2016-10-28T10:14:33.000Z">
+<meta property="og:description" content="我们常见的一种场景是合并上报，指定时间还没达到批量的阈值，有多少条报多少条，现在基于BlockingQueue实现了一种简单的方式去实习这个特性。
+
+Add 方法
+
+queue.offer(logItem, 10, TimeUnit.MILLISECONDS) // 如果队列已满，需要超时等待一段时间，使用此方法queue.offer(logItem) // 如果队列已满，直接需要返回add失败，">
+<meta property="og:updated_time" content="2017-06-13T01:26:40.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Java int long equals的坑">
-<meta name="twitter:description" content="int long equals的坑Integer s = new Integer(9);Integer t = new Integer(9);Long u = new Long(9);System.out.println(s == u); // 编译错误System.out.println(s == t); // false,指向不同对象System.out.println(s.equals(u)">
+<meta name="twitter:title" content="BlockingQueue带超时的批量取">
+<meta name="twitter:description" content="我们常见的一种场景是合并上报，指定时间还没达到批量的阈值，有多少条报多少条，现在基于BlockingQueue实现了一种简单的方式去实习这个特性。
+
+Add 方法
+
+queue.offer(logItem, 10, TimeUnit.MILLISECONDS) // 如果队列已满，需要超时等待一段时间，使用此方法queue.offer(logItem) // 如果队列已满，直接需要返回add失败，">
 
 
 
@@ -119,13 +131,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2016/09/01/int-long-equals/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/06/13/queue-batch-get-with-timeout/"/>
 
 
 
 
 
-  <title> Java int long equals的坑 | Arthur Blog </title>
+  <title> BlockingQueue带超时的批量取 | Arthur Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
@@ -247,7 +259,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/09/01/int-long-equals/">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/13/queue-batch-get-with-timeout/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="Arthur Zhang">
@@ -271,7 +283,7 @@
             
             
               
-                Java int long equals的坑
+                BlockingQueue带超时的批量取
               
             
           </h1>
@@ -286,8 +298,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-09-01T21:17:43+08:00">
-                2016-09-01
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-06-13T21:17:43+08:00">
+                2017-06-13
               </time>
             
 
@@ -322,7 +334,18 @@
       
 
       
-        <h4 id="int_long_equals的坑">int long equals的坑</h4><figure class="highlight openscad"><table><tr><td class="code"><pre><span class="line">Integer s = new Integer<span class="params">(<span class="number">9</span>)</span>;</span><br><span class="line">Integer t = new Integer<span class="params">(<span class="number">9</span>)</span>;</span><br><span class="line">Long u = new Long<span class="params">(<span class="number">9</span>)</span>;</span><br><span class="line">System.out.println<span class="params">(s == u)</span>; <span class="comment">// 编译错误</span></span><br><span class="line">System.out.println<span class="params">(s == t)</span>; <span class="comment">// false,指向不同对象</span></span><br><span class="line">System.out.println<span class="params">(s.equals<span class="params">(u)</span>)</span>; <span class="comment">// false, Integer的equals方法首先判断是不是Integer类型,如果不是,直接return false</span></span><br><span class="line"></span><br><span class="line">System.out.println<span class="params">(s.equals<span class="params">(new Integer<span class="params">(<span class="number">9</span>)</span>)</span>)</span>; <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line">System.out.println<span class="params">(s.equals<span class="params">(<span class="number">9</span>)</span>)</span>; <span class="comment">// true</span></span><br><span class="line">System.out.println<span class="params">(u.equals<span class="params">(<span class="number">9</span>)</span>)</span>; <span class="comment">// false</span></span><br><span class="line">System.out.println<span class="params">(u.equals<span class="params">(<span class="number">9</span>L)</span>)</span>; <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line">System.out.println<span class="params">(u == <span class="number">9</span>)</span>; <span class="comment">// true</span></span><br><span class="line">System.out.println<span class="params">(u == <span class="number">9</span>L)</span>; <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+        <p>我们常见的一种场景是合并上报，指定时间还没达到批量的阈值，有多少条报多少条，现在基于<code>BlockingQueue</code>实现了一种简单的方式去实习这个特性。</p>
+<ul>
+<li>Add 方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">queue.offer(logItem, <span class="number">10</span>, TimeUnit.MILLISECONDS) <span class="comment">// 如果队列已满，需要超时等待一段时间，使用此方法</span></span><br><span class="line">queue.offer(logItem) <span class="comment">// 如果队列已满，直接需要返回add失败，使用此方法</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>批量获取方法</li>
+</ul>
+<p><code>BlockingQueue</code>的批量取方法<code>drainTo()</code>不支持超时特性，但是注意到<code>poll()</code> 支持，结合这两者的特性，我们做了如下的改动</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;E&gt; <span class="function"><span class="keyword">int</span> <span class="title">batchGet</span><span class="params">(BlockingQueue&lt;E&gt; q,Collection&lt;? <span class="keyword">super</span> E&gt; buffer, <span class="keyword">int</span> numElements, <span class="keyword">long</span> timeout, TimeUnit unit)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    <span class="keyword">long</span> deadline = System.nanoTime() + unit.toNanos(timeout);</span><br><span class="line">    <span class="keyword">int</span> added = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (added &lt; numElements) &#123;</span><br><span class="line">	    <span class="comment">// drainTo非常高效，我们先尝试批量取，能取多少是多少，不够的poll来凑</span></span><br><span class="line">        added += q.drainTo(buffer, numElements - added);</span><br><span class="line">        <span class="keyword">if</span> (added &lt; numElements) &#123;</span><br><span class="line">            E e = q.poll(deadline - System.nanoTime(), TimeUnit.NANOSECONDS);</span><br><span class="line">            <span class="keyword">if</span> (e == <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            buffer.add(e);</span><br><span class="line">            added++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> added;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>完整源代码如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> SIZE = <span class="number">5000</span>;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> BATCH_FETCH_ITEM_COUNT = <span class="number">50</span>;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_WAIT_TIMEOUT = <span class="number">30</span>;</span><br><span class="line"><span class="keyword">private</span> BlockingQueue&lt;String&gt; queue = <span class="keyword">new</span> LinkedBlockingQueue&lt;&gt;(SIZE);</span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(<span class="keyword">final</span> String logItem)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> queue.offer(logItem);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> List&lt;String&gt; <span class="title">batchGet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    List&lt;String&gt; bulkData = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    batchGet(queue, bulkData, BATCH_FETCH_ITEM_COUNT, MAX_WAIT_TIMEOUT, TimeUnit.SECONDS);</span><br><span class="line">    <span class="keyword">return</span> bulkData;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;E&gt; <span class="function"><span class="keyword">int</span> <span class="title">batchGet</span><span class="params">(BlockingQueue&lt;E&gt; q,Collection&lt;? <span class="keyword">super</span> E&gt; buffer, <span class="keyword">int</span> numElements, <span class="keyword">long</span> timeout, TimeUnit unit)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    <span class="keyword">long</span> deadline = System.nanoTime() + unit.toNanos(timeout);</span><br><span class="line">    <span class="keyword">int</span> added = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (added &lt; numElements) &#123;</span><br><span class="line">        added += q.drainTo(buffer, numElements - added);</span><br><span class="line">        <span class="keyword">if</span> (added &lt; numElements) &#123;</span><br><span class="line">            E e = q.poll(deadline - System.nanoTime(), TimeUnit.NANOSECONDS);</span><br><span class="line">            <span class="keyword">if</span> (e == <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            buffer.add(e);</span><br><span class="line">            added++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> added;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
     </div>
 
@@ -363,8 +386,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/04/03/integer-cache/" rel="next" title="理解Java Integer的缓存策略">
-                <i class="fa fa-chevron-left"></i> 理解Java Integer的缓存策略
+              <a href="/2017/03/21/redis-server-day02/" rel="next" title="一起来写个redis server（day02）">
+                <i class="fa fa-chevron-left"></i> 一起来写个redis server（day02）
               </a>
             
           </div>
@@ -373,8 +396,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/12/23/try-with-resource-byte-code/" rel="prev" title="有趣的try-with-resource实现">
-                有趣的try-with-resource实现 <i class="fa fa-chevron-right"></i>
+              <a href="/2017/07/13/java-memory-leaks/" rel="prev" title="Java内存泄露排查方法">
+                Java内存泄露排查方法 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -422,17 +445,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview sidebar-panel">
+      <section class="site-overview sidebar-panel sidebar-panel-active">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/default_avatar.jpg"
@@ -481,22 +495,6 @@
 
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#int_long_equals的坑"><span class="nav-number">1.</span> <span class="nav-text">int long equals的坑</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
     </div>
