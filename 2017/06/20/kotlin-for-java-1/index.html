@@ -82,28 +82,25 @@
 
 
 
-<meta name="description" content="把null强转为原始类型会抛出空指针异常，比较容易出错
-常见的场景
-String ip = &quot;172.19.1.1&quot;;Integer port = null;// 经过一段逻辑，port，没有被赋值，调用下面的函数就会抛出空指针异常foo(ip, port);void foo(String ip, int port) &amp;#123;&amp;#125;
-再比如
-Map&amp;lt;String, Object&amp;g">
+<meta name="description" content="用Intellij Idea创建一个kotlin项目，新建一个MainDemo.kt文件，输入main回车，就自动回生成main入口函数
+MainDemo.ktpackage com.cvte.kt.basicfun main(args: Array&amp;lt;String&amp;gt;) &amp;#123;    print(&quot;Hello World&quot;)&amp;#125;
+运行一下，就会输出Hello World
+我">
 <meta property="og:type" content="article">
-<meta property="og:title" content="null强转为原始类型的隐式空指针异常（陷阱与缺陷）">
-<meta property="og:url" content="http://yoursite.com/2017/01/17/null-cast-primitive/index.html">
+<meta property="og:title" content="Kotlin for Java Developer(1)—Main函数">
+<meta property="og:url" content="http://yoursite.com/2017/06/20/kotlin-for-java-1/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="把null强转为原始类型会抛出空指针异常，比较容易出错
-常见的场景
-String ip = &quot;172.19.1.1&quot;;Integer port = null;// 经过一段逻辑，port，没有被赋值，调用下面的函数就会抛出空指针异常foo(ip, port);void foo(String ip, int port) &amp;#123;&amp;#125;
-再比如
-Map&amp;lt;String, Object&amp;g">
-<meta property="og:updated_time" content="2017-01-17T09:50:01.000Z">
+<meta property="og:description" content="用Intellij Idea创建一个kotlin项目，新建一个MainDemo.kt文件，输入main回车，就自动回生成main入口函数
+MainDemo.ktpackage com.cvte.kt.basicfun main(args: Array&amp;lt;String&amp;gt;) &amp;#123;    print(&quot;Hello World&quot;)&amp;#125;
+运行一下，就会输出Hello World
+我">
+<meta property="og:updated_time" content="2017-06-20T01:08:11.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="null强转为原始类型的隐式空指针异常（陷阱与缺陷）">
-<meta name="twitter:description" content="把null强转为原始类型会抛出空指针异常，比较容易出错
-常见的场景
-String ip = &quot;172.19.1.1&quot;;Integer port = null;// 经过一段逻辑，port，没有被赋值，调用下面的函数就会抛出空指针异常foo(ip, port);void foo(String ip, int port) &amp;#123;&amp;#125;
-再比如
-Map&amp;lt;String, Object&amp;g">
+<meta name="twitter:title" content="Kotlin for Java Developer(1)—Main函数">
+<meta name="twitter:description" content="用Intellij Idea创建一个kotlin项目，新建一个MainDemo.kt文件，输入main回车，就自动回生成main入口函数
+MainDemo.ktpackage com.cvte.kt.basicfun main(args: Array&amp;lt;String&amp;gt;) &amp;#123;    print(&quot;Hello World&quot;)&amp;#125;
+运行一下，就会输出Hello World
+我">
 
 
 
@@ -131,13 +128,13 @@ Map&amp;lt;String, Object&amp;g">
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/01/17/null-cast-primitive/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/06/20/kotlin-for-java-1/"/>
 
 
 
 
 
-  <title> null强转为原始类型的隐式空指针异常（陷阱与缺陷） | Arthur Blog </title>
+  <title> Kotlin for Java Developer(1)—Main函数 | Arthur Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
@@ -259,7 +256,7 @@ Map&amp;lt;String, Object&amp;g">
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/01/17/null-cast-primitive/">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/20/kotlin-for-java-1/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="Arthur Zhang">
@@ -283,7 +280,7 @@ Map&amp;lt;String, Object&amp;g">
             
             
               
-                null强转为原始类型的隐式空指针异常（陷阱与缺陷）
+                Kotlin for Java Developer(1)—Main函数
               
             
           </h1>
@@ -298,8 +295,8 @@ Map&amp;lt;String, Object&amp;g">
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-01-17T21:17:43+08:00">
-                2017-01-17
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-06-20T21:17:43+08:00">
+                2017-06-20
               </time>
             
 
@@ -321,8 +318,8 @@ Map&amp;lt;String, Object&amp;g">
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java再入门/" itemprop="url" rel="index">
-                    <span itemprop="name">Java再入门</span>
+                  <a href="/categories/Kotlin-for-Java-Developer/" itemprop="url" rel="index">
+                    <span itemprop="name">Kotlin for Java Developer</span>
                   </a>
                 </span>
 
@@ -356,13 +353,16 @@ Map&amp;lt;String, Object&amp;g">
       
 
       
-        <p>把<code>null</code>强转为原始类型会抛出空指针异常，比较容易出错</p>
-<p>常见的场景</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String ip = <span class="string">"172.19.1.1"</span>;</span><br><span class="line">Integer port = <span class="keyword">null</span>;</span><br><span class="line"><span class="comment">// 经过一段逻辑，port，没有被赋值，调用下面的函数就会抛出空指针异常</span></span><br><span class="line">foo(ip, port);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">(String ip, <span class="keyword">int</span> port)</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
-<p>再比如</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Map&lt;String, Object&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"><span class="comment">// 经过了漫长的逻辑，map被put进去了很多数据</span></span><br><span class="line"><span class="keyword">int</span> id = (Integer) map.get(<span class="string">"id"</span>);  <span class="comment">// 抛出 NullPointerException</span></span><br><span class="line">System.out.println(id);</span><br></pre></td></tr></table></figure>
-<p>再比如：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Map&lt;Integer, Integer&gt; numberAndCount = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"><span class="keyword">int</span>[] numbers = &#123;<span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">9</span>, <span class="number">11</span>, <span class="number">13</span>, <span class="number">17</span>, <span class="number">19</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">33</span>, <span class="number">12</span>, <span class="number">5</span>&#125;;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i : numbers) &#123;</span><br><span class="line">    Integer count = numberAndCount.get(i);</span><br><span class="line">    numberAndCount.put(i, ++count); <span class="comment">// NullPointerException here</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <p>用Intellij Idea创建一个kotlin项目，新建一个MainDemo.kt文件，输入<code>main</code>回车，就自动回生成main入口函数</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">MainDemo.kt</span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.cvte.kt.<span class="function">basic</span><br><span class="line">fun <span class="title">main</span><span class="params">(args: Array&lt;String&gt;)</span> </span>&#123;</span><br><span class="line">    print(<span class="string">"Hello World"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行一下，就会输出<code>Hello World</code></p>
+<p>我们来对比一下，Java版本的<code>Hello World</code></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">MainDemoJava.java</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainDemoJava</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Hello World"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们发现，kotlin版本的main函数没有包裹在类中，至少现在看起来如此。<br>那它是如何做到可以编译运行的呢？<br>我们看一下MainDemo.kt编译后的输出文件</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="tag">-rw-r--r--</span>  1 <span class="tag">Arthur</span>  <span class="tag">staff</span>   1<span class="class">.0K</span>  6 20 08<span class="pseudo">:50</span> <span class="tag">MainDemoKt</span><span class="class">.class</span></span><br></pre></td></tr></table></figure>
+<p>发现会生成<code>一个文件名+Kt+.class</code>的class文件，反编译一下看看</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">MainDemoKt</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(@NotNull <span class="keyword">final</span> String[] args)</span> </span>&#123;</span><br><span class="line">        Intrinsics.checkParameterIsNotNull((Object)args, <span class="string">"args"</span>);</span><br><span class="line">        System.out.print(<span class="string">"Hello World"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那我们看到，kotlin其实就是一个语法糖嘛，没什么神奇的，但是又超级好用，后面会有一个系列讲，kotlin到底有哪些好用的语法，以及是如何是如何实现的</p>
 
       
     </div>
@@ -404,8 +404,8 @@ Map&amp;lt;String, Object&amp;g">
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/12/24/arrays-aslist/" rel="next" title="重新认识Arrays.asList（冷知识）">
-                <i class="fa fa-chevron-left"></i> 重新认识Arrays.asList（冷知识）
+              <a href="/2017/06/13/queue-batch-get-with-timeout/" rel="next" title="BlockingQueue带超时的批量取">
+                <i class="fa fa-chevron-left"></i> BlockingQueue带超时的批量取
               </a>
             
           </div>
@@ -413,10 +413,6 @@ Map&amp;lt;String, Object&amp;g">
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/03/10/try-lock-pattern/" rel="prev" title="Lock在try中的正确姿势">
-                Lock在try中的正确姿势 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
