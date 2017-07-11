@@ -82,31 +82,19 @@
 
 
 
-<meta name="description" content="kotlin中没有 switch case 语法，取而代之的是引入了when语法，when语法会视情况，把语句翻译成Java概念中的if-else  switch-case  三目运算符
-下面枚举了三种情况
-
-if-else
-
-fun checkValue(result: Any) &amp;#123;    when (result) &amp;#123;        &quot;Value&quot; -&amp;gt; &amp;#123;">
+<meta name="description" content="Kotlin for Java Developer(4)—object代码胜万言，我们来看看kotlin中object的原理
+object ObjectDemo &amp;#123;    val name: String = &quot;hello&quot;&amp;#125;fun main(args: Array&amp;lt;String&amp;gt;) &amp;#123;    println(ObjectDemo.name)&amp;#125;">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Kotlin for Java Developer(2)—when语法">
-<meta property="og:url" content="http://yoursite.com/2017/06/21/kotlin-for-java-2/index.html">
+<meta property="og:title" content="Kotlin for Java Developer(4)—object">
+<meta property="og:url" content="http://yoursite.com/2017/06/21/kotlin-for-java-4-object/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="kotlin中没有 switch case 语法，取而代之的是引入了when语法，when语法会视情况，把语句翻译成Java概念中的if-else  switch-case  三目运算符
-下面枚举了三种情况
-
-if-else
-
-fun checkValue(result: Any) &amp;#123;    when (result) &amp;#123;        &quot;Value&quot; -&amp;gt; &amp;#123;">
-<meta property="og:updated_time" content="2017-06-20T21:55:11.000Z">
+<meta property="og:description" content="Kotlin for Java Developer(4)—object代码胜万言，我们来看看kotlin中object的原理
+object ObjectDemo &amp;#123;    val name: String = &quot;hello&quot;&amp;#125;fun main(args: Array&amp;lt;String&amp;gt;) &amp;#123;    println(ObjectDemo.name)&amp;#125;">
+<meta property="og:updated_time" content="2017-07-11T14:43:17.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Kotlin for Java Developer(2)—when语法">
-<meta name="twitter:description" content="kotlin中没有 switch case 语法，取而代之的是引入了when语法，when语法会视情况，把语句翻译成Java概念中的if-else  switch-case  三目运算符
-下面枚举了三种情况
-
-if-else
-
-fun checkValue(result: Any) &amp;#123;    when (result) &amp;#123;        &quot;Value&quot; -&amp;gt; &amp;#123;">
+<meta name="twitter:title" content="Kotlin for Java Developer(4)—object">
+<meta name="twitter:description" content="Kotlin for Java Developer(4)—object代码胜万言，我们来看看kotlin中object的原理
+object ObjectDemo &amp;#123;    val name: String = &quot;hello&quot;&amp;#125;fun main(args: Array&amp;lt;String&amp;gt;) &amp;#123;    println(ObjectDemo.name)&amp;#125;">
 
 
 
@@ -134,13 +122,13 @@ fun checkValue(result: Any) &amp;#123;    when (result) &amp;#123;        &quot;
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/06/21/kotlin-for-java-2/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/06/21/kotlin-for-java-4-object/"/>
 
 
 
 
 
-  <title> Kotlin for Java Developer(2)—when语法 | Arthur Blog </title>
+  <title> Kotlin for Java Developer(4)—object | Arthur Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
@@ -262,7 +250,7 @@ fun checkValue(result: Any) &amp;#123;    when (result) &amp;#123;        &quot;
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/21/kotlin-for-java-2/">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/21/kotlin-for-java-4-object/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="Arthur Zhang">
@@ -286,7 +274,7 @@ fun checkValue(result: Any) &amp;#123;    when (result) &amp;#123;        &quot;
             
             
               
-                Kotlin for Java Developer(2)—when语法
+                Kotlin for Java Developer(4)—object
               
             
           </h1>
@@ -301,7 +289,7 @@ fun checkValue(result: Any) &amp;#123;    when (result) &amp;#123;        &quot;
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-06-21T21:17:43+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-06-21T23:17:43+08:00">
                 2017-06-21
               </time>
             
@@ -359,28 +347,11 @@ fun checkValue(result: Any) &amp;#123;    when (result) &amp;#123;        &quot;
       
 
       
-        <p>kotlin中没有 <code>switch case</code> 语法，取而代之的是引入了<code>when</code>语法，<code>when</code>语法会视情况，把语句翻译成Java概念中的<code>if-else</code>  <code>switch-case</code>  <code>三目运算符</code></p>
-<p>下面枚举了三种情况</p>
-<ul>
-<li>if-else</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function">fun <span class="title">checkValue</span><span class="params">(result: Any)</span> </span>&#123;</span><br><span class="line">    when (result) &#123;</span><br><span class="line">        <span class="string">"Value"</span> -&gt; &#123;</span><br><span class="line">            println(<span class="string">"It's a value"</span>)</span><br><span class="line">            println(<span class="string">"Second statement"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        is String -&gt; &#123;</span><br><span class="line">            println(<span class="string">"Excellent"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> -&gt; &#123;</span><br><span class="line">            println(<span class="string">"It came to this?"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>反编译class文件以后的Java代码</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">checkValue</span><span class="params">(@NotNull <span class="keyword">final</span> Object result)</span> </span>&#123;</span><br><span class="line">    Intrinsics.checkParameterIsNotNull(result, <span class="string">"result"</span>);</span><br><span class="line">    <span class="keyword">if</span> (Intrinsics.areEqual(result, (Object)<span class="string">"Value"</span>)) &#123;</span><br><span class="line">        System.out.println((Object)<span class="string">"It's a value"</span>);</span><br><span class="line">        System.out.println((Object)<span class="string">"Second statement"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (result <span class="keyword">instanceof</span> String) &#123;</span><br><span class="line">        System.out.println((Object)<span class="string">"Excellent"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        System.out.println((Object)<span class="string">"It came to this?"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>就是一个高级版<code>if-else</code>语法糖</p>
-<ul>
-<li>switch-case</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function">fun <span class="title">check</span><span class="params">(x: Int)</span> </span>&#123;</span><br><span class="line">    when (x) &#123;</span><br><span class="line">        <span class="number">1</span> -&gt; print(<span class="string">"x == 1"</span>)</span><br><span class="line">        <span class="number">2</span> -&gt; print(<span class="string">"x == 2"</span>)</span><br><span class="line">        <span class="keyword">else</span> -&gt; &#123; <span class="comment">// Note the block</span></span><br><span class="line">            print(<span class="string">"x is neither 1 nor 2"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>对应于</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">check</span><span class="params">(<span class="keyword">final</span> <span class="keyword">int</span> x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">switch</span> (x) &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">1</span>: &#123;</span><br><span class="line">            System.out.print((Object)<span class="string">"x == 1"</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">case</span> <span class="number">2</span>: &#123;</span><br><span class="line">            System.out.print((Object)<span class="string">"x == 2"</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">default</span>: &#123;</span><br><span class="line">            System.out.print((Object)<span class="string">"x is neither 1 nor 2"</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>三目表达式</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function">fun <span class="title">describe</span><span class="params">(obj: Any)</span>: String </span>=</span><br><span class="line">        when (obj) &#123;</span><br><span class="line">            <span class="number">1</span> -&gt; <span class="string">"One"</span></span><br><span class="line">            <span class="string">"Hello"</span> -&gt; <span class="string">"Greeting"</span></span><br><span class="line">            is Long -&gt; <span class="string">"Long"</span></span><br><span class="line">            !is String -&gt; <span class="string">"Not a string"</span></span><br><span class="line">            <span class="keyword">else</span> -&gt; <span class="string">"Unknown"</span></span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
-<p>对应于</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String <span class="title">describe</span><span class="params">(<span class="keyword">final</span> Object obj)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Intrinsics.areEqual(obj, (Object)<span class="number">1</span>) ? <span class="string">"One"</span> : (Intrinsics.areEqual(obj, (Object)<span class="string">"Hello"</span>) ? <span class="string">"Greeting"</span> : ((obj <span class="keyword">instanceof</span> Long) ? <span class="string">"Long"</span> : ((obj <span class="keyword">instanceof</span> String) ? <span class="string">"Unknown"</span> : <span class="string">"Not a string"</span>)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>由此可见kotlin的语法更加具有表现力</p>
+        <h1 id="Kotlin_for_Java_Developer(4)—object">Kotlin for Java Developer(4)—object</h1><p>代码胜万言，我们来看看kotlin中object的原理</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">object ObjectDemo &#123;</span><br><span class="line">    val name: String = <span class="string">"hello"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">fun <span class="title">main</span><span class="params">(args: Array&lt;String&gt;)</span> </span>&#123;</span><br><span class="line">    println(ObjectDemo.name)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对应Java中的代码如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// ObjectDemo.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ObjectDemo</span> </span>&#123;</span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String name = <span class="string">"hello"</span>;</span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> ObjectDemo INSTANCE;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> name;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">private</span> <span class="title">ObjectDemo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      INSTANCE = (ObjectDemo)<span class="keyword">this</span>;</span><br><span class="line">      name = <span class="string">"hello"</span>;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">static</span> &#123;</span><br><span class="line">      <span class="keyword">new</span> ObjectDemo();</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// ObjectDemoKt.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ObjectDemoKt</span> </span>&#123;</span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">      String var1 = ObjectDemo.INSTANCE.getName();</span><br><span class="line">      System.out.println(var1);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>很明显的<code>eager</code>单例模式</p>
 
       
     </div>
@@ -422,8 +393,8 @@ fun checkValue(result: Any) &amp;#123;    when (result) &amp;#123;        &quot;
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/06/20/kotlin-for-java-1/" rel="next" title="Kotlin for Java Developer(1)—Main函数">
-                <i class="fa fa-chevron-left"></i> Kotlin for Java Developer(1)—Main函数
+              <a href="/2017/06/21/kotlin-for-java-3/" rel="next" title="Kotlin for Java Developer(3)—local return与inline">
+                <i class="fa fa-chevron-left"></i> Kotlin for Java Developer(3)—local return与inline
               </a>
             
           </div>
@@ -431,10 +402,6 @@ fun checkValue(result: Any) &amp;#123;    when (result) &amp;#123;        &quot;
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/06/21/kotlin-for-java-3/" rel="prev" title="Kotlin for Java Developer(3)—local return与inline">
-                Kotlin for Java Developer(3)—local return与inline <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -481,8 +448,17 @@ fun checkValue(result: Any) &amp;#123;    when (result) &amp;#123;        &quot;
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/default_avatar.jpg"
@@ -531,6 +507,22 @@ fun checkValue(result: Any) &amp;#123;    when (result) &amp;#123;        &quot;
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Kotlin_for_Java_Developer(4)—object"><span class="nav-number">1.</span> <span class="nav-text">Kotlin for Java Developer(4)—object</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
     </div>
