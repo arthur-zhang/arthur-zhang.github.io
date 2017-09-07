@@ -1,0 +1,705 @@
+<!doctype html>
+
+
+
+
+<html class="theme-next mist" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="这个文章试图解答以下两个困扰许久的问题
+
+为什么JVM进程物理内存远大于Xmx设置的值，比如设置了-Xmx512m，用top看到 JVM 实际内存占用超过1G？
+设置-Xms到底有什么用，设置-Xms=2048m，用top看到JVM占用实际很小？
+
+JVM进程物理内存远大于Xmx第一个问题，其实很好理解，Xmx指定的是最大堆的大小，也就是我们熟悉的新生代和老生代的最大值，不包括其他（持久代、JIT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM的Xmx Xms分析">
+<meta property="og:url" content="http://yoursite.com/2017/09/07/jvm-xmx-xms/index.html">
+<meta property="og:site_name" content="Arthur Blog">
+<meta property="og:description" content="这个文章试图解答以下两个困扰许久的问题
+
+为什么JVM进程物理内存远大于Xmx设置的值，比如设置了-Xmx512m，用top看到 JVM 实际内存占用超过1G？
+设置-Xms到底有什么用，设置-Xms=2048m，用top看到JVM占用实际很小？
+
+JVM进程物理内存远大于Xmx第一个问题，其实很好理解，Xmx指定的是最大堆的大小，也就是我们熟悉的新生代和老生代的最大值，不包括其他（持久代、JIT">
+<meta property="og:updated_time" content="2017-09-07T01:06:21.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JVM的Xmx Xms分析">
+<meta name="twitter:description" content="这个文章试图解答以下两个困扰许久的问题
+
+为什么JVM进程物理内存远大于Xmx设置的值，比如设置了-Xmx512m，用top看到 JVM 实际内存占用超过1G？
+设置-Xms到底有什么用，设置-Xms=2048m，用top看到JVM占用实际很小？
+
+JVM进程物理内存远大于Xmx第一个问题，其实很好理解，Xmx指定的是最大堆的大小，也就是我们熟悉的新生代和老生代的最大值，不包括其他（持久代、JIT">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: false,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/09/07/jvm-xmx-xms/"/>
+
+
+
+
+
+  <title> JVM的Xmx Xms分析 | Arthur Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=60116635";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Arthur Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/07/jvm-xmx-xms/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Arthur Zhang">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/default_avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Arthur Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Arthur Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                JVM的Xmx Xms分析
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-09-07T21:17:43+08:00">
+                2017-09-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Jvm/" itemprop="url" rel="index">
+                    <span itemprop="name">Jvm</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这个文章试图解答以下两个困扰许久的问题</p>
+<ul>
+<li>为什么JVM进程物理内存远大于Xmx设置的值，比如设置了-Xmx512m，用top看到 JVM 实际内存占用超过1G？</li>
+<li>设置-Xms到底有什么用，设置-Xms=2048m，用top看到JVM占用实际很小？</li>
+</ul>
+<h1 id="JVM进程物理内存远大于Xmx">JVM进程物理内存远大于Xmx</h1><p>第一个问题，其实很好理解，Xmx指定的是最大堆的大小，也就是我们熟悉的新生代和老生代的最大值，不包括其他（持久代、JIT CodeCache，堆外内存、JNI code、Metaspace、线程栈）</p>
+<h1 id="-Xms到底有什么用">-Xms到底有什么用</h1><p>第二个问题，会稍微复杂一点</p>
+<p>做个简单的实验：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hello</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Hello World!"</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep(<span class="number">1000000L</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>关注两个输出</p>
+<figure class="highlight ruby"><table><tr><td class="code"><pre><span class="line">java -cp . -<span class="constant">Xms512m</span> -<span class="constant">Xmx512m</span> -<span class="constant">XX</span><span class="symbol">:NativeMemoryTracking=detail</span> <span class="constant">Hello</span></span><br></pre></td></tr></table></figure>
+<h4 id="top输出">top输出</h4><figure class="highlight inform7"><table><tr><td class="code"><pre><span class="line">top -p $pid</span><br><span class="line">  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND</span><br><span class="line"> 4527 ya        20   0 2808408  39608  10576 S   0.0  2.1   0:00.98 java</span><br></pre></td></tr></table></figure>
+<p>RES值其实很小</p>
+<h4 id="jcmd输出">jcmd输出</h4><figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">jcmd  <span class="number">5641</span> VM<span class="class">.native_memory</span> <span class="tag">summary</span></span><br><span class="line"></span><br><span class="line">Total: reserved=<span class="number">1876589</span>KB, committed=<span class="number">577621</span>KB</span><br><span class="line">-                 Java Heap (reserved=<span class="number">524288</span>KB, committed=<span class="number">524288</span>KB)</span><br><span class="line">                            (mmap: reserved=<span class="number">524288</span>KB, committed=<span class="number">524288</span>KB)</span><br><span class="line"></span><br><span class="line">-                     Class (reserved=<span class="number">1059949</span>KB, committed=<span class="number">8045</span>KB)</span><br><span class="line">                            (classes <span class="hexcolor">#389</span>)</span><br><span class="line">                            (malloc=<span class="number">3181</span>KB <span class="hexcolor">#137</span>)</span><br><span class="line">                            (mmap: reserved=<span class="number">1056768</span>KB, committed=<span class="number">4864</span>KB)</span><br><span class="line"></span><br><span class="line">-                    Thread (reserved=<span class="number">12388</span>KB, committed=<span class="number">12388</span>KB)</span><br><span class="line">                            (thread #<span class="number">13</span>)</span><br><span class="line">                            (stack: reserved=<span class="number">12336</span>KB, committed=<span class="number">12336</span>KB)</span><br><span class="line">                            (malloc=<span class="number">38</span>KB #<span class="number">64</span>)</span><br><span class="line">                            (arena=<span class="number">14</span>KB #<span class="number">24</span>)</span><br><span class="line"></span><br><span class="line">-                      Code (reserved=<span class="number">249632</span>KB, committed=<span class="number">2568</span>KB)</span><br><span class="line">                            (malloc=<span class="number">32</span>KB <span class="hexcolor">#297</span>)</span><br><span class="line">                            (mmap: reserved=<span class="number">249600</span>KB, committed=<span class="number">2536</span>KB)</span><br><span class="line"></span><br><span class="line">-                        GC (reserved=<span class="number">22625</span>KB, committed=<span class="number">22625</span>KB)</span><br><span class="line">                            (malloc=<span class="number">3465</span>KB <span class="hexcolor">#111</span>)</span><br><span class="line">                            (mmap: reserved=<span class="number">19160</span>KB, committed=<span class="number">19160</span>KB)</span><br><span class="line"></span><br><span class="line">-                  Compiler (reserved=<span class="number">132</span>KB, committed=<span class="number">132</span>KB)</span><br><span class="line">                            (malloc=<span class="number">1</span>KB #<span class="number">22</span>)</span><br><span class="line">                            (arena=<span class="number">131</span>KB #<span class="number">3</span>)</span><br><span class="line"></span><br><span class="line">-                  Internal (reserved=<span class="number">5904</span>KB, committed=<span class="number">5904</span>KB)</span><br><span class="line">                            (malloc=<span class="number">5872</span>KB <span class="hexcolor">#132</span>5)</span><br><span class="line">                            (mmap: reserved=<span class="number">32</span>KB, committed=<span class="number">32</span>KB)</span><br><span class="line"></span><br><span class="line">-                    Symbol (reserved=<span class="number">1356</span>KB, committed=<span class="number">1356</span>KB)</span><br><span class="line">                            (malloc=<span class="number">900</span>KB #<span class="number">66</span>)</span><br><span class="line">                            (arena=<span class="number">456</span>KB #<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">-    Native Memory Tracking (reserved=<span class="number">140</span>KB, committed=<span class="number">140</span>KB)</span><br><span class="line">                            (malloc=<span class="number">86</span>KB <span class="hexcolor">#136</span>7)</span><br><span class="line">                            (tracking overhead=<span class="number">54</span>KB)</span><br><span class="line"></span><br><span class="line">-               Arena Chunk (reserved=<span class="number">174</span>KB, committed=<span class="number">174</span>KB)</span><br><span class="line">                            (malloc=<span class="number">174</span>KB)</span><br></pre></td></tr></table></figure>
+<p>上面的输出，也可以解释第一个问题，除了heap的占用，JVM还有很多其他的开销，比如线程、GC等上面所说的</p>
+<p>我们来关注一个重要的信息</p>
+<figure class="highlight lisp"><table><tr><td class="code"><pre><span class="line">Java Heap <span class="list">(<span class="keyword">reserved=524288KB</span>, committed=524288KB)</span></span><br><span class="line">    <span class="list">(<span class="keyword">mmap</span>: reserved=524288KB, committed=524288KB)</span></span><br></pre></td></tr></table></figure>
+<p>我们看到<code>reserved</code>和<code>committed</code>都是<code>512M</code></p>
+<p>我们改一下启动参数，把Xms改小到128m</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">java -cp . -Xms128m -Xmx512m -XX:NativeMemoryTracking=detail Hello</span><br></pre></td></tr></table></figure>
+<p>重新用jcmd来查看一下</p>
+<figure class="highlight inform7"><table><tr><td class="code"><pre><span class="line">Total: reserved=1873968KB, committed=180508KB</span><br><span class="line">-                 Java Heap (reserved=524288KB, committed=131072KB)</span><br><span class="line">                            (mmap: reserved=524288KB, committed=131072KB)</span><br></pre></td></tr></table></figure>
+<p>看到reserved的等于Xmx，committed的等于Xms</p>
+<p>我们来看一下原理，</p>
+<blockquote>
+<p>为了让资源得到最大合理利用，OS在物理内存之上搞一层虚拟地址，同一台机器上每个进程可访问的虚拟地址空间大小都是一样的，为了屏蔽掉复杂的到物理内存的映射，该工作os直接做了，当需要物理内存的时候，当前虚拟地址又没有映射到物理内存上的时候，就会发生缺页中断，由内核去为之准备一块物理内存，所以即使我们分配了一块1G的虚拟内存，物理内存上不一定有一块1G的空间与之对应<br>（抄袭于其它博客）</p>
+</blockquote>
+<p>虚拟地址内存的几个状态：</p>
+<ul>
+<li>Free：不解释了</li>
+<li>Reserved：这段地址空间被保留，以便未来进程需要的时候，可以获取到，这部分内存只有在committed以后才可以被访问到</li>
+<li>Committed：可以被进程访问到的内存，意味着在paging file里分配了这么多的page frames，Committed内存只要在进程使用的时候才会被真正加载到主内存，也被称为 on-demand paging</li>
+</ul>
+<p>比如我们设置 -Xms512m -Xmx2048m</p>
+<ul>
+<li>Xmx：<br>JVM告诉操作系统，我的堆可能需要多大2G的内存，你要给我留着，不同意的话，我是有脾气的，我就不启动了。操作系统如果爱你的话，就会承诺，当JVM需要增加堆而尝试分配额外内存的时，这些内存是可以获取到的</li>
+<li>Xms：<br>JVM启动时分配的初始内存，但是要注意这是committed虚拟地址空间，只有用到的时候，才会变成物理内存</li>
+</ul>
+<p>参考链接</p>
+<p><a href="https://blogs.oracle.com/buck/repost%3a-why-is-my-jvm-process-larger-than-max-heap-size" target="_blank" rel="external">https://blogs.oracle.com/buck/repost%3a-why-is-my-jvm-process-larger-than-max-heap-size</a><br><a href="https://plumbr.eu/blog/memory-leaks/why-does-my-java-process-consume-more-memory-than-xmx" target="_blank" rel="external">https://plumbr.eu/blog/memory-leaks/why-does-my-java-process-consume-more-memory-than-xmx</a><br><a href="https://www.ibm.com/developerworks/library/j-memusage/" target="_blank" rel="external">https://www.ibm.com/developerworks/library/j-memusage/</a><br><a href="http://lovestblog.cn/blog/2015/08/21/rssxmx/" target="_blank" rel="external">http://lovestblog.cn/blog/2015/08/21/rssxmx/</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>挖坑鼓励奖</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechat-pay.jpeg" alt="Arthur Zhang WeChat Pay"/>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/11/kotlin-for-java-4-object/" rel="next" title="Kotlin for Java Developer(4)—object">
+                <i class="fa fa-chevron-left"></i> Kotlin for Java Developer(4)—object
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/default_avatar.jpg"
+               alt="Arthur Zhang" />
+          <p class="site-author-name" itemprop="name">Arthur Zhang</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/">
+                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#JVM进程物理内存远大于Xmx"><span class="nav-number">1.</span> <span class="nav-text">JVM进程物理内存远大于Xmx</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#-Xms到底有什么用"><span class="nav-number">2.</span> <span class="nav-text">-Xms到底有什么用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#top输出"><span class="nav-number">2.0.0.1.</span> <span class="nav-text">top输出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jcmd输出"><span class="nav-number">2.0.0.2.</span> <span class="nav-text">jcmd输出</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Arthur Zhang</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
