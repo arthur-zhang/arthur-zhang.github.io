@@ -98,7 +98,7 @@ JVM进程物理内存远大于Xmx第一个问题，其实很好理解，Xmx指�
 设置-Xms到底有什么用，设置-Xms=2048m，用top看到JVM占用实际很小？
 
 JVM进程物理内存远大于Xmx第一个问题，其实很好理解，Xmx指定的是最大堆的大小，也就是我们熟悉的新生代和老生代的最大值，不包括其他（持久代、JIT">
-<meta property="og:updated_time" content="2017-09-07T01:13:17.000Z">
+<meta property="og:updated_time" content="2017-09-07T01:18:31.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JVM的Xmx Xms分析">
 <meta name="twitter:description" content="这个文章试图解答以下两个困扰许久的问题
@@ -397,6 +397,8 @@ JVM进程物理内存远大于Xmx第一个问题，其实很好理解，Xmx指�
 <li>Xmx：<br>JVM告诉操作系统，我的堆可能需要多达2G的内存，你要给我留着，不同意的话，我是有脾气的，我就不启动了。操作系统如果爱你的话，就会承诺，当JVM需要增加堆而尝试分配额外内存的时，这些内存是可以获取到的</li>
 <li>Xms：<br>JVM启动时分配的初始内存，但是要注意这是committed虚拟地址空间，只有用到的时候，才会变成物理内存</li>
 </ul>
+<p>为什么Oracle推荐设置<code>Xmx</code>和<code>Xms</code>为相等：</p>
+<p>主要是为了避免Xms用完GC以后，需要重新向操作系统申请内存，设置为一样，就省去了这个过程</p>
 <p>参考链接</p>
 <p><a href="https://blogs.oracle.com/buck/repost%3a-why-is-my-jvm-process-larger-than-max-heap-size" target="_blank" rel="external">https://blogs.oracle.com/buck/repost%3a-why-is-my-jvm-process-larger-than-max-heap-size</a><br><a href="https://plumbr.eu/blog/memory-leaks/why-does-my-java-process-consume-more-memory-than-xmx" target="_blank" rel="external">https://plumbr.eu/blog/memory-leaks/why-does-my-java-process-consume-more-memory-than-xmx</a><br><a href="https://www.ibm.com/developerworks/library/j-memusage/" target="_blank" rel="external">https://www.ibm.com/developerworks/library/j-memusage/</a><br><a href="http://lovestblog.cn/blog/2015/08/21/rssxmx/" target="_blank" rel="external">http://lovestblog.cn/blog/2015/08/21/rssxmx/</a></p>
 
