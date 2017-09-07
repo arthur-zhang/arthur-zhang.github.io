@@ -98,7 +98,7 @@ JVM进程物理内存远大于Xmx第一个问题，其实很好理解，Xmx指�
 设置-Xms到底有什么用，设置-Xms=2048m，用top看到JVM占用实际很小？
 
 JVM进程物理内存远大于Xmx第一个问题，其实很好理解，Xmx指定的是最大堆的大小，也就是我们熟悉的新生代和老生代的最大值，不包括其他（持久代、JIT">
-<meta property="og:updated_time" content="2017-09-07T01:06:21.000Z">
+<meta property="og:updated_time" content="2017-09-07T01:13:17.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JVM的Xmx Xms分析">
 <meta name="twitter:description" content="这个文章试图解答以下两个困扰许久的问题
@@ -394,7 +394,7 @@ JVM进程物理内存远大于Xmx第一个问题，其实很好理解，Xmx指�
 </ul>
 <p>比如我们设置 -Xms512m -Xmx2048m</p>
 <ul>
-<li>Xmx：<br>JVM告诉操作系统，我的堆可能需要多大2G的内存，你要给我留着，不同意的话，我是有脾气的，我就不启动了。操作系统如果爱你的话，就会承诺，当JVM需要增加堆而尝试分配额外内存的时，这些内存是可以获取到的</li>
+<li>Xmx：<br>JVM告诉操作系统，我的堆可能需要多达2G的内存，你要给我留着，不同意的话，我是有脾气的，我就不启动了。操作系统如果爱你的话，就会承诺，当JVM需要增加堆而尝试分配额外内存的时，这些内存是可以获取到的</li>
 <li>Xms：<br>JVM启动时分配的初始内存，但是要注意这是committed虚拟地址空间，只有用到的时候，才会变成物理内存</li>
 </ul>
 <p>参考链接</p>
