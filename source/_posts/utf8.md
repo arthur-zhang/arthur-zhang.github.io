@@ -116,11 +116,15 @@ modified UTF-8跟标准utf8的区别在于：
 - 只有1-2-3字节三种，没有4字节表示的utf8，UTF-8中需要4字节的字符在变种UTF-8中变成需要6字节
 - 没看懂，看了翻译的也没看懂，囧
 
-最会附两张动图
+参考文章：
 
+http://www.ruanyifeng.com/blog/2007/10/ascii_unicode_and_utf-8.html
+http://docs.oracle.com/javase/7/docs/api/java/io/DataInput.html#modified-utf-8
+https://zh.wikipedia.org/wiki/UTF-8
+
+最后附两张动图
 
 ![图](/images/utf8-2.gif)
 ![图](/images/utf8-3.gif)
-
 
 
