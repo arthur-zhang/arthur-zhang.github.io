@@ -122,9 +122,6 @@ http://www.ruanyifeng.com/blog/2007/10/ascii_unicode_and_utf-8.html
 http://docs.oracle.com/javase/7/docs/api/java/io/DataInput.html#modified-utf-8
 https://zh.wikipedia.org/wiki/UTF-8
 
-最后附两张动图
-
-![图](/images/utf8-2.gif)
-![图](/images/utf8-3.gif)
+    
 
 
