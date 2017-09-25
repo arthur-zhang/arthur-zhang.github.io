@@ -82,25 +82,25 @@
 
 
 
-<meta name="description" content="我们在把数组转list时，最常看到的实用方式是Arrays.asList
-比如
-String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&quot;jerry&quot;        &amp;#125;;List&amp;lt;String&amp;gt; list =  Arrays.asList(receivers);
-然后看下Arrays.asList的源码">
+<meta name="description" content="用Intellij Idea创建一个kotlin项目，新建一个MainDemo.kt文件，输入main回车，就自动回生成main入口函数
+MainDemo.ktpackage com.cvte.kt.basicfun main(args: Array&amp;lt;String&amp;gt;) &amp;#123;    print(&quot;Hello World&quot;)&amp;#125;
+运行一下，就会输出Hello World
+我">
 <meta property="og:type" content="article">
-<meta property="og:title" content="重新认识Arrays.asList（冷知识）">
-<meta property="og:url" content="http://yoursite.com/2016/12/24/arrays-aslist/index.html">
+<meta property="og:title" content="Kotlin for Java Developer(1)—Main函数">
+<meta property="og:url" content="http://yoursite.com/2017/06/20/kotlin-for-java-1/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="我们在把数组转list时，最常看到的实用方式是Arrays.asList
-比如
-String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&quot;jerry&quot;        &amp;#125;;List&amp;lt;String&amp;gt; list =  Arrays.asList(receivers);
-然后看下Arrays.asList的源码">
-<meta property="og:updated_time" content="2017-01-17T09:50:07.000Z">
+<meta property="og:description" content="用Intellij Idea创建一个kotlin项目，新建一个MainDemo.kt文件，输入main回车，就自动回生成main入口函数
+MainDemo.ktpackage com.cvte.kt.basicfun main(args: Array&amp;lt;String&amp;gt;) &amp;#123;    print(&quot;Hello World&quot;)&amp;#125;
+运行一下，就会输出Hello World
+我">
+<meta property="og:updated_time" content="2017-06-20T01:08:11.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="重新认识Arrays.asList（冷知识）">
-<meta name="twitter:description" content="我们在把数组转list时，最常看到的实用方式是Arrays.asList
-比如
-String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&quot;jerry&quot;        &amp;#125;;List&amp;lt;String&amp;gt; list =  Arrays.asList(receivers);
-然后看下Arrays.asList的源码">
+<meta name="twitter:title" content="Kotlin for Java Developer(1)—Main函数">
+<meta name="twitter:description" content="用Intellij Idea创建一个kotlin项目，新建一个MainDemo.kt文件，输入main回车，就自动回生成main入口函数
+MainDemo.ktpackage com.cvte.kt.basicfun main(args: Array&amp;lt;String&amp;gt;) &amp;#123;    print(&quot;Hello World&quot;)&amp;#125;
+运行一下，就会输出Hello World
+我">
 
 
 
@@ -128,13 +128,13 @@ String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&q
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2016/12/24/arrays-aslist/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/06/20/kotlin-for-java-1/"/>
 
 
 
 
 
-  <title> 重新认识Arrays.asList（冷知识） | Arthur Blog </title>
+  <title> Kotlin for Java Developer(1)—Main函数 | Arthur Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
@@ -256,7 +256,7 @@ String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&q
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/12/24/arrays-aslist/">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/20/kotlin-for-java-1/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="Arthur Zhang">
@@ -280,7 +280,7 @@ String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&q
             
             
               
-                重新认识Arrays.asList（冷知识）
+                Kotlin for Java Developer(1)—Main函数
               
             
           </h1>
@@ -295,8 +295,8 @@ String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&q
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-12-24T21:17:43+08:00">
-                2016-12-24
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-06-20T21:17:43+08:00">
+                2017-06-20
               </time>
             
 
@@ -318,8 +318,8 @@ String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&q
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java再入门/" itemprop="url" rel="index">
-                    <span itemprop="name">Java再入门</span>
+                  <a href="/categories/Kotlin-for-Java-Developer/" itemprop="url" rel="index">
+                    <span itemprop="name">Kotlin for Java Developer</span>
                   </a>
                 </span>
 
@@ -353,24 +353,16 @@ String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&q
       
 
       
-        <p>我们在把数组转list时，最常看到的实用方式是<code>Arrays.asList</code></p>
-<p>比如</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String[] receivers  = <span class="keyword">new</span> String [] &#123;</span><br><span class="line">                <span class="string">"tom"</span>,<span class="string">"jerry"</span></span><br><span class="line">        &#125;;</span><br><span class="line">List&lt;String&gt; list =  Arrays.asList(receivers);</span><br></pre></td></tr></table></figure>
-<p>然后看下<code>Arrays.asList</code>的源码</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">List&lt;T&gt; <span class="title">asList</span><span class="params">(T... a)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ArrayList&lt;&gt;(a);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>是不是跟你想的一样，这个方法把<code>array</code>转为了<code>java.util.ArrayList</code>？</p>
-<p>我都这么说了，肯定不是的啦，不信我们来测试一下。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 正常</span></span><br><span class="line">    List&lt;String&gt; foo = foo();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 正常</span></span><br><span class="line">    List&lt;String&gt; bar = bar();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 正常</span></span><br><span class="line">    java.util.ArrayList&lt;String&gt; foo1 = (java.util.ArrayList&lt;String&gt;) foo();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 挂掉 java.lang.ClassCastException: java.util.Arrays$ArrayList cannot be cast to java.util.ArrayList</span></span><br><span class="line">    java.util.ArrayList&lt;String&gt; bar1 = (java.util.ArrayList&lt;String&gt;) bar();</span><br><span class="line"></span><br><span class="line">    System.out.println(foo().getClass()); <span class="comment">// class java.util.ArrayList</span></span><br><span class="line">    System.out.println(bar().getClass()); <span class="comment">// class java.util.Arrays$ArrayList</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;String&gt; <span class="title">foo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    List&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    list.add(<span class="string">"tom"</span>);</span><br><span class="line">    <span class="keyword">return</span> list;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;String&gt; <span class="title">bar</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Arrays.asList(<span class="string">"tom"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>现在我们知道了<code>Arrays.asList</code>返回的并不是<code>java.util.ArrayList</code>,而是Arrays的静态内部类<code>Arrays.ArrayList</code>，源码如下：</p>
-<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">Arrays</span> &#123;</span></span><br><span class="line">    public static &lt;<span class="type">T</span>&gt; <span class="type">List</span>&lt;<span class="type">T</span>&gt; asList(<span class="type">T</span>... a) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="type">ArrayList</span>&lt;&gt;(a);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> static <span class="class"><span class="keyword">class</span> <span class="title">ArrayList&lt;E&gt;</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">AbstractList&lt;E&gt;</span> &#123;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可能你又要想了，有什么关系，不影响我使用。加入你想再add或删除一个元素，那么就悲剧了</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">List&lt;String&gt; bar = Arrays.asList(<span class="string">"hello"</span>);</span><br><span class="line">bar.add(<span class="string">"world"</span>); <span class="comment">// java.lang.UnsupportedOperationException</span></span><br></pre></td></tr></table></figure>
-<p>因为Arrays.ArrayList的内部实现是一个<code>固定大小</code>的数组，正如它文档所说</p>
-<blockquote>
-<p>Returns a fixed-size list backed by the specified array</p>
-</blockquote>
-<p>那么要把array转换为一个可变大小的list，要怎么处理？</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">ArrayList&lt;String&gt; arrayList = <span class="keyword">new</span> ArrayList&lt;String&gt;(Arrays.asList(arr));</span><br></pre></td></tr></table></figure>
+        <p>用Intellij Idea创建一个kotlin项目，新建一个MainDemo.kt文件，输入<code>main</code>回车，就自动回生成main入口函数</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">MainDemo.kt</span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.cvte.kt.<span class="function">basic</span><br><span class="line">fun <span class="title">main</span><span class="params">(args: Array&lt;String&gt;)</span> </span>&#123;</span><br><span class="line">    print(<span class="string">"Hello World"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行一下，就会输出<code>Hello World</code></p>
+<p>我们来对比一下，Java版本的<code>Hello World</code></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">MainDemoJava.java</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainDemoJava</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Hello World"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们发现，kotlin版本的main函数没有包裹在类中，至少现在看起来如此。<br>那它是如何做到可以编译运行的呢？<br>我们看一下MainDemo.kt编译后的输出文件</p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="tag">-rw-r--r--</span>  1 <span class="tag">Arthur</span>  <span class="tag">staff</span>   1<span class="class">.0K</span>  6 20 08<span class="pseudo">:50</span> <span class="tag">MainDemoKt</span><span class="class">.class</span></span><br></pre></td></tr></table></figure>
+<p>发现会生成<code>一个文件名+Kt+.class</code>的class文件，反编译一下看看</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">MainDemoKt</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(@NotNull <span class="keyword">final</span> String[] args)</span> </span>&#123;</span><br><span class="line">        Intrinsics.checkParameterIsNotNull((Object)args, <span class="string">"args"</span>);</span><br><span class="line">        System.out.print(<span class="string">"Hello World"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那我们看到，kotlin其实就是一个语法糖嘛，没什么神奇的，但是又超级好用，后面会有一个系列讲，kotlin到底有哪些好用的语法，以及是如何是如何实现的</p>
 
       
     </div>
@@ -412,8 +404,8 @@ String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&q
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/12/24/int-class-vs-integer-class/" rel="next" title="int.class和Integer.class">
-                <i class="fa fa-chevron-left"></i> int.class和Integer.class
+              <a href="/2017/06/13/queue-batch-get-with-timeout/" rel="next" title="BlockingQueue带超时的批量取">
+                <i class="fa fa-chevron-left"></i> BlockingQueue带超时的批量取
               </a>
             
           </div>
@@ -422,8 +414,8 @@ String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&q
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/01/17/null-cast-primitive/" rel="prev" title="null强转为原始类型的隐式空指针异常（陷阱与缺陷）">
-                null强转为原始类型的隐式空指针异常（陷阱与缺陷） <i class="fa fa-chevron-right"></i>
+              <a href="/2017/06/21/kotlin-for-java-2/" rel="prev" title="Kotlin for Java Developer(2)—when语法">
+                Kotlin for Java Developer(2)—when语法 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
