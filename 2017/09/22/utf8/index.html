@@ -82,34 +82,16 @@
 
 
 
-<meta name="description" content="最近看了一点kvm，其中有一段校验utf8字符串的代码，觉得比较有意思
-以下描述取自 阮一峰
-UTF8编码方法如下
-UTF-8最大的一个特点，就是它是一种变长的编码方式。它可以使用1~4个字节表示一个符号，根据不同的符号而变化字节长度。
-UTF-8的编码规则很简单，只有二条：
-
-对于单字节的符号，字节的第一位设为0，后面7位为这个符号的unicode码。因此对于英语字母，UTF-8编码和ASCII">
+<meta name="description" content="最近看了一点kvm，其中有一段校验utf8字符串的代码，觉得比较有意思 以下描述取自 阮一峰 UTF8编码方法如下 UTF-8最大的一个特点，就是它是一种变长的编码方式。它可以使用1~4个字节表示一个符号，根据不同的符号而变化字节长度。 UTF-8的编码规则很简单，只有二条：  对于单字节的符号，字节的第一位设为0，后面7位为这个符号的unicode码。因此对于英语字母，UTF-8编码和ASCII">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java Class 文件之 UTF8 编码">
 <meta property="og:url" content="http://yoursite.com/2017/09/22/utf8/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="最近看了一点kvm，其中有一段校验utf8字符串的代码，觉得比较有意思
-以下描述取自 阮一峰
-UTF8编码方法如下
-UTF-8最大的一个特点，就是它是一种变长的编码方式。它可以使用1~4个字节表示一个符号，根据不同的符号而变化字节长度。
-UTF-8的编码规则很简单，只有二条：
-
-对于单字节的符号，字节的第一位设为0，后面7位为这个符号的unicode码。因此对于英语字母，UTF-8编码和ASCII">
+<meta property="og:description" content="最近看了一点kvm，其中有一段校验utf8字符串的代码，觉得比较有意思 以下描述取自 阮一峰 UTF8编码方法如下 UTF-8最大的一个特点，就是它是一种变长的编码方式。它可以使用1~4个字节表示一个符号，根据不同的符号而变化字节长度。 UTF-8的编码规则很简单，只有二条：  对于单字节的符号，字节的第一位设为0，后面7位为这个符号的unicode码。因此对于英语字母，UTF-8编码和ASCII">
 <meta property="og:updated_time" content="2017-09-25T14:58:14.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java Class 文件之 UTF8 编码">
-<meta name="twitter:description" content="最近看了一点kvm，其中有一段校验utf8字符串的代码，觉得比较有意思
-以下描述取自 阮一峰
-UTF8编码方法如下
-UTF-8最大的一个特点，就是它是一种变长的编码方式。它可以使用1~4个字节表示一个符号，根据不同的符号而变化字节长度。
-UTF-8的编码规则很简单，只有二条：
-
-对于单字节的符号，字节的第一位设为0，后面7位为这个符号的unicode码。因此对于英语字母，UTF-8编码和ASCII">
+<meta name="twitter:description" content="最近看了一点kvm，其中有一段校验utf8字符串的代码，觉得比较有意思 以下描述取自 阮一峰 UTF8编码方法如下 UTF-8最大的一个特点，就是它是一种变长的编码方式。它可以使用1~4个字节表示一个符号，根据不同的符号而变化字节长度。 UTF-8的编码规则很简单，只有二条：  对于单字节的符号，字节的第一位设为0，后面7位为这个符号的unicode码。因此对于英语字母，UTF-8编码和ASCII">
 
 
 
@@ -363,7 +345,7 @@ UTF-8的编码规则很简单，只有二条：
 
       
         <p>最近看了一点kvm，其中有一段校验utf8字符串的代码，觉得比较有意思</p>
-<p>以下描述取自 <a href="http://www.ruanyifeng.com/blog/2007/10/ascii_unicode_and_utf-8.html" target="_blank" rel="external">阮一峰</a></p>
+<p>以下描述取自 <a href="http://www.ruanyifeng.com/blog/2007/10/ascii_unicode_and_utf-8.html" target="_blank" rel="noopener">阮一峰</a></p>
 <p>UTF8编码方法如下</p>
 <p>UTF-8最大的一个特点，就是它是一种<code>变长</code>的编码方式。它可以使用1~4个字节表示一个符号，根据不同的符号而变化字节长度。</p>
 <p>UTF-8的编码规则很简单，只有二条：</p>
@@ -398,18 +380,18 @@ UTF-8的编码规则很简单，只有二条：
 </tbody>
 </table>
 <p>我们来看一下kvm中<code>preverifier</code>程序中的一段utf8字符检验代码（常量池中的CONSTANT_Utf8类型）</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span></span><br><span class="line"><span class="title">verifyUTF8String</span><span class="params">(<span class="keyword">char</span> *bytes, <span class="keyword">unsigned</span> <span class="keyword">short</span> length)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; length; i++) &#123;</span><br><span class="line">        <span class="keyword">unsigned</span> <span class="keyword">int</span> c = ((<span class="keyword">unsigned</span> <span class="keyword">char</span> *) bytes)[i];</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (c == <span class="number">0</span>) <span class="comment">/* no embedded zeros */</span></span><br><span class="line">            <span class="keyword">goto</span> failed;</span><br><span class="line">        <span class="keyword">if</span> (c &lt; <span class="number">128</span>)</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        <span class="keyword">switch</span> (c &gt;&gt; <span class="number">4</span>) &#123;</span><br><span class="line">            <span class="comment">// 0~7  0xxx xxxx 一定是ok的</span></span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 这五个一定是不ok的</span></span><br><span class="line">            <span class="keyword">case</span> <span class="number">0x8</span>: <span class="comment">// 1000xxxx</span></span><br><span class="line">            <span class="keyword">case</span> <span class="number">0x9</span>: <span class="comment">// 1001xxxx</span></span><br><span class="line">            <span class="keyword">case</span> <span class="number">0xA</span>: <span class="comment">// 1010xxxx</span></span><br><span class="line">            <span class="keyword">case</span> <span class="number">0xB</span>: <span class="comment">// 1011xxxx</span></span><br><span class="line">            <span class="keyword">case</span> <span class="number">0xF</span>: <span class="comment">// 1111xxxx</span></span><br><span class="line">                <span class="keyword">goto</span> failed;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 两个字节表示</span></span><br><span class="line">            <span class="keyword">case</span> <span class="number">0xC</span>: <span class="comment">// 1100xxxx</span></span><br><span class="line">            <span class="keyword">case</span> <span class="number">0xD</span>: <span class="comment">// 1101xxxx</span></span><br><span class="line">                <span class="comment">/* 110xxxxx  10xxxxxx */</span></span><br><span class="line">                i++;</span><br><span class="line">                <span class="keyword">if</span> (i &gt;= length)</span><br><span class="line">                    <span class="keyword">goto</span> failed;</span><br><span class="line">                <span class="comment">// 判断第二字节是否为10xxxxxx，和0xC0(0x11000000)进行与操作，如果等于0x80(0x100000000),则表示最高两位为10</span></span><br><span class="line">                <span class="keyword">if</span> ((bytes[i] &amp; <span class="number">0xC0</span>) == <span class="number">0x80</span>)</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">goto</span> failed;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 三个字节表示</span></span><br><span class="line">            <span class="keyword">case</span> <span class="number">0xE</span>:</span><br><span class="line">                <span class="comment">/* 1110xxxx 10xxxxxx 10xxxxxx */</span></span><br><span class="line">                i += <span class="number">2</span>;</span><br><span class="line">                <span class="keyword">if</span> (i &gt;= length)</span><br><span class="line">                    <span class="keyword">goto</span> failed;</span><br><span class="line">                <span class="comment">// 判断第二 第三字节是否为10xxxxxx，和0xC0(0x11000000)进行与操作，如果等于0x80(0x100000000),则表示最高两位为10</span></span><br><span class="line">                <span class="keyword">if</span> (((bytes[i - <span class="number">1</span>] &amp; <span class="number">0xC0</span>) == <span class="number">0x80</span>) &amp;&amp;</span><br><span class="line">                    ((bytes[i] &amp; <span class="number">0xC0</span>) == <span class="number">0x80</span>))</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">goto</span> failed;</span><br><span class="line">        &#125; <span class="comment">/* end of switch */</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    failed:</span><br><span class="line">        JAVA_ERROR(context, <span class="string">"Bad utf string"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">void</span></span><br><span class="line">verifyUTF8String(<span class="keyword">char</span> *bytes, <span class="keyword">unsigned</span> <span class="keyword">short</span> length) &#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; length; i++) &#123;</span><br><span class="line">        <span class="keyword">unsigned</span> <span class="keyword">int</span> c = ((<span class="keyword">unsigned</span> <span class="keyword">char</span> *) bytes)[i];</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (c == <span class="number">0</span>) <span class="comment">/* no embedded zeros */</span></span><br><span class="line">            <span class="keyword">goto</span> failed;</span><br><span class="line">        <span class="keyword">if</span> (c &lt; <span class="number">128</span>)</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        <span class="keyword">switch</span> (c &gt;&gt; <span class="number">4</span>) &#123;</span><br><span class="line">            <span class="comment">// 0~7  0xxx xxxx 一定是ok的</span></span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 这五个一定是不ok的</span></span><br><span class="line">            <span class="keyword">case</span> <span class="number">0x8</span>: <span class="comment">// 1000xxxx</span></span><br><span class="line">            <span class="keyword">case</span> <span class="number">0x9</span>: <span class="comment">// 1001xxxx</span></span><br><span class="line">            <span class="keyword">case</span> <span class="number">0xA</span>: <span class="comment">// 1010xxxx</span></span><br><span class="line">            <span class="keyword">case</span> <span class="number">0xB</span>: <span class="comment">// 1011xxxx</span></span><br><span class="line">            <span class="keyword">case</span> <span class="number">0xF</span>: <span class="comment">// 1111xxxx</span></span><br><span class="line">                <span class="keyword">goto</span> failed;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 两个字节表示</span></span><br><span class="line">            <span class="keyword">case</span> <span class="number">0xC</span>: <span class="comment">// 1100xxxx</span></span><br><span class="line">            <span class="keyword">case</span> <span class="number">0xD</span>: <span class="comment">// 1101xxxx</span></span><br><span class="line">                <span class="comment">/* 110xxxxx  10xxxxxx */</span></span><br><span class="line">                i++;</span><br><span class="line">                <span class="keyword">if</span> (i &gt;= length)</span><br><span class="line">                    <span class="keyword">goto</span> failed;</span><br><span class="line">                <span class="comment">// 判断第二字节是否为10xxxxxx，和0xC0(0x11000000)进行与操作，如果等于0x80(0x100000000),则表示最高两位为10</span></span><br><span class="line">                <span class="keyword">if</span> ((bytes[i] &amp; <span class="number">0xC0</span>) == <span class="number">0x80</span>)</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">goto</span> failed;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 三个字节表示</span></span><br><span class="line">            <span class="keyword">case</span> <span class="number">0xE</span>:</span><br><span class="line">                <span class="comment">/* 1110xxxx 10xxxxxx 10xxxxxx */</span></span><br><span class="line">                i += <span class="number">2</span>;</span><br><span class="line">                <span class="keyword">if</span> (i &gt;= length)</span><br><span class="line">                    <span class="keyword">goto</span> failed;</span><br><span class="line">                <span class="comment">// 判断第二 第三字节是否为10xxxxxx，和0xC0(0x11000000)进行与操作，如果等于0x80(0x100000000),则表示最高两位为10</span></span><br><span class="line">                <span class="keyword">if</span> (((bytes[i - <span class="number">1</span>] &amp; <span class="number">0xC0</span>) == <span class="number">0x80</span>) &amp;&amp;</span><br><span class="line">                    ((bytes[i] &amp; <span class="number">0xC0</span>) == <span class="number">0x80</span>))</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">goto</span> failed;</span><br><span class="line">        &#125; <span class="comment">/* end of switch */</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    failed:</span><br><span class="line">        JAVA_ERROR(context, <span class="string">"Bad utf string"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>上面的代码其实是一段非常经典的代码，我找了很多utf8编码的实现，大体逻辑都跟这个类似，还是比较巧妙的。</p>
 <p>细心的观众，可能会注意到一个问题</p>
 <blockquote>
 <p>你前面说了，utf8是用1~4个字节来构成的，但是上面的代码，明明就只有判断1~3个字节的逻辑，如果有四个字节，岂不是这里的逻辑会错乱？</p>
 </blockquote>
 <p>确实，这个我纠结了一会，一开始还以为是kvm太古老，utf编码支持得不行，我看了下最新版里面Java处理utf8的逻辑，也是一样的，google了一番，发现了原因</p>
-<p>来自<a href="https://zh.wikipedia.org/wiki/UTF-8" target="_blank" rel="external">维基百科</a></p>
+<p>来自<a href="https://zh.wikipedia.org/wiki/UTF-8" target="_blank" rel="noopener">维基百科</a></p>
 <blockquote>
 <p>Java<br>在通常用法下，Java程序语言在通过InputStreamReader和OutputStreamWriter读取和写入串的时候支持标准UTF-8。但是，Java也支持一种非标准的变体UTF-8，供对象的序列化，Java本地界面和在class文件中的嵌入常数时使用的modified UTF-8</p>
 </blockquote>
-<p>注意到有一个东西叫<code>modified UTF-8</code>，java的<code>DataInput</code>中文档有比较详细的介绍 <a href="http://docs.oracle.com/javase/7/docs/api/java/io/DataInput.html#modified-utf-8" target="_blank" rel="external">modified-utf-8</a></p>
+<p>注意到有一个东西叫<code>modified UTF-8</code>，java的<code>DataInput</code>中文档有比较详细的介绍 <a href="http://docs.oracle.com/javase/7/docs/api/java/io/DataInput.html#modified-utf-8" target="_blank" rel="noopener">modified-utf-8</a></p>
 <p>The differences between this format and the standard UTF-8 format are the following:</p>
 <ul>
 <li>The null byte ‘\u0000’ is encoded in 2-byte format rather than 1-byte, so that the encoded strings never have embedded nulls.</li>
@@ -424,7 +406,7 @@ UTF-8的编码规则很简单，只有二条：
 <li>没看懂，看了翻译的也没看懂，囧</li>
 </ul>
 <p>参考文章：</p>
-<p><a href="http://www.ruanyifeng.com/blog/2007/10/ascii_unicode_and_utf-8.html" target="_blank" rel="external">http://www.ruanyifeng.com/blog/2007/10/ascii_unicode_and_utf-8.html</a><br><a href="http://docs.oracle.com/javase/7/docs/api/java/io/DataInput.html#modified-utf-8" target="_blank" rel="external">http://docs.oracle.com/javase/7/docs/api/java/io/DataInput.html#modified-utf-8</a><br><a href="https://zh.wikipedia.org/wiki/UTF-8" target="_blank" rel="external">https://zh.wikipedia.org/wiki/UTF-8</a></p>
+<p><a href="http://www.ruanyifeng.com/blog/2007/10/ascii_unicode_and_utf-8.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2007/10/ascii_unicode_and_utf-8.html</a><br><a href="http://docs.oracle.com/javase/7/docs/api/java/io/DataInput.html#modified-utf-8" target="_blank" rel="noopener">http://docs.oracle.com/javase/7/docs/api/java/io/DataInput.html#modified-utf-8</a><br><a href="https://zh.wikipedia.org/wiki/UTF-8" target="_blank" rel="noopener">https://zh.wikipedia.org/wiki/UTF-8</a></p>
 
       
     </div>
@@ -466,8 +448,8 @@ UTF-8的编码规则很简单，只有二条：
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/09/07/jvm-xmx-xms/" rel="next" title="JVM的Xmx Xms分析">
-                <i class="fa fa-chevron-left"></i> JVM的Xmx Xms分析
+              <a href="/2017/09/07/float-mysql/" rel="next" title="MySQL float">
+                <i class="fa fa-chevron-left"></i> MySQL float
               </a>
             
           </div>
@@ -539,7 +521,7 @@ UTF-8的编码规则很简单，只有二条：
           
             <div class="site-state-item site-state-posts">
               <a href="/">
-                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-count">21</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -548,7 +530,7 @@ UTF-8的编码规则很简单，只有二条：
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -590,7 +572,7 @@ UTF-8的编码规则很简单，只有二条：
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2017</span>
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

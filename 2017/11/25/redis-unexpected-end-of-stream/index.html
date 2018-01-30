@@ -82,24 +82,22 @@
 
 
 
-<meta name="description" content="这几天线上出现了偶发性jedis的异常，堆栈如下
-redis.clients.jedis.exceptions.JedisConnectionException: Unexpected end of stream.    at redis.clients.util.RedisInputStream.ensureFill(RedisInputStream.java:199)    at redis.">
+<meta name="description" content="这几天线上出现了偶发性jedis的异常，堆栈如下 redis.clients.jedis.exceptions.JedisConnectionException: Unexpected end of stream.    at redis.clients.util.RedisInputStream.ensureFill(RedisInputStream.java:199)    at redis.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一次 Redis Unexpected end of stream 的除错分析记录">
 <meta property="og:url" content="http://yoursite.com/2017/11/25/redis-unexpected-end-of-stream/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="这几天线上出现了偶发性jedis的异常，堆栈如下
-redis.clients.jedis.exceptions.JedisConnectionException: Unexpected end of stream.    at redis.clients.util.RedisInputStream.ensureFill(RedisInputStream.java:199)    at redis.">
+<meta property="og:description" content="这几天线上出现了偶发性jedis的异常，堆栈如下 redis.clients.jedis.exceptions.JedisConnectionException: Unexpected end of stream.    at redis.clients.util.RedisInputStream.ensureFill(RedisInputStream.java:199)    at redis.">
 <meta property="og:image" content="http://yoursite.com/images/15115949120236.jpg">
 <meta property="og:image" content="http://yoursite.com/images/15115950836709.jpg">
 <meta property="og:image" content="http://yoursite.com/images/15115951848199.jpg">
 <meta property="og:image" content="http://yoursite.com/images/15115952364777.jpg">
 <meta property="og:image" content="http://yoursite.com/images/15115965826180.jpg">
-<meta property="og:updated_time" content="2017-11-25T08:23:28.057Z">
+<meta property="og:updated_time" content="2017-11-25T08:23:28.058Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一次 Redis Unexpected end of stream 的除错分析记录">
-<meta name="twitter:description" content="这几天线上出现了偶发性jedis的异常，堆栈如下
-redis.clients.jedis.exceptions.JedisConnectionException: Unexpected end of stream.    at redis.clients.util.RedisInputStream.ensureFill(RedisInputStream.java:199)    at redis.">
+<meta name="twitter:description" content="这几天线上出现了偶发性jedis的异常，堆栈如下 redis.clients.jedis.exceptions.JedisConnectionException: Unexpected end of stream.    at redis.clients.util.RedisInputStream.ensureFill(RedisInputStream.java:199)    at redis.">
+<meta name="twitter:image" content="http://yoursite.com/images/15115949120236.jpg">
 
 
 
@@ -364,11 +362,11 @@ redis.clients.jedis.exceptions.JedisConnectionException: Unexpected end of strea
 <p><img src="/images/15115951848199.jpg" alt=""></p>
 <p><img src="/images/15115952364777.jpg" alt=""></p>
 <p>也就是峰值过后的第十分钟才出现，查看了jedis的配置文件如下：</p>
-<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">redis<span class="class">.maxTotal</span> = <span class="number">5000000</span>  <span class="comment">// 值的合理性先不管他</span></span><br><span class="line">redis<span class="class">.maxIdle</span> = <span class="number">1000</span>      <span class="comment">// 值的合理性先不管他</span></span><br><span class="line">redis<span class="class">.minEvictableIdleTimeMillis</span> = <span class="number">300000</span>    <span class="comment">// 连接空闲大于5min的</span></span><br><span class="line">redis<span class="class">.numTestsPerEvictionRun</span> = <span class="number">3</span>             <span class="comment">// 每次检查3个连接</span></span><br><span class="line">redis<span class="class">.timeBetweenEvictionRunsMillis</span> = <span class="number">60000</span>  <span class="comment">// 每60s执行一次</span></span><br><span class="line">redis<span class="class">.hostName</span> = redis-master-<span class="number">1</span><span class="class">.gz</span><span class="class">.cvte</span><span class="class">.cn</span></span><br><span class="line">redis<span class="class">.port</span> = <span class="number">6379</span></span><br><span class="line">redis<span class="class">.timeout</span> = <span class="number">2147483647</span></span><br><span class="line">redis<span class="class">.usePool</span> = true</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">redis.maxTotal = 5000000  // 值的合理性先不管他</span><br><span class="line">redis.maxIdle = 1000      // 值的合理性先不管他</span><br><span class="line">redis.minEvictableIdleTimeMillis = 300000    // 连接空闲大于5min的</span><br><span class="line">redis.numTestsPerEvictionRun = 3             // 每次检查3个连接</span><br><span class="line">redis.timeBetweenEvictionRunsMillis = 60000  // 每60s执行一次</span><br><span class="line">redis.hostName = redis-master-1.gz.cvte.cn</span><br><span class="line">redis.port = 6379</span><br><span class="line">redis.timeout = 2147483647</span><br><span class="line">redis.usePool = true</span><br></pre></td></tr></table></figure>
 <p>一开始，我们是怀疑jedis使用的commons-pool的空闲连接回收策略导致的，按上面的配置文件<br>每60s执行一次，每次检查3个连接，检查的条件是存活了5min</p>
 <p>那我就是写代码模拟一下这种情况，连接暴涨之后，因为回收策略的问题，导致的连接使用的问题，但是我不管怎么配置，都不能模拟出<code>Unexpected end of stream</code>的情况，那我就怀疑到底是不是因为回收的问题，因为上面的回收配置来看，10分钟也释放不了那么多空闲连接（1次/min <em> 10min </em> 3 = 30）</p>
 <p>那十分钟这个到底怎么来的，困扰了我几个小时，后来我去查看了一些redis的配置，好像想起来了什么<br>我们redis的配置文件设置的是<code>600s</code>超时，也就是<code>10</code>分钟</p>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line">127<span class="class">.0</span><span class="class">.0</span><span class="class">.1</span><span class="pseudo">:6379</span>&gt; <span class="tag">config</span> <span class="tag">get</span> <span class="tag">timeout</span></span><br><span class="line">1) "<span class="tag">timeout</span>"</span><br><span class="line">2) "600"</span><br><span class="line">127<span class="class">.0</span><span class="class">.0</span><span class="class">.1</span><span class="pseudo">:6379</span>&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; config get timeout</span><br><span class="line">1) &quot;timeout&quot;</span><br><span class="line">2) &quot;600&quot;</span><br><span class="line">127.0.0.1:6379&gt;</span><br></pre></td></tr></table></figure>
 <p>看起来非常像了，那我再模拟一下，我把本地的redis的超时时间设置成2s，然后，我来试一下</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function">fun <span class="title">main</span><span class="params">(args: Array&lt;String&gt;)</span> </span>&#123;</span><br><span class="line">    val jedis = RedisHelper.getInstance().get()</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        jedis.get(<span class="string">"helo"</span>)</span><br><span class="line">        Thread.sleep(<span class="number">3000</span>)</span><br><span class="line">        jedis.get(<span class="string">"hello"</span>)</span><br><span class="line">    &#125; <span class="keyword">catch</span> (ex: Exception) &#123;</span><br><span class="line">        ex.printStackTrace()</span><br><span class="line">    &#125;</span><br><span class="line">    System.`in`.read()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>激动得我差点留下了悔恨的泪水</p>
@@ -378,7 +376,7 @@ redis.clients.jedis.exceptions.JedisConnectionException: Unexpected end of strea
 <p>那我们再拿来用，就抛了<code>JedisConnectionException: Unexpected end of stream</code>的异常</p>
 <p>当然你会说，我们实际使用的例子，用完一次就会换回去池子里，不会拿了连接，发一次命令，过一会再发</p>
 <p>其实这个不是个什么问题，本质上是一样的，不信我们来试一下，这次我们把连接池大小设置的小一点，比如1</p>
-<figure class="highlight"><table><tr><td class="code"><pre><span class="line">fun main(args: Array&lt;String&gt;) &#123;</span><br><span class="line">    val context = ClassPathXmlApplicationContext("classpath:*.xml")</span><br><span class="line">    context.start()</span><br><span class="line">    val redisTemplate: RedisTemplate&lt;Serializable, Serializable&gt; = context.getBean(RedisTemplate::class.java) as RedisTemplate&lt;Serializable, Serializable&gt;</span><br><span class="line">    redisTemplate.opsForValue().get("hallo")</span><br><span class="line">    Thread.sleep(3000)</span><br><span class="line">    redisTemplate.opsForValue().get("hallo")</span><br><span class="line">    System.`in`.read()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function">fun <span class="title">main</span><span class="params">(args: Array&lt;String&gt;)</span> </span>&#123;</span><br><span class="line">    val context = ClassPathXmlApplicationContext(<span class="string">"classpath:*.xml"</span>)</span><br><span class="line">    context.start()</span><br><span class="line">    val redisTemplate: RedisTemplate&lt;Serializable, Serializable&gt; = context.getBean(RedisTemplate::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>) <span class="title">as</span> <span class="title">RedisTemplate</span>&lt;<span class="title">Serializable</span>, <span class="title">Serializable</span>&gt;</span></span><br><span class="line">    redisTemplate.opsForValue().get("hallo")</span><br><span class="line">    Thread.sleep(<span class="number">3000</span>)</span><br><span class="line">    redisTemplate.opsForValue().get(<span class="string">"hallo"</span>)</span><br><span class="line">    System.`in`.read()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>嗯，出现了跟线上一模一样的堆栈</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Exception in thread <span class="string">"main"</span> org.springframework.data.redis.RedisConnectionFailureException: Unexpected end of stream.; nested exception is redis.clients.jedis.exceptions.JedisConnectionException: Unexpected end of stream.</span><br><span class="line">    at org.springframework.data.redis.connection.jedis.JedisExceptionConverter.convert(JedisExceptionConverter.java:<span class="number">67</span>)</span><br><span class="line">    at org.springframework.data.redis.connection.jedis.JedisExceptionConverter.convert(JedisExceptionConverter.java:<span class="number">41</span>)</span><br><span class="line">    at org.springframework.data.redis.PassThroughExceptionTranslationStrategy.translate(PassThroughExceptionTranslationStrategy.java:<span class="number">37</span>)</span><br><span class="line">    at org.springframework.data.redis.FallbackExceptionTranslationStrategy.translate(FallbackExceptionTranslationStrategy.java:<span class="number">37</span>)</span><br><span class="line">    at org.springframework.data.redis.connection.jedis.JedisConnection.convertJedisAccessException(JedisConnection.java:<span class="number">242</span>)</span><br><span class="line">    at org.springframework.data.redis.connection.jedis.JedisConnection.get(JedisConnection.java:<span class="number">1220</span>)</span><br><span class="line">    at org.springframework.data.redis.core.DefaultValueOperations$<span class="number">1</span>.inRedis(DefaultValueOperations.java:<span class="number">46</span>)</span><br><span class="line">    at org.springframework.data.redis.core.AbstractOperations$ValueDeserializingRedisCallback.doInRedis(AbstractOperations.java:<span class="number">57</span>)</span><br><span class="line">    at org.springframework.data.redis.core.RedisTemplate.execute(RedisTemplate.java:<span class="number">207</span>)</span><br><span class="line">    at org.springframework.data.redis.core.RedisTemplate.execute(RedisTemplate.java:<span class="number">169</span>)</span><br><span class="line">    at org.springframework.data.redis.core.AbstractOperations.execute(AbstractOperations.java:<span class="number">91</span>)</span><br><span class="line">    at org.springframework.data.redis.core.DefaultValueOperations.get(DefaultValueOperations.java:<span class="number">43</span>)</span><br><span class="line">    at JedisTest5Kt.main(JedisTest5.kt:<span class="number">24</span>)</span><br><span class="line">Caused by: redis.clients.jedis.exceptions.JedisConnectionException: Unexpected end of stream.</span><br><span class="line">    at redis.clients.util.RedisInputStream.ensureFill(RedisInputStream.java:<span class="number">199</span>)</span><br><span class="line">    at redis.clients.util.RedisInputStream.readByte(RedisInputStream.java:<span class="number">40</span>)</span><br><span class="line">    at redis.clients.jedis.Protocol.process(Protocol.java:<span class="number">151</span>)</span><br><span class="line">    at redis.clients.jedis.Protocol.read(Protocol.java:<span class="number">215</span>)</span><br><span class="line">    at redis.clients.jedis.Connection.readProtocolWithCheckingBroken(Connection.java:<span class="number">340</span>)</span><br><span class="line">    at redis.clients.jedis.Connection.getBinaryBulkReply(Connection.java:<span class="number">259</span>)</span><br><span class="line">    at redis.clients.jedis.BinaryJedis.get(BinaryJedis.java:<span class="number">244</span>)</span><br><span class="line">    at org.springframework.data.redis.connection.jedis.JedisConnection.get(JedisConnection.java:<span class="number">1218</span>)</span><br><span class="line">    ... <span class="number">7</span> more</span><br></pre></td></tr></table></figure>
 <p>那我们线上的原因可能就是：</p>
@@ -441,6 +439,10 @@ redis.clients.jedis.exceptions.JedisConnectionException: Unexpected end of strea
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2018/01/30/http-client-connection-reset/" rel="prev" title="一次 http client 偶发性Connection Reset的除错分析记录">
+                一次 http client 偶发性Connection Reset的除错分析记录 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -500,7 +502,7 @@ redis.clients.jedis.exceptions.JedisConnectionException: Unexpected end of strea
           
             <div class="site-state-item site-state-posts">
               <a href="/">
-                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-count">21</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -509,7 +511,7 @@ redis.clients.jedis.exceptions.JedisConnectionException: Unexpected end of strea
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -551,7 +553,7 @@ redis.clients.jedis.exceptions.JedisConnectionException: Unexpected end of strea
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2017</span>
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

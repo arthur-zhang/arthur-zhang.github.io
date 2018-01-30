@@ -82,28 +82,16 @@
 
 
 
-<meta name="description" content="Kotlin for Java Developer(3)—local return与inline
-local return其实说的是个比较简单的事情，在lambda中return，到底是应该退出外层调用函数，还是退出lambda函数的问题
-
-以下面这段代码为例
-fun test3() &amp;#123;    val nums = 1..100    nums.forEach &amp;#123;">
+<meta name="description" content="Kotlin for Java Developer(3)—local return与inline local return其实说的是个比较简单的事情，在lambda中return，到底是应该退出外层调用函数，还是退出lambda函数的问题  以下面这段代码为例 fun test3() &amp;#123;    val nums = 1..100    nums.forEach &amp;#123;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Kotlin for Java Developer(3)—local return与inline">
 <meta property="og:url" content="http://yoursite.com/2017/06/21/kotlin-for-java-3/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="Kotlin for Java Developer(3)—local return与inline
-local return其实说的是个比较简单的事情，在lambda中return，到底是应该退出外层调用函数，还是退出lambda函数的问题
-
-以下面这段代码为例
-fun test3() &amp;#123;    val nums = 1..100    nums.forEach &amp;#123;">
+<meta property="og:description" content="Kotlin for Java Developer(3)—local return与inline local return其实说的是个比较简单的事情，在lambda中return，到底是应该退出外层调用函数，还是退出lambda函数的问题  以下面这段代码为例 fun test3() &amp;#123;    val nums = 1..100    nums.forEach &amp;#123;">
 <meta property="og:updated_time" content="2017-06-21T00:58:15.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Kotlin for Java Developer(3)—local return与inline">
-<meta name="twitter:description" content="Kotlin for Java Developer(3)—local return与inline
-local return其实说的是个比较简单的事情，在lambda中return，到底是应该退出外层调用函数，还是退出lambda函数的问题
-
-以下面这段代码为例
-fun test3() &amp;#123;    val nums = 1..100    nums.forEach &amp;#123;">
+<meta name="twitter:description" content="Kotlin for Java Developer(3)—local return与inline local return其实说的是个比较简单的事情，在lambda中return，到底是应该退出外层调用函数，还是退出lambda函数的问题  以下面这段代码为例 fun test3() &amp;#123;    val nums = 1..100    nums.forEach &amp;#123;">
 
 
 
@@ -356,25 +344,25 @@ fun test3() &amp;#123;    val nums = 1..100    nums.forEach &amp;#123;">
       
 
       
-        <h1 id="Kotlin_for_Java_Developer(3)—local_return与inline">Kotlin for Java Developer(3)—local return与inline</h1><ul>
+        <h1 id="Kotlin-for-Java-Developer-3-—local-return与inline"><a href="#Kotlin-for-Java-Developer-3-—local-return与inline" class="headerlink" title="Kotlin for Java Developer(3)—local return与inline"></a>Kotlin for Java Developer(3)—local return与inline</h1><ul>
 <li>local return其实说的是个比较简单的事情，在lambda中return，到底是应该退出<code>外层调用函数</code>，还是退出<code>lambda函数</code>的问题</li>
 </ul>
 <p>以下面这段代码为例</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function">fun <span class="title">test3</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    val nums = <span class="number">1</span>..<span class="number">100</span></span><br><span class="line">    nums.forEach &#123;</span><br><span class="line">        <span class="keyword">if</span> (it % <span class="number">5</span> == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    println(<span class="string">"reach here"</span>) <span class="comment">// 不被打印</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>那到底最后面的<code>”reach here”</code>会不会被打印呢？，答案是否定的<br>如果我们只是想退出<code>foreach</code>，还是有办法的，就是现在要说的<code>local return</code>，</p>
 <p>示例代码如下</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function">fun <span class="title">test3</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    val nums = <span class="number">1</span>..<span class="number">100</span></span><br><span class="line">    nums.forEach MyLabel@ &#123;</span><br><span class="line">        <span class="keyword">if</span> (it % <span class="number">5</span> == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span><span class="annotation">@MyLabel</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    println(<span class="string">"reach here"</span>) <span class="comment">// 被打印</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function">fun <span class="title">test3</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    val nums = <span class="number">1</span>..<span class="number">100</span></span><br><span class="line">    nums.forEach MyLabel@ &#123;</span><br><span class="line">        <span class="keyword">if</span> (it % <span class="number">5</span> == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span><span class="meta">@MyLabel</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    println(<span class="string">"reach here"</span>) <span class="comment">// 被打印</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>当然lambda函数名也是也是可以用来当return label的</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function">fun <span class="title">test3</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    val nums = <span class="number">1</span>..<span class="number">100</span></span><br><span class="line">    nums.forEach &#123;</span><br><span class="line">        <span class="keyword">if</span> (it % <span class="number">5</span> == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span><span class="annotation">@forEach</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    println(<span class="string">"reach here"</span>) <span class="comment">// 被打印</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function">fun <span class="title">test3</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    val nums = <span class="number">1</span>..<span class="number">100</span></span><br><span class="line">    nums.forEach &#123;</span><br><span class="line">        <span class="keyword">if</span> (it % <span class="number">5</span> == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span><span class="meta">@forEach</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    println(<span class="string">"reach here"</span>) <span class="comment">// 被打印</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>当然换成匿名函数，是没有这个问题的，因为return退出的是匿名函数本身</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function">fun <span class="title">test4</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    val nums = <span class="number">1</span>..<span class="number">100</span></span><br><span class="line">    nums.forEach(</span><br><span class="line">            fun(x): Unit &#123;</span><br><span class="line">                <span class="keyword">if</span> (x % <span class="number">5</span> == <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="keyword">return</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;)</span><br><span class="line">    println(<span class="string">"reach here"</span>) <span class="comment">// 被打印</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>为什么lambda return跳出的是外层函数而不是lambda函数自身呢？</p>
 <p>我们先来看一下<code>forEach</code>高阶函数的实现</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">_Collections.kt</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> inline fun &lt;T&gt; Iterable&lt;T&gt;.forEach(action: (T) -&gt; Unit): Unit &#123;</span><br><span class="line">    <span class="keyword">for</span> (element in <span class="keyword">this</span>) action(element)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>我们有注意到新的关键字<code>inline</code></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function">fun <span class="title">sayHello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    val a = <span class="number">0</span></span><br><span class="line">    val b = <span class="number">1</span></span><br><span class="line">    var c = a + <span class="function">b</span><br><span class="line">    <span class="title">println</span><span class="params">(c)</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fun <span class="title">main</span><span class="params">(args: Array&lt;String&gt;)</span> </span>&#123;</span><br><span class="line">    print(<span class="string">"start"</span>)</span><br><span class="line">    sayHello()</span><br><span class="line">    print(<span class="string">"end"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function">fun <span class="title">sayHello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    val a = <span class="number">0</span></span><br><span class="line">    val b = <span class="number">1</span></span><br><span class="line">    var c = a + b</span><br><span class="line">    println(c)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">fun <span class="title">main</span><span class="params">(args: Array&lt;String&gt;)</span> </span>&#123;</span><br><span class="line">    print(<span class="string">"start"</span>)</span><br><span class="line">    sayHello()</span><br><span class="line">    print(<span class="string">"end"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">sayHello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> a = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> b = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> c = a + b;</span><br><span class="line">        System.out.println(c);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(@NotNull <span class="keyword">final</span> String[] args)</span> </span>&#123;</span><br><span class="line">        Intrinsics.checkParameterIsNotNull((Object)args, <span class="string">"args"</span>);</span><br><span class="line">        System.out.print((Object)<span class="string">"start"</span>);</span><br><span class="line">        sayHello();</span><br><span class="line">        System.out.print((Object)<span class="string">"end"</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>加了inline以后<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function">inline fun <span class="title">sayHello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    val a = <span class="number">0</span></span><br><span class="line">    val b = <span class="number">1</span></span><br><span class="line">    var c = a + <span class="function">b</span><br><span class="line">    <span class="title">println</span><span class="params">(c)</span></span><br><span class="line">&#125;</span></span><br></pre></td></tr></table></figure></p>
+<p>加了inline以后<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function">inline fun <span class="title">sayHello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    val a = <span class="number">0</span></span><br><span class="line">    val b = <span class="number">1</span></span><br><span class="line">    var c = a + b</span><br><span class="line">    println(c)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(@NotNull <span class="keyword">final</span> String[] args)</span> </span>&#123;</span><br><span class="line">    Intrinsics.checkParameterIsNotNull((Object)args, <span class="string">"args"</span>);</span><br><span class="line">    System.out.print((Object)<span class="string">"start"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> a = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> b = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> c = a + b;</span><br><span class="line"></span><br><span class="line">    System.out.println(c);</span><br><span class="line">    System.out.print((Object)<span class="string">"end"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>在kotlin中，函数就是对象，当你调用某个函数的时候，就会创建相关的对象。<br>这就是空间上的开销<br>当你去调用某个函数的时候，虚拟机会去找到你调用函数的位置。然后执行函数，然后再回到你调用的初始位置。<br>这就是时间上的开销<br>ok，现在，我直接把调用的函数里面的代码放到我调用的地方，省去寻找调用函数的位置的时间。</p>
 <p>既然如此，如果函数特别长，其实不适合内联</p>
@@ -502,7 +490,7 @@ fun test3() &amp;#123;    val nums = 1..100    nums.forEach &amp;#123;">
           
             <div class="site-state-item site-state-posts">
               <a href="/">
-                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-count">21</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -511,7 +499,7 @@ fun test3() &amp;#123;    val nums = 1..100    nums.forEach &amp;#123;">
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -548,7 +536,7 @@ fun test3() &amp;#123;    val nums = 1..100    nums.forEach &amp;#123;">
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Kotlin_for_Java_Developer(3)—local_return与inline"><span class="nav-number">1.</span> <span class="nav-text">Kotlin for Java Developer(3)—local return与inline</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Kotlin-for-Java-Developer-3-—local-return与inline"><span class="nav-number">1.</span> <span class="nav-text">Kotlin for Java Developer(3)—local return与inline</span></a></li></ol></div>
             
 
           </div>
@@ -569,7 +557,7 @@ fun test3() &amp;#123;    val nums = 1..100    nums.forEach &amp;#123;">
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2017</span>
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

@@ -82,25 +82,16 @@
 
 
 
-<meta name="description" content="用Intellij Idea创建一个kotlin项目，新建一个MainDemo.kt文件，输入main回车，就自动回生成main入口函数
-MainDemo.ktpackage com.cvte.kt.basicfun main(args: Array&amp;lt;String&amp;gt;) &amp;#123;    print(&quot;Hello World&quot;)&amp;#125;
-运行一下，就会输出Hello World
-我">
+<meta name="description" content="用Intellij Idea创建一个kotlin项目，新建一个MainDemo.kt文件，输入main回车，就自动回生成main入口函数 MainDemo.ktpackage com.cvte.kt.basicfun main(args: Array&amp;lt;String&amp;gt;) &amp;#123;    print(&quot;Hello World&quot;)&amp;#125; 运行一下，就会输出Hello World 我">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Kotlin for Java Developer(1)—Main函数">
 <meta property="og:url" content="http://yoursite.com/2017/06/20/kotlin-for-java-1/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="用Intellij Idea创建一个kotlin项目，新建一个MainDemo.kt文件，输入main回车，就自动回生成main入口函数
-MainDemo.ktpackage com.cvte.kt.basicfun main(args: Array&amp;lt;String&amp;gt;) &amp;#123;    print(&quot;Hello World&quot;)&amp;#125;
-运行一下，就会输出Hello World
-我">
+<meta property="og:description" content="用Intellij Idea创建一个kotlin项目，新建一个MainDemo.kt文件，输入main回车，就自动回生成main入口函数 MainDemo.ktpackage com.cvte.kt.basicfun main(args: Array&amp;lt;String&amp;gt;) &amp;#123;    print(&quot;Hello World&quot;)&amp;#125; 运行一下，就会输出Hello World 我">
 <meta property="og:updated_time" content="2017-06-20T01:08:11.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Kotlin for Java Developer(1)—Main函数">
-<meta name="twitter:description" content="用Intellij Idea创建一个kotlin项目，新建一个MainDemo.kt文件，输入main回车，就自动回生成main入口函数
-MainDemo.ktpackage com.cvte.kt.basicfun main(args: Array&amp;lt;String&amp;gt;) &amp;#123;    print(&quot;Hello World&quot;)&amp;#125;
-运行一下，就会输出Hello World
-我">
+<meta name="twitter:description" content="用Intellij Idea创建一个kotlin项目，新建一个MainDemo.kt文件，输入main回车，就自动回生成main入口函数 MainDemo.ktpackage com.cvte.kt.basicfun main(args: Array&amp;lt;String&amp;gt;) &amp;#123;    print(&quot;Hello World&quot;)&amp;#125; 运行一下，就会输出Hello World 我">
 
 
 
@@ -354,14 +345,14 @@ MainDemo.ktpackage com.cvte.kt.basicfun main(args: Array&amp;lt;String&amp;gt;) 
 
       
         <p>用Intellij Idea创建一个kotlin项目，新建一个MainDemo.kt文件，输入<code>main</code>回车，就自动回生成main入口函数</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">MainDemo.kt</span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.cvte.kt.<span class="function">basic</span><br><span class="line">fun <span class="title">main</span><span class="params">(args: Array&lt;String&gt;)</span> </span>&#123;</span><br><span class="line">    print(<span class="string">"Hello World"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">MainDemo.kt</span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.cvte.kt.basic</span><br><span class="line"><span class="function">fun <span class="title">main</span><span class="params">(args: Array&lt;String&gt;)</span> </span>&#123;</span><br><span class="line">    print(<span class="string">"Hello World"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>运行一下，就会输出<code>Hello World</code></p>
 <p>我们来对比一下，Java版本的<code>Hello World</code></p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">MainDemoJava.java</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainDemoJava</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Hello World"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>我们发现，kotlin版本的main函数没有包裹在类中，至少现在看起来如此。<br>那它是如何做到可以编译运行的呢？<br>我们看一下MainDemo.kt编译后的输出文件</p>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="tag">-rw-r--r--</span>  1 <span class="tag">Arthur</span>  <span class="tag">staff</span>   1<span class="class">.0K</span>  6 20 08<span class="pseudo">:50</span> <span class="tag">MainDemoKt</span><span class="class">.class</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-rw-r--r--  1 Arthur  staff   1.0K  6 20 08:50 MainDemoKt.class</span><br></pre></td></tr></table></figure>
 <p>发现会生成<code>一个文件名+Kt+.class</code>的class文件，反编译一下看看</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">MainDemoKt</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(@NotNull <span class="keyword">final</span> String[] args)</span> </span>&#123;</span><br><span class="line">        Intrinsics.checkParameterIsNotNull((Object)args, <span class="string">"args"</span>);</span><br><span class="line">        System.out.print(<span class="string">"Hello World"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">MainDemoKt</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(@NotNull <span class="keyword">final</span> String[] args)</span> </span>&#123;</span><br><span class="line">        Intrinsics.checkParameterIsNotNull((Object)args, <span class="string">"args"</span>);</span><br><span class="line">        System.out.print(<span class="string">"Hello World"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>那我们看到，kotlin其实就是一个语法糖嘛，没什么神奇的，但是又超级好用，后面会有一个系列讲，kotlin到底有哪些好用的语法，以及是如何是如何实现的</p>
 
       
@@ -477,7 +468,7 @@ MainDemo.ktpackage com.cvte.kt.basicfun main(args: Array&amp;lt;String&amp;gt;) 
           
             <div class="site-state-item site-state-posts">
               <a href="/">
-                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-count">21</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -486,7 +477,7 @@ MainDemo.ktpackage com.cvte.kt.basicfun main(args: Array&amp;lt;String&amp;gt;) 
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -528,7 +519,7 @@ MainDemo.ktpackage com.cvte.kt.basicfun main(args: Array&amp;lt;String&amp;gt;) 
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2017</span>
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

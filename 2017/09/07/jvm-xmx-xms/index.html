@@ -82,31 +82,16 @@
 
 
 
-<meta name="description" content="这个文章试图解答以下两个困扰许久的问题
-
-为什么JVM进程物理内存远大于Xmx设置的值，比如设置了-Xmx512m，用top看到 JVM 实际内存占用超过1G？
-设置-Xms到底有什么用，设置-Xms=2048m，用top看到JVM占用实际很小？
-
-JVM进程物理内存远大于Xmx第一个问题，其实很好理解，Xmx指定的是最大堆的大小，也就是我们熟悉的新生代和老生代的最大值，不包括其他（持久代、JIT">
+<meta name="description" content="这个文章试图解答以下两个困扰许久的问题  为什么JVM进程物理内存远大于Xmx设置的值，比如设置了-Xmx512m，用top看到 JVM 实际内存占用超过1G？ 设置-Xms到底有什么用，设置-Xms=2048m，用top看到JVM占用实际很小？  JVM进程物理内存远大于Xmx第一个问题，其实很好理解，Xmx指定的是最大堆的大小，也就是我们熟悉的新生代和老生代的最大值，不包括其他（持久代、JIT">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JVM的Xmx Xms分析">
 <meta property="og:url" content="http://yoursite.com/2017/09/07/jvm-xmx-xms/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="这个文章试图解答以下两个困扰许久的问题
-
-为什么JVM进程物理内存远大于Xmx设置的值，比如设置了-Xmx512m，用top看到 JVM 实际内存占用超过1G？
-设置-Xms到底有什么用，设置-Xms=2048m，用top看到JVM占用实际很小？
-
-JVM进程物理内存远大于Xmx第一个问题，其实很好理解，Xmx指定的是最大堆的大小，也就是我们熟悉的新生代和老生代的最大值，不包括其他（持久代、JIT">
+<meta property="og:description" content="这个文章试图解答以下两个困扰许久的问题  为什么JVM进程物理内存远大于Xmx设置的值，比如设置了-Xmx512m，用top看到 JVM 实际内存占用超过1G？ 设置-Xms到底有什么用，设置-Xms=2048m，用top看到JVM占用实际很小？  JVM进程物理内存远大于Xmx第一个问题，其实很好理解，Xmx指定的是最大堆的大小，也就是我们熟悉的新生代和老生代的最大值，不包括其他（持久代、JIT">
 <meta property="og:updated_time" content="2017-09-07T01:18:31.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JVM的Xmx Xms分析">
-<meta name="twitter:description" content="这个文章试图解答以下两个困扰许久的问题
-
-为什么JVM进程物理内存远大于Xmx设置的值，比如设置了-Xmx512m，用top看到 JVM 实际内存占用超过1G？
-设置-Xms到底有什么用，设置-Xms=2048m，用top看到JVM占用实际很小？
-
-JVM进程物理内存远大于Xmx第一个问题，其实很好理解，Xmx指定的是最大堆的大小，也就是我们熟悉的新生代和老生代的最大值，不包括其他（持久代、JIT">
+<meta name="twitter:description" content="这个文章试图解答以下两个困扰许久的问题  为什么JVM进程物理内存远大于Xmx设置的值，比如设置了-Xmx512m，用top看到 JVM 实际内存占用超过1G？ 设置-Xms到底有什么用，设置-Xms=2048m，用top看到JVM占用实际很小？  JVM进程物理内存远大于Xmx第一个问题，其实很好理解，Xmx指定的是最大堆的大小，也就是我们熟悉的新生代和老生代的最大值，不包括其他（持久代、JIT">
 
 
 
@@ -364,23 +349,23 @@ JVM进程物理内存远大于Xmx第一个问题，其实很好理解，Xmx指�
 <li>为什么JVM进程物理内存远大于Xmx设置的值，比如设置了-Xmx512m，用top看到 JVM 实际内存占用超过1G？</li>
 <li>设置-Xms到底有什么用，设置-Xms=2048m，用top看到JVM占用实际很小？</li>
 </ul>
-<h1 id="JVM进程物理内存远大于Xmx">JVM进程物理内存远大于Xmx</h1><p>第一个问题，其实很好理解，Xmx指定的是最大堆的大小，也就是我们熟悉的新生代和老生代的最大值，不包括其他（持久代、JIT CodeCache，堆外内存、JNI code、Metaspace、线程栈）</p>
-<h1 id="-Xms到底有什么用">-Xms到底有什么用</h1><p>第二个问题，会稍微复杂一点</p>
+<h1 id="JVM进程物理内存远大于Xmx"><a href="#JVM进程物理内存远大于Xmx" class="headerlink" title="JVM进程物理内存远大于Xmx"></a>JVM进程物理内存远大于Xmx</h1><p>第一个问题，其实很好理解，Xmx指定的是最大堆的大小，也就是我们熟悉的新生代和老生代的最大值，不包括其他（持久代、JIT CodeCache，堆外内存、JNI code、Metaspace、线程栈）</p>
+<h1 id="Xms到底有什么用"><a href="#Xms到底有什么用" class="headerlink" title="-Xms到底有什么用"></a>-Xms到底有什么用</h1><p>第二个问题，会稍微复杂一点</p>
 <p>做个简单的实验：</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hello</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Hello World!"</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep(<span class="number">1000000L</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>关注两个输出</p>
-<figure class="highlight ruby"><table><tr><td class="code"><pre><span class="line">java -cp . -<span class="constant">Xms512m</span> -<span class="constant">Xmx512m</span> -<span class="constant">XX</span><span class="symbol">:NativeMemoryTracking=detail</span> <span class="constant">Hello</span></span><br></pre></td></tr></table></figure>
-<h4 id="top输出">top输出</h4><figure class="highlight inform7"><table><tr><td class="code"><pre><span class="line">top -p $pid</span><br><span class="line">  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND</span><br><span class="line"> 4527 ya        20   0 2808408  39608  10576 S   0.0  2.1   0:00.98 java</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">java -cp . -Xms512m -Xmx512m -XX:NativeMemoryTracking=detail Hello</span><br></pre></td></tr></table></figure>
+<h4 id="top输出"><a href="#top输出" class="headerlink" title="top输出"></a>top输出</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">top -p $pid</span><br><span class="line">  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND</span><br><span class="line"> 4527 ya        20   0 2808408  39608  10576 S   0.0  2.1   0:00.98 java</span><br></pre></td></tr></table></figure>
 <p>RES值其实很小</p>
-<h4 id="jcmd输出">jcmd输出</h4><figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">jcmd  <span class="number">5641</span> VM<span class="class">.native_memory</span> <span class="tag">summary</span></span><br><span class="line"></span><br><span class="line">Total: reserved=<span class="number">1876589</span>KB, committed=<span class="number">577621</span>KB</span><br><span class="line">-                 Java Heap (reserved=<span class="number">524288</span>KB, committed=<span class="number">524288</span>KB)</span><br><span class="line">                            (mmap: reserved=<span class="number">524288</span>KB, committed=<span class="number">524288</span>KB)</span><br><span class="line"></span><br><span class="line">-                     Class (reserved=<span class="number">1059949</span>KB, committed=<span class="number">8045</span>KB)</span><br><span class="line">                            (classes <span class="hexcolor">#389</span>)</span><br><span class="line">                            (malloc=<span class="number">3181</span>KB <span class="hexcolor">#137</span>)</span><br><span class="line">                            (mmap: reserved=<span class="number">1056768</span>KB, committed=<span class="number">4864</span>KB)</span><br><span class="line"></span><br><span class="line">-                    Thread (reserved=<span class="number">12388</span>KB, committed=<span class="number">12388</span>KB)</span><br><span class="line">                            (thread #<span class="number">13</span>)</span><br><span class="line">                            (stack: reserved=<span class="number">12336</span>KB, committed=<span class="number">12336</span>KB)</span><br><span class="line">                            (malloc=<span class="number">38</span>KB #<span class="number">64</span>)</span><br><span class="line">                            (arena=<span class="number">14</span>KB #<span class="number">24</span>)</span><br><span class="line"></span><br><span class="line">-                      Code (reserved=<span class="number">249632</span>KB, committed=<span class="number">2568</span>KB)</span><br><span class="line">                            (malloc=<span class="number">32</span>KB <span class="hexcolor">#297</span>)</span><br><span class="line">                            (mmap: reserved=<span class="number">249600</span>KB, committed=<span class="number">2536</span>KB)</span><br><span class="line"></span><br><span class="line">-                        GC (reserved=<span class="number">22625</span>KB, committed=<span class="number">22625</span>KB)</span><br><span class="line">                            (malloc=<span class="number">3465</span>KB <span class="hexcolor">#111</span>)</span><br><span class="line">                            (mmap: reserved=<span class="number">19160</span>KB, committed=<span class="number">19160</span>KB)</span><br><span class="line"></span><br><span class="line">-                  Compiler (reserved=<span class="number">132</span>KB, committed=<span class="number">132</span>KB)</span><br><span class="line">                            (malloc=<span class="number">1</span>KB #<span class="number">22</span>)</span><br><span class="line">                            (arena=<span class="number">131</span>KB #<span class="number">3</span>)</span><br><span class="line"></span><br><span class="line">-                  Internal (reserved=<span class="number">5904</span>KB, committed=<span class="number">5904</span>KB)</span><br><span class="line">                            (malloc=<span class="number">5872</span>KB <span class="hexcolor">#132</span>5)</span><br><span class="line">                            (mmap: reserved=<span class="number">32</span>KB, committed=<span class="number">32</span>KB)</span><br><span class="line"></span><br><span class="line">-                    Symbol (reserved=<span class="number">1356</span>KB, committed=<span class="number">1356</span>KB)</span><br><span class="line">                            (malloc=<span class="number">900</span>KB #<span class="number">66</span>)</span><br><span class="line">                            (arena=<span class="number">456</span>KB #<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">-    Native Memory Tracking (reserved=<span class="number">140</span>KB, committed=<span class="number">140</span>KB)</span><br><span class="line">                            (malloc=<span class="number">86</span>KB <span class="hexcolor">#136</span>7)</span><br><span class="line">                            (tracking overhead=<span class="number">54</span>KB)</span><br><span class="line"></span><br><span class="line">-               Arena Chunk (reserved=<span class="number">174</span>KB, committed=<span class="number">174</span>KB)</span><br><span class="line">                            (malloc=<span class="number">174</span>KB)</span><br></pre></td></tr></table></figure>
+<h4 id="jcmd输出"><a href="#jcmd输出" class="headerlink" title="jcmd输出"></a>jcmd输出</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">jcmd  5641 VM.native_memory summary</span><br><span class="line"></span><br><span class="line">Total: reserved=1876589KB, committed=577621KB</span><br><span class="line">-                 Java Heap (reserved=524288KB, committed=524288KB)</span><br><span class="line">                            (mmap: reserved=524288KB, committed=524288KB)</span><br><span class="line"></span><br><span class="line">-                     Class (reserved=1059949KB, committed=8045KB)</span><br><span class="line">                            (classes #389)</span><br><span class="line">                            (malloc=3181KB #137)</span><br><span class="line">                            (mmap: reserved=1056768KB, committed=4864KB)</span><br><span class="line"></span><br><span class="line">-                    Thread (reserved=12388KB, committed=12388KB)</span><br><span class="line">                            (thread #13)</span><br><span class="line">                            (stack: reserved=12336KB, committed=12336KB)</span><br><span class="line">                            (malloc=38KB #64)</span><br><span class="line">                            (arena=14KB #24)</span><br><span class="line"></span><br><span class="line">-                      Code (reserved=249632KB, committed=2568KB)</span><br><span class="line">                            (malloc=32KB #297)</span><br><span class="line">                            (mmap: reserved=249600KB, committed=2536KB)</span><br><span class="line"></span><br><span class="line">-                        GC (reserved=22625KB, committed=22625KB)</span><br><span class="line">                            (malloc=3465KB #111)</span><br><span class="line">                            (mmap: reserved=19160KB, committed=19160KB)</span><br><span class="line"></span><br><span class="line">-                  Compiler (reserved=132KB, committed=132KB)</span><br><span class="line">                            (malloc=1KB #22)</span><br><span class="line">                            (arena=131KB #3)</span><br><span class="line"></span><br><span class="line">-                  Internal (reserved=5904KB, committed=5904KB)</span><br><span class="line">                            (malloc=5872KB #1325)</span><br><span class="line">                            (mmap: reserved=32KB, committed=32KB)</span><br><span class="line"></span><br><span class="line">-                    Symbol (reserved=1356KB, committed=1356KB)</span><br><span class="line">                            (malloc=900KB #66)</span><br><span class="line">                            (arena=456KB #1)</span><br><span class="line"></span><br><span class="line">-    Native Memory Tracking (reserved=140KB, committed=140KB)</span><br><span class="line">                            (malloc=86KB #1367)</span><br><span class="line">                            (tracking overhead=54KB)</span><br><span class="line"></span><br><span class="line">-               Arena Chunk (reserved=174KB, committed=174KB)</span><br><span class="line">                            (malloc=174KB)</span><br></pre></td></tr></table></figure>
 <p>上面的输出，也可以解释第一个问题，除了heap的占用，JVM还有很多其他的开销，比如线程、GC等上面所说的</p>
 <p>我们来关注一个重要的信息</p>
-<figure class="highlight lisp"><table><tr><td class="code"><pre><span class="line">Java Heap <span class="list">(<span class="keyword">reserved=524288KB</span>, committed=524288KB)</span></span><br><span class="line">    <span class="list">(<span class="keyword">mmap</span>: reserved=524288KB, committed=524288KB)</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Java Heap (reserved=524288KB, committed=524288KB)</span><br><span class="line">    (mmap: reserved=524288KB, committed=524288KB)</span><br></pre></td></tr></table></figure>
 <p>我们看到<code>reserved</code>和<code>committed</code>都是<code>512M</code></p>
 <p>我们改一下启动参数，把Xms改小到128m</p>
-<figure class="highlight"><table><tr><td class="code"><pre><span class="line">java -cp . -Xms128m -Xmx512m -XX:NativeMemoryTracking=detail Hello</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">java -cp . -Xms128m -Xmx512m -XX:NativeMemoryTracking=detail Hello</span><br></pre></td></tr></table></figure>
 <p>重新用jcmd来查看一下</p>
-<figure class="highlight inform7"><table><tr><td class="code"><pre><span class="line">Total: reserved=1873968KB, committed=180508KB</span><br><span class="line">-                 Java Heap (reserved=524288KB, committed=131072KB)</span><br><span class="line">                            (mmap: reserved=524288KB, committed=131072KB)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Total: reserved=1873968KB, committed=180508KB</span><br><span class="line">-                 Java Heap (reserved=524288KB, committed=131072KB)</span><br><span class="line">                            (mmap: reserved=524288KB, committed=131072KB)</span><br></pre></td></tr></table></figure>
 <p>看到reserved的等于Xmx，committed的等于Xms</p>
 <p>我们来看一下原理，</p>
 <blockquote>
@@ -400,7 +385,7 @@ JVM进程物理内存远大于Xmx第一个问题，其实很好理解，Xmx指�
 <p>为什么Oracle推荐设置<code>Xmx</code>和<code>Xms</code>为相等：</p>
 <p>主要是为了避免Xms用完GC以后，需要重新向操作系统申请内存，设置为一样，就省去了这个过程</p>
 <p>参考链接</p>
-<p><a href="https://blogs.oracle.com/buck/repost%3a-why-is-my-jvm-process-larger-than-max-heap-size" target="_blank" rel="external">https://blogs.oracle.com/buck/repost%3a-why-is-my-jvm-process-larger-than-max-heap-size</a><br><a href="https://plumbr.eu/blog/memory-leaks/why-does-my-java-process-consume-more-memory-than-xmx" target="_blank" rel="external">https://plumbr.eu/blog/memory-leaks/why-does-my-java-process-consume-more-memory-than-xmx</a><br><a href="https://www.ibm.com/developerworks/library/j-memusage/" target="_blank" rel="external">https://www.ibm.com/developerworks/library/j-memusage/</a><br><a href="http://lovestblog.cn/blog/2015/08/21/rssxmx/" target="_blank" rel="external">http://lovestblog.cn/blog/2015/08/21/rssxmx/</a></p>
+<p><a href="https://blogs.oracle.com/buck/repost%3a-why-is-my-jvm-process-larger-than-max-heap-size" target="_blank" rel="noopener">https://blogs.oracle.com/buck/repost%3a-why-is-my-jvm-process-larger-than-max-heap-size</a><br><a href="https://plumbr.eu/blog/memory-leaks/why-does-my-java-process-consume-more-memory-than-xmx" target="_blank" rel="noopener">https://plumbr.eu/blog/memory-leaks/why-does-my-java-process-consume-more-memory-than-xmx</a><br><a href="https://www.ibm.com/developerworks/library/j-memusage/" target="_blank" rel="noopener">https://www.ibm.com/developerworks/library/j-memusage/</a><br><a href="http://lovestblog.cn/blog/2015/08/21/rssxmx/" target="_blank" rel="noopener">http://lovestblog.cn/blog/2015/08/21/rssxmx/</a></p>
 
       
     </div>
@@ -452,8 +437,8 @@ JVM进程物理内存远大于Xmx第一个问题，其实很好理解，Xmx指�
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/09/22/utf8/" rel="prev" title="Java Class 文件之 UTF8 编码">
-                Java Class 文件之 UTF8 编码 <i class="fa fa-chevron-right"></i>
+              <a href="/2017/09/07/float-mysql/" rel="prev" title="MySQL float">
+                MySQL float <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -524,7 +509,7 @@ JVM进程物理内存远大于Xmx第一个问题，其实很好理解，Xmx指�
           
             <div class="site-state-item site-state-posts">
               <a href="/">
-                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-count">21</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -533,7 +518,7 @@ JVM进程物理内存远大于Xmx第一个问题，其实很好理解，Xmx指�
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -570,7 +555,7 @@ JVM进程物理内存远大于Xmx第一个问题，其实很好理解，Xmx指�
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#JVM进程物理内存远大于Xmx"><span class="nav-number">1.</span> <span class="nav-text">JVM进程物理内存远大于Xmx</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#-Xms到底有什么用"><span class="nav-number">2.</span> <span class="nav-text">-Xms到底有什么用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#top输出"><span class="nav-number">2.0.0.1.</span> <span class="nav-text">top输出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jcmd输出"><span class="nav-number">2.0.0.2.</span> <span class="nav-text">jcmd输出</span></a></li></ol></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#JVM进程物理内存远大于Xmx"><span class="nav-number">1.</span> <span class="nav-text">JVM进程物理内存远大于Xmx</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Xms到底有什么用"><span class="nav-number">2.</span> <span class="nav-text">-Xms到底有什么用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#top输出"><span class="nav-number">2.0.0.1.</span> <span class="nav-text">top输出</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jcmd输出"><span class="nav-number">2.0.0.2.</span> <span class="nav-text">jcmd输出</span></a></li></ol></li></ol></li></ol></li></ol></div>
             
 
           </div>
@@ -591,7 +576,7 @@ JVM进程物理内存远大于Xmx第一个问题，其实很好理解，Xmx指�
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2017</span>
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

@@ -82,31 +82,16 @@
 
 
 
-<meta name="description" content="下面的代码输出什么？
-(⊙o⊙)…先不要怀疑int.class这样写是不是有语法错误。。。
-Class&amp;lt;Integer&amp;gt;  a = int.class;Class&amp;lt;Integer&amp;gt;  b = Integer.class;System.out.println(a == b);输出 false
-下面来分析一下为什么。
-先来看字节码
- Object a = int.class;">
+<meta name="description" content="下面的代码输出什么？ (⊙o⊙)…先不要怀疑int.class这样写是不是有语法错误。。。 Class&amp;lt;Integer&amp;gt;  a = int.class;Class&amp;lt;Integer&amp;gt;  b = Integer.class;System.out.println(a == b);输出 false 下面来分析一下为什么。 先来看字节码  Object a = int.class;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="int.class和Integer.class">
 <meta property="og:url" content="http://yoursite.com/2016/12/24/int-class-vs-integer-class/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="下面的代码输出什么？
-(⊙o⊙)…先不要怀疑int.class这样写是不是有语法错误。。。
-Class&amp;lt;Integer&amp;gt;  a = int.class;Class&amp;lt;Integer&amp;gt;  b = Integer.class;System.out.println(a == b);输出 false
-下面来分析一下为什么。
-先来看字节码
- Object a = int.class;">
+<meta property="og:description" content="下面的代码输出什么？ (⊙o⊙)…先不要怀疑int.class这样写是不是有语法错误。。。 Class&amp;lt;Integer&amp;gt;  a = int.class;Class&amp;lt;Integer&amp;gt;  b = Integer.class;System.out.println(a == b);输出 false 下面来分析一下为什么。 先来看字节码  Object a = int.class;">
 <meta property="og:updated_time" content="2016-12-23T23:27:15.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="int.class和Integer.class">
-<meta name="twitter:description" content="下面的代码输出什么？
-(⊙o⊙)…先不要怀疑int.class这样写是不是有语法错误。。。
-Class&amp;lt;Integer&amp;gt;  a = int.class;Class&amp;lt;Integer&amp;gt;  b = Integer.class;System.out.println(a == b);输出 false
-下面来分析一下为什么。
-先来看字节码
- Object a = int.class;">
+<meta name="twitter:description" content="下面的代码输出什么？ (⊙o⊙)…先不要怀疑int.class这样写是不是有语法错误。。。 Class&amp;lt;Integer&amp;gt;  a = int.class;Class&amp;lt;Integer&amp;gt;  b = Integer.class;System.out.println(a == b);输出 false 下面来分析一下为什么。 先来看字节码  Object a = int.class;">
 
 
 
@@ -364,12 +349,12 @@ Class&amp;lt;Integer&amp;gt;  a = int.class;Class&amp;lt;Integer&amp;gt;  b = In
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Class&lt;Integer&gt;  a = <span class="keyword">int</span>.class;</span><br><span class="line">Class&lt;Integer&gt;  b = Integer.class;</span><br><span class="line">System.out.println(a == b);</span><br><span class="line"></span><br><span class="line">输出 <span class="keyword">false</span></span><br></pre></td></tr></table></figure>
 <p>下面来分析一下为什么。</p>
 <p>先来看字节码</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"> Object a = <span class="keyword">int</span>.class;</span><br><span class="line"> Object b = Integer.class;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span>.class</span><br><span class="line"> <span class="number">0</span>: getstatic     #<span class="number">2</span>   <span class="comment">// Field java/lang/Integer.TYPE:Ljava/lang/Class;</span></span><br><span class="line"> </span><br><span class="line">Integer.class</span><br><span class="line"><span class="number">4</span>: ldc           #<span class="number">3</span>   <span class="comment">// class java/lang/Integer</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line"> Object a = <span class="keyword">int</span>.class;</span><br><span class="line"> Object b = Integer.class;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span>.class</span><br><span class="line"> 0: getstatic     #2   // Field java/lang/Integer.TYPE:Ljava/lang/Class;</span><br><span class="line"> </span><br><span class="line">Integer.class</span><br><span class="line">4: ldc           #3   // class java/lang/Integer</span><br></pre></td></tr></table></figure>
 <hr>
 <p>可见</p>
 <p><code>int.class=Integer.TYPE</code></p>
 <p>实际上是<code>Integer</code>类的一个静态常量<code>TYPE</code>，最终的值是<code>Class.getPrimitiveClass(&quot;int&quot;)</code></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> * The &#123;<span class="doctag">@code</span> Class&#125; instance representing the primitive type</span><br><span class="line"> * &#123;<span class="doctag">@code</span> int&#125;.</span><br><span class="line"> *</span><br><span class="line"> * <span class="doctag">@since</span>   JDK1.1</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Class&lt;Integer&gt;  TYPE = (Class&lt;Integer&gt;) Class.getPrimitiveClass(<span class="string">"int"</span>);</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * The &#123;<span class="doctag">@code</span> Class&#125; instance representing the primitive type</span></span><br><span class="line"><span class="comment"> * &#123;<span class="doctag">@code</span> int&#125;.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span>   JDK1.1</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Class&lt;Integer&gt;  TYPE = (Class&lt;Integer&gt;) Class.getPrimitiveClass(<span class="string">"int"</span>);</span><br></pre></td></tr></table></figure>
 <p><code>Integer.class</code>这个大家就比较清楚了，是<code>java.lang.Integer</code>的class对象，实际上代表 <code>Class.forName(&quot;java.lang.Integer&quot;)</code></p>
 <p>你可能会想，知道这个有毛用？这么偏门的知识。</p>
 <p>在反射中，搞错了这两个，你可能要调试n长时间，找不到方法等，不要问我是怎么知道的。</p>
@@ -414,8 +399,8 @@ Class&amp;lt;Integer&amp;gt;  a = int.class;Class&amp;lt;Integer&amp;gt;  b = In
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/12/23/try-with-resource-byte-code/" rel="next" title="有趣的try-with-resource实现">
-                <i class="fa fa-chevron-left"></i> 有趣的try-with-resource实现
+              <a href="/2016/12/24/arrays-aslist/" rel="next" title="重新认识Arrays.asList（冷知识）">
+                <i class="fa fa-chevron-left"></i> 重新认识Arrays.asList（冷知识）
               </a>
             
           </div>
@@ -424,8 +409,8 @@ Class&amp;lt;Integer&amp;gt;  a = int.class;Class&amp;lt;Integer&amp;gt;  b = In
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/12/24/arrays-aslist/" rel="prev" title="重新认识Arrays.asList（冷知识）">
-                重新认识Arrays.asList（冷知识） <i class="fa fa-chevron-right"></i>
+              <a href="/2017/01/17/null-cast-primitive/" rel="prev" title="null强转为原始类型的隐式空指针异常（陷阱与缺陷）">
+                null强转为原始类型的隐式空指针异常（陷阱与缺陷） <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -487,7 +472,7 @@ Class&amp;lt;Integer&amp;gt;  a = int.class;Class&amp;lt;Integer&amp;gt;  b = In
           
             <div class="site-state-item site-state-posts">
               <a href="/">
-                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-count">21</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -496,7 +481,7 @@ Class&amp;lt;Integer&amp;gt;  a = int.class;Class&amp;lt;Integer&amp;gt;  b = In
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -538,7 +523,7 @@ Class&amp;lt;Integer&amp;gt;  a = int.class;Class&amp;lt;Integer&amp;gt;  b = In
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2017</span>
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
