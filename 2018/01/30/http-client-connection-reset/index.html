@@ -93,7 +93,7 @@
 <meta property="og:image" content="http://yoursite.com/images/connection-reset2.png">
 <meta property="og:image" content="http://yoursite.com/images/connection-reset3.png">
 <meta property="og:image" content="http://yoursite.com/images/connection-reset4.png">
-<meta property="og:updated_time" content="2018-01-30T11:25:48.193Z">
+<meta property="og:updated_time" content="2018-01-30T11:32:13.550Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一次 http client 偶发性Connection Reset的除错分析记录">
 <meta name="twitter:description" content="线上http client偶发性报Connection Reset的问题 [2018-01-24 09:38:22,162][http-nio-0.0.0.0-8084-exec-1782][ERROR][com.masaike.care.common.utils.HttpUtils:288] Connection resetjava.net.SocketException: Connection">
@@ -387,7 +387,7 @@
 <p>番外篇：</p>
 <p>其实apache这个httpclient写得挺牛叉的，<br>1、对幂等请求可以retry<br>2、它在每个http连接发起之前，都会进行失效检查（默认行为，可关闭），类似于redis等连接池中的<code>testOnBorrow</code>，可能会有最多30ms的延时。4.3版本以上已废弃这种方式，采用了更高效的实现方式。</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (config.isStaleConnectionCheckEnabled()) &#123;</span><br><span class="line">  <span class="comment">// validate connection</span></span><br><span class="line">  <span class="keyword">if</span> (managedConn.isOpen()) &#123;</span><br><span class="line">      <span class="keyword">this</span>.log.debug(<span class="string">"Stale connection check"</span>);</span><br><span class="line">      <span class="keyword">if</span> (managedConn.isStale()) &#123; <span class="comment">/// 进行失效检测</span></span><br><span class="line">          <span class="keyword">this</span>.log.debug(<span class="string">"Stale connection detected"</span>);</span><br><span class="line">          managedConn.close();</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>但是这些都无法保证，真正执行的时候，http连接池还是好的（这个其实是无解的），但是也没什么太大问题，这种情况，retry一次基本上就ok了。</p>
+<p>但是这些都无法保证，真正执行的时候，http连接还是好的（这个其实是无解的），但是也没什么太大问题，这种情况，retry一次基本上就ok了。</p>
 <p>怎么解这个问题呢？很简单，自己实现一个retry的逻辑，在<code>Connection reset</code>的情况下进行retry，不管是不是幂等的接口。</p>
 <p>改完，测试，确实ok了。</p>
 
