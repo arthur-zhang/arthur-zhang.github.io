@@ -93,7 +93,7 @@
 <meta property="og:image" content="http://yoursite.com/images/connection-reset2.png">
 <meta property="og:image" content="http://yoursite.com/images/connection-reset3.png">
 <meta property="og:image" content="http://yoursite.com/images/connection-reset4.png">
-<meta property="og:updated_time" content="2018-01-30T11:16:33.429Z">
+<meta property="og:updated_time" content="2018-01-30T11:19:37.467Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一次 http client 偶发性Connection Reset的除错分析记录">
 <meta name="twitter:description" content="线上http client偶发性报Connection Reset的问题 [2018-01-24 09:38:22,162][http-nio-0.0.0.0-8084-exec-1782][ERROR][com.masaike.care.common.utils.HttpUtils:288] Connection resetjava.net.SocketException: Connection">
@@ -362,7 +362,7 @@
 <p>tcpdump抓包如下</p>
 <p><img src="/images/nginx-keepalvie1.png" alt=""></p>
 <p>可以看到10s以后，<code>nginx</code>就<code>主动</code>断掉了此http1.1的keep-alive连接</p>
-<p>那么一种可能的bug产生方式就是我拿到了一个即将过期的的连接，在执行http轻轻前的一瞬间还是好的，请求qian的时候被nginx</p>
+<p>那么一种可能的bug产生方式就是我拿到了一个即将过期的的连接，在执行http请求前的一瞬间刚好被nginx断掉了</p>
 <p>怎么模拟呢？自然想到的方式是，连建立连接，然后等连接失效，然后用这个失效的连接去发起http请求，肯定会失败</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String url = <span class="string">"http://test.me.com/rest-ip.json"</span>;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; Integer.MAX_VALUE; i++) &#123;</span><br><span class="line">    System.out.println(<span class="string">"\n##########&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;"</span> + i);</span><br><span class="line">    JSONObject a = HttpUtils.sendHttpRequest(url, <span class="keyword">new</span> HashMap&lt;&gt;(), <span class="string">"GET"</span>);</span><br><span class="line">    System.out.println(<span class="keyword">new</span> Date() + <span class="string">"&gt;&gt;"</span> + a);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>采用<code>debug</code>的方式，可以轻松的复现，方法之一是先访问一次（这个时候会从连接池申请一条连接），然后再次从连接池获取连接，debug断点等超时，然后等nginx超时发送fin包，然后debug继续，用这条有问题的连接去请求nginx服务器，果然抛出了我们想要的<code>Connection Reset</code></p>
