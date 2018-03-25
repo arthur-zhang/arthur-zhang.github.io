@@ -55,10 +55,10 @@ public class MyDataSource implements DataSource{
 
     public Connection getConnection() throws SQLException {
         Properties properties = new Properties();
-        properties.put("username", "seewo");
-        properties.put("password", "seewo@cvte");
+        properties.put("username", "masaike");
+        properties.put("password", "masaike@me");
         Connection conn = DriverManager.getConnection(
-                "jdbc:mysql://test1.ya.me:3306/seewo_easi_pass?useUnicode=true&characterEncoding=UTF-8&rewriteBatchedStatements=true&useSSL=false",
+                "jdbc:mysql://test1.ya.me:3306/masaike?useUnicode=true&characterEncoding=UTF-8&rewriteBatchedStatements=true&useSSL=false",
                 properties);
         return conn;
     }
