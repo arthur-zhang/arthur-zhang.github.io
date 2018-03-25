@@ -82,22 +82,16 @@
 
 
 
-<meta name="description" content="我们来一步一步用Java写一个redis的服务器，短期目标是实现所有的单机版本功能，长期目标是实现集群、类codis proxy功能。纯业余学习项目，一起来看看网络编程、NIO、并发、分布式的一些知识。
-github地址 https://github.com/arthur-zhang/redis-server
-今天的目标实现用redis-cli连接我们的服务器，完成redis-cli发送ping命">
+<meta name="description" content="我们来一步一步用Java写一个redis的服务器，短期目标是实现所有的单机版本功能，长期目标是实现集群、类codis proxy功能。纯业余学习项目，一起来看看网络编程、NIO、并发、分布式的一些知识。 github地址 https://github.com/arthur-zhang/redis-server 今天的目标实现用redis-cli连接我们的服务器，完成redis-cli发送ping命">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一起来写个redis server（day01）">
 <meta property="og:url" content="http://yoursite.com/2017/03/15/redis-server-day01/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="我们来一步一步用Java写一个redis的服务器，短期目标是实现所有的单机版本功能，长期目标是实现集群、类codis proxy功能。纯业余学习项目，一起来看看网络编程、NIO、并发、分布式的一些知识。
-github地址 https://github.com/arthur-zhang/redis-server
-今天的目标实现用redis-cli连接我们的服务器，完成redis-cli发送ping命">
+<meta property="og:description" content="我们来一步一步用Java写一个redis的服务器，短期目标是实现所有的单机版本功能，长期目标是实现集群、类codis proxy功能。纯业余学习项目，一起来看看网络编程、NIO、并发、分布式的一些知识。 github地址 https://github.com/arthur-zhang/redis-server 今天的目标实现用redis-cli连接我们的服务器，完成redis-cli发送ping命">
 <meta property="og:updated_time" content="2017-03-16T00:35:36.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一起来写个redis server（day01）">
-<meta name="twitter:description" content="我们来一步一步用Java写一个redis的服务器，短期目标是实现所有的单机版本功能，长期目标是实现集群、类codis proxy功能。纯业余学习项目，一起来看看网络编程、NIO、并发、分布式的一些知识。
-github地址 https://github.com/arthur-zhang/redis-server
-今天的目标实现用redis-cli连接我们的服务器，完成redis-cli发送ping命">
+<meta name="twitter:description" content="我们来一步一步用Java写一个redis的服务器，短期目标是实现所有的单机版本功能，长期目标是实现集群、类codis proxy功能。纯业余学习项目，一起来看看网络编程、NIO、并发、分布式的一些知识。 github地址 https://github.com/arthur-zhang/redis-server 今天的目标实现用redis-cli连接我们的服务器，完成redis-cli发送ping命">
 
 
 
@@ -354,11 +348,11 @@ github地址 https://github.com/arthur-zhang/redis-server
 <p>github地址 <code>https://github.com/arthur-zhang/redis-server</code></p>
 <p>今天的目标实现用<code>redis-cli</code>连接我们的服务器，完成<code>redis-cli</code>发送<code>ping</code>命令，我们返回<code>pong</code></p>
 <p>先用<code>tcpdump</code>抓个真正<code>redis-cli</code>和<code>redis-server</code> ping命令的包</p>
-<figure class="highlight dns"><table><tr><td class="code"><pre><span class="line">   <span class="number">127.0.0.1</span>.62054 &gt; <span class="number">127.0.0.1</span>.6379: Flags [P.], cksum 0xfe36 (incorrect -&gt; 0xcfd1), seq 14:28, ack 8, win 12457, options [nop,nop,TS val <span class="number">1573721279</span> ecr <span class="number">1573665837</span>], length 14</span><br><span class="line">0x0000:  <span class="number">0200 0000</span> <span class="number">4500 0042</span> 3b6c <span class="number">4000 4006</span> 0000  ....E..B<span class="comment">;l@.@...</span></span><br><span class="line">0x0010:  <span class="number">7f00 0001</span> <span class="number">7f00 0001</span> f266 18eb 317b 8f7c  .........f..1&#123;.|</span><br><span class="line">0x0020:  59da f12b <span class="number">8018 30a9</span> fe<span class="number">36 0000 01</span>01 080a  Y..+..0..6......</span><br><span class="line">0x0030:  5dcd 14bf 5dcc 3c2d <span class="number">2a31 0d0</span>a <span class="number">2434 0d0</span>a  ]...].&lt;-*1..$4..</span><br><span class="line">0x0040:  <span class="number">7069 6e67</span> 0d0a                           ping..</span><br><span class="line"></span><br><span class="line">   <span class="number">127.0.0.1</span>.6379 &gt; <span class="number">127.0.0.1</span>.62054: Flags [P.], cksum 0xfe2f (incorrect -&gt; 0x34dd), seq <span class="number">9758:9765</span>, ack 189, win 12752, options [nop,nop,TS val <span class="number">1607541840</span> ecr <span class="number">1607541835</span>], length 7</span><br><span class="line">0x0000:  <span class="number">0200 0000</span> <span class="number">4502 003</span>b afd<span class="number">6 4000 40</span>06 0000  ....E..<span class="comment">;..@.@...</span></span><br><span class="line">0x0010:  <span class="number">7f00 0001</span> <span class="number">7f00 0001</span> 18eb f266 59db 1741  ...........fY..<span class="keyword">A</span></span><br><span class="line">0x0020:  317b 902b <span class="number">8018 31d0</span> fe2f <span class="number">0000 0101</span> 080a  1&#123;.+..1../......</span><br><span class="line">0x0030:  5fd<span class="number">1 2450 5</span>fd1 244b <span class="number">2b50 4f4</span>e 470d 0a    _.$P_.$K+PONG..</span><br></pre></td></tr></table></figure>
-<p>结合<a href="https://redis.io/topics/protocol" target="_blank" rel="external">redis通信协议</a> 我们可以看到请求和响应如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">   127.0.0.1.62054 &gt; 127.0.0.1.6379: Flags [P.], cksum 0xfe36 (incorrect -&gt; 0xcfd1), seq 14:28, ack 8, win 12457, options [nop,nop,TS val 1573721279 ecr 1573665837], length 14</span><br><span class="line">0x0000:  0200 0000 4500 0042 3b6c 4000 4006 0000  ....E..B;l@.@...</span><br><span class="line">0x0010:  7f00 0001 7f00 0001 f266 18eb 317b 8f7c  .........f..1&#123;.|</span><br><span class="line">0x0020:  59da f12b 8018 30a9 fe36 0000 0101 080a  Y..+..0..6......</span><br><span class="line">0x0030:  5dcd 14bf 5dcc 3c2d 2a31 0d0a 2434 0d0a  ]...].&lt;-*1..$4..</span><br><span class="line">0x0040:  7069 6e67 0d0a                           ping..</span><br><span class="line"></span><br><span class="line">   127.0.0.1.6379 &gt; 127.0.0.1.62054: Flags [P.], cksum 0xfe2f (incorrect -&gt; 0x34dd), seq 9758:9765, ack 189, win 12752, options [nop,nop,TS val 1607541840 ecr 1607541835], length 7</span><br><span class="line">0x0000:  0200 0000 4502 003b afd6 4000 4006 0000  ....E..;..@.@...</span><br><span class="line">0x0010:  7f00 0001 7f00 0001 18eb f266 59db 1741  ...........fY..A</span><br><span class="line">0x0020:  317b 902b 8018 31d0 fe2f 0000 0101 080a  1&#123;.+..1../......</span><br><span class="line">0x0030:  5fd1 2450 5fd1 244b 2b50 4f4e 470d 0a    _.$P_.$K+PONG..</span><br></pre></td></tr></table></figure>
+<p>结合<a href="https://redis.io/topics/protocol" target="_blank" rel="noopener">redis通信协议</a> 我们可以看到请求和响应如下</p>
 <p>请求<br><code>2A 31 0D 0A 24 34 0D 0A 70 69 6E 67 0D 0A</code> 对应 <code>*1\r\n$4\r\nping\r\n</code></p>
 <p>响应<br><code>2B 50 4F 4E 47 0D 0A</code> 对应 <code>+PONG\r\n</code></p>
-<p>请求协议<br><figure class="highlight gherkin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">*</span><span class="variable">&lt;参数数量&gt;</span> CR LF</span><br><span class="line">$<span class="variable">&lt;参数 1 的字节数量&gt;</span> CR LF</span><br><span class="line"><span class="variable">&lt;参数 1 的数据&gt;</span> CR LF</span><br><span class="line">...</span><br><span class="line">$<span class="variable">&lt;参数 N 的字节数量&gt;</span> CR LF</span><br><span class="line"><span class="variable">&lt;参数 N 的数据&gt;</span> CR LF</span><br></pre></td></tr></table></figure></p>
+<p>请求协议<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">*&lt;参数数量&gt; CR LF</span><br><span class="line">$&lt;参数 1 的字节数量&gt; CR LF</span><br><span class="line">&lt;参数 1 的数据&gt; CR LF</span><br><span class="line">...</span><br><span class="line">$&lt;参数 N 的字节数量&gt; CR LF</span><br><span class="line">&lt;参数 N 的数据&gt; CR LF</span><br></pre></td></tr></table></figure></p>
 <p>redis的响应回复</p>
 <ul>
 <li>状态回复（status reply）的第一个字节是 “+”</li>
@@ -368,9 +362,9 @@ github地址 https://github.com/arthur-zhang/redis-server
 <li>多条批量回复（multi bulk reply）的第一个字节是 “*”</li>
 </ul>
 <p>这里的 <code>*1\r\n$4\r\nping\r\n</code></p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">┌───────────────┐</span><br><span class="line">│argument count │</span><br><span class="line">└───────────────┘</span><br><span class="line">        ▲</span><br><span class="line">        │</span><br><span class="line">        │</span><br><span class="line">  ┌───┬─┴─┬────┬───┬──┬────┬────┬────┐</span><br><span class="line">  │ * │ 1 │<span class="command">\r</span><span class="command">\n</span>│ <span class="formula">$ │4 │<span class="command">\r</span><span class="command">\n</span>│ping│<span class="command">\r</span><span class="command">\n</span>│</span><br><span class="line">  └───┴───┴────┴───┴┬─┴────┴────┴────┘</span><br><span class="line">                    │</span><br><span class="line">                    │</span><br><span class="line">                    │</span><br><span class="line">                    ▼</span><br><span class="line">        ┌──────────────────────────┐</span><br><span class="line">        │   argument<span class="special">#</span>1 byte size   │</span><br><span class="line">        └──────────────────────────┘</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">┌───────────────┐</span><br><span class="line">│argument count │</span><br><span class="line">└───────────────┘</span><br><span class="line">        ▲</span><br><span class="line">        │</span><br><span class="line">        │</span><br><span class="line">  ┌───┬─┴─┬────┬───┬──┬────┬────┬────┐</span><br><span class="line">  │ * │ 1 │\r\n│ $ │4 │\r\n│ping│\r\n│</span><br><span class="line">  └───┴───┴────┴───┴┬─┴────┴────┴────┘</span><br><span class="line">                    │</span><br><span class="line">                    │</span><br><span class="line">                    │</span><br><span class="line">                    ▼</span><br><span class="line">        ┌──────────────────────────┐</span><br><span class="line">        │   argument#1 byte size   │</span><br><span class="line">        └──────────────────────────┘</span><br></pre></td></tr></table></figure>
 <p>基本代码如下，监听6397，顺序处理请求，用<code>redis-cli</code>请求我们的server</p>
-<figure class="highlight css"><table><tr><td class="code"><pre><span class="line"><span class="tag">redis-cli</span> <span class="tag">-p</span> 6397</span><br><span class="line">127<span class="class">.0</span><span class="class">.0</span><span class="class">.1</span><span class="pseudo">:6397</span>&gt; <span class="tag">ping</span></span><br><span class="line"><span class="tag">pong</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">redis-cli -p 6397</span><br><span class="line">127.0.0.1:6397&gt; ping</span><br><span class="line">pong</span><br></pre></td></tr></table></figure>
 <p>部分代码如下</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisServer</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String PING = <span class="string">"ping"</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        ServerSocket serverSocket = <span class="keyword">new</span> ServerSocket(<span class="number">6397</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            System.out.println(<span class="string">"process incoming call"</span>);</span><br><span class="line">            Socket socket = serverSocket.accept();</span><br><span class="line">            InputStream in = socket.getInputStream();</span><br><span class="line">            OutputStream out = socket.getOutputStream();</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">int</span> read = in.read();</span><br><span class="line">            <span class="comment">// 开始符</span></span><br><span class="line">            <span class="keyword">if</span> (read == <span class="string">'*'</span>) &#123;</span><br><span class="line">                <span class="comment">// 参数个数，第一个参数为命令的名字</span></span><br><span class="line">                <span class="keyword">long</span> numberArgs = Protocol.readLong(in);</span><br><span class="line">                <span class="comment">// 命令和命令参数部分</span></span><br><span class="line">                <span class="keyword">byte</span>[][] bytesArray = <span class="keyword">new</span> <span class="keyword">byte</span>[(<span class="keyword">int</span>) numberArgs][];</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; numberArgs; i++) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (in.read() == <span class="string">'$'</span>) &#123;</span><br><span class="line">                        bytesArray[i] = Protocol.readBytes(in);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 判断是否是ping命令</span></span><br><span class="line">                <span class="keyword">if</span> (Arrays.equals(PING.getBytes(), bytesArray[<span class="number">0</span>])) &#123;</span><br><span class="line">                    System.out.println(<span class="string">"is ping cmd"</span>);</span><br><span class="line">                    <span class="comment">// 返回pong</span></span><br><span class="line">                    Protocol.writeResponsePong(out);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    socket.close();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -487,7 +481,7 @@ github地址 https://github.com/arthur-zhang/redis-server
           
             <div class="site-state-item site-state-posts">
               <a href="/">
-                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-count">21</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -496,7 +490,7 @@ github地址 https://github.com/arthur-zhang/redis-server
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -538,7 +532,7 @@ github地址 https://github.com/arthur-zhang/redis-server
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2017</span>
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

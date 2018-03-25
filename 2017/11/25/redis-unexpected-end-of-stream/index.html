@@ -1,0 +1,673 @@
+<!doctype html>
+
+
+
+
+<html class="theme-next mist" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="这几天线上出现了偶发性jedis的异常，堆栈如下 redis.clients.jedis.exceptions.JedisConnectionException: Unexpected end of stream.    at redis.clients.util.RedisInputStream.ensureFill(RedisInputStream.java:199)    at redis.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一次 Redis Unexpected end of stream 的除错分析记录">
+<meta property="og:url" content="http://yoursite.com/2017/11/25/redis-unexpected-end-of-stream/index.html">
+<meta property="og:site_name" content="Arthur Blog">
+<meta property="og:description" content="这几天线上出现了偶发性jedis的异常，堆栈如下 redis.clients.jedis.exceptions.JedisConnectionException: Unexpected end of stream.    at redis.clients.util.RedisInputStream.ensureFill(RedisInputStream.java:199)    at redis.">
+<meta property="og:image" content="http://yoursite.com/images/15115949120236.jpg">
+<meta property="og:image" content="http://yoursite.com/images/15115950836709.jpg">
+<meta property="og:image" content="http://yoursite.com/images/15115951848199.jpg">
+<meta property="og:image" content="http://yoursite.com/images/15115952364777.jpg">
+<meta property="og:image" content="http://yoursite.com/images/15115965826180.jpg">
+<meta property="og:updated_time" content="2017-11-25T08:23:28.058Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一次 Redis Unexpected end of stream 的除错分析记录">
+<meta name="twitter:description" content="这几天线上出现了偶发性jedis的异常，堆栈如下 redis.clients.jedis.exceptions.JedisConnectionException: Unexpected end of stream.    at redis.clients.util.RedisInputStream.ensureFill(RedisInputStream.java:199)    at redis.">
+<meta name="twitter:image" content="http://yoursite.com/images/15115949120236.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: false,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/11/25/redis-unexpected-end-of-stream/"/>
+
+
+
+
+
+  <title> 一次 Redis Unexpected end of stream 的除错分析记录 | Arthur Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=60116635";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Arthur Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/25/redis-unexpected-end-of-stream/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Arthur Zhang">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/default_avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Arthur Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Arthur Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                一次 Redis Unexpected end of stream 的除错分析记录
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-11-25T21:17:43+08:00">
+                2017-11-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/redis/" itemprop="url" rel="index">
+                    <span itemprop="name">redis</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这几天线上出现了偶发性jedis的异常，堆栈如下</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">redis.clients.jedis.exceptions.JedisConnectionException: Unexpected end of stream.</span><br><span class="line">    at redis.clients.util.RedisInputStream.ensureFill(RedisInputStream.java:<span class="number">199</span>)</span><br><span class="line">    at redis.clients.util.RedisInputStream.readByte(RedisInputStream.java:<span class="number">40</span>)</span><br><span class="line">    at redis.clients.jedis.Protocol.process(Protocol.java:<span class="number">151</span>)</span><br><span class="line">    at redis.clients.jedis.Protocol.read(Protocol.java:<span class="number">215</span>)</span><br><span class="line">    at redis.clients.jedis.Connection.readProtocolWithCheckingBroken(Connection.java:<span class="number">340</span>)</span><br><span class="line">    at redis.clients.jedis.Connection.getBinaryBulkReply(Connection.java:<span class="number">259</span>)</span><br><span class="line">    at redis.clients.jedis.Connection.getBulkReply(Connection.java:<span class="number">248</span>)</span><br><span class="line">    at redis.clients.jedis.Jedis.get(Jedis.java:<span class="number">153</span>)</span><br></pre></td></tr></table></figure>
+<p>看jedis的源码如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureFill</span><span class="params">()</span> <span class="keyword">throws</span> JedisConnectionException </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (count &gt;= limit) &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      limit = in.read(buf);</span><br><span class="line">      count = <span class="number">0</span>;</span><br><span class="line">      <span class="keyword">if</span> (limit == -<span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">// 这里抛了异常</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> JedisConnectionException(<span class="string">"Unexpected end of stream."</span>);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> JedisConnectionException(e);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>看起来是连接关闭的问题，但是为什么会出现呢？<br>我们看了当时出问题的时间点附近的redis连接数，发现了点东西</p>
+<p><img src="/images/15115949120236.jpg" alt=""></p>
+<p>对应业务告警如下<br><img src="/images/15115950836709.jpg" alt=""></p>
+<p>时间点上比较接近</p>
+<p>但是又不完全对的上时间</p>
+<p><img src="/images/15115951848199.jpg" alt=""></p>
+<p><img src="/images/15115952364777.jpg" alt=""></p>
+<p>也就是峰值过后的第十分钟才出现，查看了jedis的配置文件如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">redis.maxTotal = 5000000  // 值的合理性先不管他</span><br><span class="line">redis.maxIdle = 1000      // 值的合理性先不管他</span><br><span class="line">redis.minEvictableIdleTimeMillis = 300000    // 连接空闲大于5min的</span><br><span class="line">redis.numTestsPerEvictionRun = 3             // 每次检查3个连接</span><br><span class="line">redis.timeBetweenEvictionRunsMillis = 60000  // 每60s执行一次</span><br><span class="line">redis.hostName = redis-master-1.gz.cvte.cn</span><br><span class="line">redis.port = 6379</span><br><span class="line">redis.timeout = 2147483647</span><br><span class="line">redis.usePool = true</span><br></pre></td></tr></table></figure>
+<p>一开始，我们是怀疑jedis使用的commons-pool的空闲连接回收策略导致的，按上面的配置文件<br>每60s执行一次，每次检查3个连接，检查的条件是存活了5min</p>
+<p>那我就是写代码模拟一下这种情况，连接暴涨之后，因为回收策略的问题，导致的连接使用的问题，但是我不管怎么配置，都不能模拟出<code>Unexpected end of stream</code>的情况，那我就怀疑到底是不是因为回收的问题，因为上面的回收配置来看，10分钟也释放不了那么多空闲连接（1次/min <em> 10min </em> 3 = 30）</p>
+<p>那十分钟这个到底怎么来的，困扰了我几个小时，后来我去查看了一些redis的配置，好像想起来了什么<br>我们redis的配置文件设置的是<code>600s</code>超时，也就是<code>10</code>分钟</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; config get timeout</span><br><span class="line">1) &quot;timeout&quot;</span><br><span class="line">2) &quot;600&quot;</span><br><span class="line">127.0.0.1:6379&gt;</span><br></pre></td></tr></table></figure>
+<p>看起来非常像了，那我再模拟一下，我把本地的redis的超时时间设置成2s，然后，我来试一下</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function">fun <span class="title">main</span><span class="params">(args: Array&lt;String&gt;)</span> </span>&#123;</span><br><span class="line">    val jedis = RedisHelper.getInstance().get()</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        jedis.get(<span class="string">"helo"</span>)</span><br><span class="line">        Thread.sleep(<span class="number">3000</span>)</span><br><span class="line">        jedis.get(<span class="string">"hello"</span>)</span><br><span class="line">    &#125; <span class="keyword">catch</span> (ex: Exception) &#123;</span><br><span class="line">        ex.printStackTrace()</span><br><span class="line">    &#125;</span><br><span class="line">    System.`in`.read()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>激动得我差点留下了悔恨的泪水</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">redis.clients.jedis.exceptions.JedisConnectionException: Unexpected end of stream.</span><br><span class="line">    at redis.clients.util.RedisInputStream.ensureFill(RedisInputStream.java:<span class="number">199</span>)</span><br><span class="line">    at redis.clients.util.RedisInputStream.readByte(RedisInputStream.java:<span class="number">40</span>)</span><br><span class="line">    at redis.clients.jedis.Protocol.process(Protocol.java:<span class="number">151</span>)</span><br><span class="line">    at redis.clients.jedis.Protocol.read(Protocol.java:<span class="number">215</span>)</span><br><span class="line">    at redis.clients.jedis.Connection.readProtocolWithCheckingBroken(Connection.java:<span class="number">340</span>)</span><br><span class="line">    at redis.clients.jedis.Connection.getBinaryBulkReply(Connection.java:<span class="number">259</span>)</span><br><span class="line">    at redis.clients.jedis.Connection.getBulkReply(Connection.java:<span class="number">248</span>)</span><br><span class="line">    at redis.clients.jedis.Jedis.get(Jedis.java:<span class="number">153</span>)</span><br></pre></td></tr></table></figure>
+<p>2s 连接空闲，redis 回了一个<code>fin</code>包，来关闭这个连接</p>
+<p><img src="/images/15115965826180.jpg" alt=""></p>
+<p>那我们再拿来用，就抛了<code>JedisConnectionException: Unexpected end of stream</code>的异常</p>
+<p>当然你会说，我们实际使用的例子，用完一次就会换回去池子里，不会拿了连接，发一次命令，过一会再发</p>
+<p>其实这个不是个什么问题，本质上是一样的，不信我们来试一下，这次我们把连接池大小设置的小一点，比如1</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function">fun <span class="title">main</span><span class="params">(args: Array&lt;String&gt;)</span> </span>&#123;</span><br><span class="line">    val context = ClassPathXmlApplicationContext(<span class="string">"classpath:*.xml"</span>)</span><br><span class="line">    context.start()</span><br><span class="line">    val redisTemplate: RedisTemplate&lt;Serializable, Serializable&gt; = context.getBean(RedisTemplate::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>) <span class="title">as</span> <span class="title">RedisTemplate</span>&lt;<span class="title">Serializable</span>, <span class="title">Serializable</span>&gt;</span></span><br><span class="line">    redisTemplate.opsForValue().get("hallo")</span><br><span class="line">    Thread.sleep(<span class="number">3000</span>)</span><br><span class="line">    redisTemplate.opsForValue().get(<span class="string">"hallo"</span>)</span><br><span class="line">    System.`in`.read()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>嗯，出现了跟线上一模一样的堆栈</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Exception in thread <span class="string">"main"</span> org.springframework.data.redis.RedisConnectionFailureException: Unexpected end of stream.; nested exception is redis.clients.jedis.exceptions.JedisConnectionException: Unexpected end of stream.</span><br><span class="line">    at org.springframework.data.redis.connection.jedis.JedisExceptionConverter.convert(JedisExceptionConverter.java:<span class="number">67</span>)</span><br><span class="line">    at org.springframework.data.redis.connection.jedis.JedisExceptionConverter.convert(JedisExceptionConverter.java:<span class="number">41</span>)</span><br><span class="line">    at org.springframework.data.redis.PassThroughExceptionTranslationStrategy.translate(PassThroughExceptionTranslationStrategy.java:<span class="number">37</span>)</span><br><span class="line">    at org.springframework.data.redis.FallbackExceptionTranslationStrategy.translate(FallbackExceptionTranslationStrategy.java:<span class="number">37</span>)</span><br><span class="line">    at org.springframework.data.redis.connection.jedis.JedisConnection.convertJedisAccessException(JedisConnection.java:<span class="number">242</span>)</span><br><span class="line">    at org.springframework.data.redis.connection.jedis.JedisConnection.get(JedisConnection.java:<span class="number">1220</span>)</span><br><span class="line">    at org.springframework.data.redis.core.DefaultValueOperations$<span class="number">1</span>.inRedis(DefaultValueOperations.java:<span class="number">46</span>)</span><br><span class="line">    at org.springframework.data.redis.core.AbstractOperations$ValueDeserializingRedisCallback.doInRedis(AbstractOperations.java:<span class="number">57</span>)</span><br><span class="line">    at org.springframework.data.redis.core.RedisTemplate.execute(RedisTemplate.java:<span class="number">207</span>)</span><br><span class="line">    at org.springframework.data.redis.core.RedisTemplate.execute(RedisTemplate.java:<span class="number">169</span>)</span><br><span class="line">    at org.springframework.data.redis.core.AbstractOperations.execute(AbstractOperations.java:<span class="number">91</span>)</span><br><span class="line">    at org.springframework.data.redis.core.DefaultValueOperations.get(DefaultValueOperations.java:<span class="number">43</span>)</span><br><span class="line">    at JedisTest5Kt.main(JedisTest5.kt:<span class="number">24</span>)</span><br><span class="line">Caused by: redis.clients.jedis.exceptions.JedisConnectionException: Unexpected end of stream.</span><br><span class="line">    at redis.clients.util.RedisInputStream.ensureFill(RedisInputStream.java:<span class="number">199</span>)</span><br><span class="line">    at redis.clients.util.RedisInputStream.readByte(RedisInputStream.java:<span class="number">40</span>)</span><br><span class="line">    at redis.clients.jedis.Protocol.process(Protocol.java:<span class="number">151</span>)</span><br><span class="line">    at redis.clients.jedis.Protocol.read(Protocol.java:<span class="number">215</span>)</span><br><span class="line">    at redis.clients.jedis.Connection.readProtocolWithCheckingBroken(Connection.java:<span class="number">340</span>)</span><br><span class="line">    at redis.clients.jedis.Connection.getBinaryBulkReply(Connection.java:<span class="number">259</span>)</span><br><span class="line">    at redis.clients.jedis.BinaryJedis.get(BinaryJedis.java:<span class="number">244</span>)</span><br><span class="line">    at org.springframework.data.redis.connection.jedis.JedisConnection.get(JedisConnection.java:<span class="number">1218</span>)</span><br><span class="line">    ... <span class="number">7</span> more</span><br></pre></td></tr></table></figure>
+<p>那我们线上的原因可能就是：</p>
+<p>峰值出现的时候，我们拿了很多的连接，这些连接在峰值过去以后，10min，被redis超时断掉了，但是我们commons-pool没有去检查这些连接的是否可用，导致拿到了断掉的连接</p>
+<p>我们怎么避免上面的情况出现呢？<br>目前来看，牺牲一部分性能开启<code>testOnBorrow</code>是比较稳妥的，就是每次拿连接，都去ping一下，看连接是否可用，不可用就重建连接，我可以试一下，开了以后，程序完全正常</p>
+<p>上面配置还有哪些问题呢？</p>
+<ol>
+<li>连接设置的过大，推荐200以下</li>
+<li>空闲连接检查设置的不合理，现在看起来好像没有太大作用</li>
+<li>客户端最大timeout设置的过大</li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>挖坑鼓励奖</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechat-pay.jpeg" alt="Arthur Zhang WeChat Pay"/>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/23/maven-assembly-plugin-spring/" rel="next" title="一个maven-assembly-plugin spring打包的问题">
+                <i class="fa fa-chevron-left"></i> 一个maven-assembly-plugin spring打包的问题
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/30/http-client-connection-reset/" rel="prev" title="一次 http client 偶发性Connection Reset的除错分析记录">
+                一次 http client 偶发性Connection Reset的除错分析记录 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview sidebar-panel sidebar-panel-active">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/default_avatar.jpg"
+               alt="Arthur Zhang" />
+          <p class="site-author-name" itemprop="name">Arthur Zhang</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/">
+                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Arthur Zhang</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

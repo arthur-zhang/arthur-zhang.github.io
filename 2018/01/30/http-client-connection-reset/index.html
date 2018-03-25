@@ -1,0 +1,671 @@
+<!doctype html>
+
+
+
+
+<html class="theme-next mist" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="线上http client偶发性报Connection Reset的问题 [2018-01-24 09:38:22,162][http-nio-0.0.0.0-8084-exec-1782][ERROR][com.masaike.care.common.utils.HttpUtils:288] Connection resetjava.net.SocketException: Connection">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一次 http client 偶发性Connection Reset的除错分析记录">
+<meta property="og:url" content="http://yoursite.com/2018/01/30/http-client-connection-reset/index.html">
+<meta property="og:site_name" content="Arthur Blog">
+<meta property="og:description" content="线上http client偶发性报Connection Reset的问题 [2018-01-24 09:38:22,162][http-nio-0.0.0.0-8084-exec-1782][ERROR][com.masaike.care.common.utils.HttpUtils:288] Connection resetjava.net.SocketException: Connection">
+<meta property="og:image" content="http://yoursite.com/images/nginx-keepalvie1.png">
+<meta property="og:image" content="http://yoursite.com/images/connection-reset1.png">
+<meta property="og:image" content="http://yoursite.com/images/connection-reset2.png">
+<meta property="og:image" content="http://yoursite.com/images/connection-reset3.png">
+<meta property="og:image" content="http://yoursite.com/images/connection-reset4.png">
+<meta property="og:updated_time" content="2018-01-30T11:32:13.550Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一次 http client 偶发性Connection Reset的除错分析记录">
+<meta name="twitter:description" content="线上http client偶发性报Connection Reset的问题 [2018-01-24 09:38:22,162][http-nio-0.0.0.0-8084-exec-1782][ERROR][com.masaike.care.common.utils.HttpUtils:288] Connection resetjava.net.SocketException: Connection">
+<meta name="twitter:image" content="http://yoursite.com/images/nginx-keepalvie1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: false,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/01/30/http-client-connection-reset/"/>
+
+
+
+
+
+  <title> 一次 http client 偶发性Connection Reset的除错分析记录 | Arthur Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=60116635";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Arthur Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/30/http-client-connection-reset/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Arthur Zhang">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/default_avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Arthur Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Arthur Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                一次 http client 偶发性Connection Reset的除错分析记录
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-30T01:10:43+08:00">
+                2018-01-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/tcp/" itemprop="url" rel="index">
+                    <span itemprop="name">tcp</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>线上http client偶发性报<code>Connection Reset</code>的问题</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">[<span class="number">2018</span>-<span class="number">01</span>-<span class="number">24</span> <span class="number">09</span>:<span class="number">38</span>:<span class="number">22</span>,<span class="number">162</span>][http-nio-<span class="number">0.0</span>.0.0-<span class="number">8084</span>-exec-<span class="number">1782</span>][ERROR][com.masaike.care.common.utils.HttpUtils:<span class="number">288</span>] Connection reset</span><br><span class="line">java.net.SocketException: Connection reset</span><br><span class="line">    at java.net.SocketInputStream.read(SocketInputStream.java:<span class="number">209</span>)</span><br><span class="line">    at java.net.SocketInputStream.read(SocketInputStream.java:<span class="number">141</span>)</span><br><span class="line">    at org.apache.http.impl.io.SessionInputBufferImpl.streamRead(SessionInputBufferImpl.java:<span class="number">136</span>)</span><br><span class="line">    at org.apache.http.impl.io.SessionInputBufferImpl.fillBuffer(SessionInputBufferImpl.java:<span class="number">152</span>)</span><br><span class="line">    at org.apache.http.impl.io.SessionInputBufferImpl.readLine(SessionInputBufferImpl.java:<span class="number">270</span>)</span><br><span class="line">    at org.apache.http.impl.conn.DefaultHttpResponseParser.parseHead(DefaultHttpResponseParser.java:<span class="number">140</span>)</span><br><span class="line">    at org.apache.http.impl.conn.DefaultHttpResponseParser.parseHead(DefaultHttpResponseParser.java:<span class="number">57</span>)</span><br><span class="line">    at org.apache.http.impl.io.AbstractMessageParser.parse(AbstractMessageParser.java:<span class="number">260</span>)</span><br><span class="line">    at org.apache.http.impl.DefaultBHttpClientConnection.receiveResponseHeader(DefaultBHttpClientConnection.java:<span class="number">161</span>)</span><br><span class="line">    at org.apache.http.impl.conn.CPoolProxy.invoke(CPoolProxy.java:<span class="number">138</span>)</span><br><span class="line">    at org.apache.http.protocol.HttpRequestExecutor.doReceiveResponse(HttpRequestExecutor.java:<span class="number">271</span>)</span><br><span class="line">    at org.apache.http.protocol.HttpRequestExecutor.execute(HttpRequestExecutor.java:<span class="number">123</span>)</span><br><span class="line">    at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:<span class="number">254</span>)</span><br><span class="line">    at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:<span class="number">195</span>)</span><br><span class="line">    at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:<span class="number">86</span>)</span><br><span class="line">    at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:<span class="number">108</span>)</span><br><span class="line">    at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:<span class="number">186</span>)</span><br><span class="line">    at org.apache.http.impl.client.CloseableHttpClient.execute(Unknown Source)</span><br><span class="line">    at org.apache.http.impl.client.CloseableHttpClient.execute(Unknown Source)</span><br><span class="line">    at com.masaike.care.common.utils.HttpUtils.sendHttpRequest(HttpUtils.java:<span class="number">197</span>)</span><br><span class="line">    at com.masaike.care.remote.impl.service.AdminServiceApiImpl.getCodeV2(AdminServiceApiImpl.java:<span class="number">271</span>)</span><br><span class="line">    at com.masaike.care.common.impl.service.AccountServiceImpl.getDynamicCode(AccountServiceImpl.java:<span class="number">4305</span>)</span><br><span class="line">    at com.masaike.care.common.impl.service.AccountServiceImpl.sendVerificationCode(AccountServiceImpl.java:<span class="number">3344</span>)</span><br></pre></td></tr></table></figure>
+<p>拿到这个问题，我的第一反应是连接失效导致的，因为类似的问题，在redis连接池已经出现过（具体可以参见我的博客 <a href="http://arthur-zhang.github.io/2017/11/25/redis-unexpected-end-of-stream/" target="_blank" rel="noopener">http://arthur-zhang.github.io/2017/11/25/redis-unexpected-end-of-stream/</a> ）</p>
+<p>问题来了，什么时候连接会被断掉？一种最常见的可能是<code>nginx</code>的<code>keepalive</code>，有关系的有两个参数<code>keepalive_timeout</code>和<code>keepalive_requests</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">keepalive_timeout 默认值75s;</span><br><span class="line"></span><br><span class="line">The first parameter sets a timeout during which a keep-alive client connection will stay open on the server side. The zero value disables keep-alive client connections. </span><br><span class="line"></span><br><span class="line">keepalive_requests 默认值 100;</span><br><span class="line">Sets the maximum number of requests that can be served through one keep-alive connection. After the maximum number of requests are made, the connection is closed.</span><br></pre></td></tr></table></figure>
+<p>我们来实测一下<br>首先来测试一下<code>keepalive_timeout</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">    keepalive_timeout  10s;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>写个代码测试一下</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String url = <span class="string">"http://test.me.com/rest-ip.json"</span>;</span><br><span class="line">JSONObject obj = HttpUtils.sendHttpRequest(url, <span class="keyword">new</span> HashMap&lt;&gt;(), <span class="string">"GET"</span>);</span><br><span class="line">System.out.println(obj);</span><br><span class="line">System.in.read();</span><br></pre></td></tr></table></figure>
+<p>tcpdump抓包如下</p>
+<p><img src="/images/nginx-keepalvie1.png" alt=""></p>
+<p>可以看到10s以后，<code>nginx</code>就<code>主动</code>断掉了此http1.1的keep-alive连接</p>
+<p>那么一种可能的bug产生方式就是我拿到了一个即将过期的的连接，在执行http请求前的一瞬间刚好被nginx断掉了</p>
+<p>怎么模拟呢？自然想到的方式是，连建立连接，然后等连接失效，然后用这个失效的连接去发起http请求，肯定会失败</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String url = <span class="string">"http://test.me.com/rest-ip.json"</span>;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; Integer.MAX_VALUE; i++) &#123;</span><br><span class="line">    System.out.println(<span class="string">"\n##########&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;"</span> + i);</span><br><span class="line">    JSONObject a = HttpUtils.sendHttpRequest(url, <span class="keyword">new</span> HashMap&lt;&gt;(), <span class="string">"GET"</span>);</span><br><span class="line">    System.out.println(<span class="keyword">new</span> Date() + <span class="string">"&gt;&gt;"</span> + a);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>采用<code>debug</code>的方式，可以轻松的复现，方法之一是先访问一次（这个时候会从连接池申请一条连接），然后再次从连接池获取连接，debug断点等超时，然后等nginx超时发送fin包，然后debug继续，用这条有问题的连接去请求nginx服务器，果然抛出了我们想要的<code>Connection Reset</code></p>
+<p><img src="/images/connection-reset1.png" alt=""></p>
+<p>查看wireshark，可以看到Nginx果然回了一个RST包</p>
+<p><img src="/images/connection-reset2.png" alt=""></p>
+<p>然后，最外层的<code>HttpUtils.sendHttpRequest</code>并没有执行抛出我们想要的异常，正常执行了。<br>仔细看，原来刁刁的apache项目不是盖的，它是有retry的！</p>
+<p><img src="/images/connection-reset3.png" alt=""></p>
+<p>这个时候，其实是比较困惑的，难道不是因为这个原因嚒。</p>
+<p>继续debug一下，发现它有一个是否需要retry的判断，原来retry也是有条件的，不是所有的都需要retry，那点进去看一下</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">retryRequest</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">final</span> IOException exception,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">final</span> <span class="keyword">int</span> executionCount,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">final</span> HttpContext context)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 判断重试次数</span></span><br><span class="line">    <span class="keyword">if</span> (executionCount &gt; <span class="keyword">this</span>.retryCount) &#123;</span><br><span class="line">        <span class="comment">// Do not retry if over max retry count</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 判断是不是在异常黑名单</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.nonRetriableClasses.contains(exception.getClass())) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">final</span> Class&lt;? extends IOException&gt; rejectException : <span class="keyword">this</span>.nonRetriableClasses) &#123;</span><br><span class="line">            <span class="keyword">if</span> (rejectException.isInstance(exception)) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">final</span> HttpClientContext clientContext = HttpClientContext.adapt(context);</span><br><span class="line">    <span class="keyword">final</span> HttpRequest request = clientContext.getRequest();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(requestIsAborted(request))&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (handleAsIdempotent(request)) &#123;</span><br><span class="line">        <span class="comment">// Retry if the request is considered idempotent</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!clientContext.isRequestSent() || <span class="keyword">this</span>.requestSentRetryEnabled) &#123;</span><br><span class="line">        <span class="comment">// Retry if the request has not been sent fully or</span></span><br><span class="line">        <span class="comment">// if it's OK to retry methods that have been sent</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// otherwise do not retry</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个时候，英语好不好就有用了，<code>handleAsIdempotent</code>，Idempotent这个单词太熟悉不过了，<code>幂等</code>。原来幂等才需要retry，那么它怎么知道需不需要retry？</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">handleAsIdempotent</span><span class="params">(<span class="keyword">final</span> HttpRequest request)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> !(request <span class="keyword">instanceof</span> HttpEntityEnclosingRequest);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们印象中，GET请求应该是幂等的，POST请求应该不是幂等的，那么我们来试一哈，改一下代码</p>
+<p>测试以后确实，<code>GET</code>请求<code>handleAsIdempotent</code>返回的是<code>true</code>，POST请求<code>handleAsIdempotent</code>返回的是<code>false</code></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String url = <span class="string">"http://test.me.com/rest-ip.json"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; Integer.MAX_VALUE; i++) &#123;</span><br><span class="line">    System.out.println(<span class="string">"\n##########&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;"</span> + i);</span><br><span class="line">    JSONObject a = HttpUtils.sendHttpRequest(url, <span class="keyword">new</span> HashMap&lt;&gt;(), <span class="string">"POST"</span>);</span><br><span class="line">    System.out.println(<span class="keyword">new</span> Date() + <span class="string">"&gt;&gt;"</span> + a);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>再来debug一下，<code>HttpUtils.sendHttpRequest</code>终于挂了</p>
+<p><img src="/images/connection-reset4.png" alt=""></p>
+<p>然后查了下，我们线上挂掉的接口，正好都是POST请求。</p>
+<p>其实所有以上的分析，大概总结为：</p>
+<p>因为某些原因（不一定是因为keepalive），httpclient的连接池拿到了一条失效的连接去发起http请求，发生了Connection Reset，然后因为是POST请求，它认为可能不是幂等的，没有进行retry，导致了最终的程序异常</p>
+<p>番外篇：</p>
+<p>其实apache这个httpclient写得挺牛叉的，<br>1、对幂等请求可以retry<br>2、它在每个http连接发起之前，都会进行失效检查（默认行为，可关闭），类似于redis等连接池中的<code>testOnBorrow</code>，可能会有最多30ms的延时。4.3版本以上已废弃这种方式，采用了更高效的实现方式。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (config.isStaleConnectionCheckEnabled()) &#123;</span><br><span class="line">  <span class="comment">// validate connection</span></span><br><span class="line">  <span class="keyword">if</span> (managedConn.isOpen()) &#123;</span><br><span class="line">      <span class="keyword">this</span>.log.debug(<span class="string">"Stale connection check"</span>);</span><br><span class="line">      <span class="keyword">if</span> (managedConn.isStale()) &#123; <span class="comment">/// 进行失效检测</span></span><br><span class="line">          <span class="keyword">this</span>.log.debug(<span class="string">"Stale connection detected"</span>);</span><br><span class="line">          managedConn.close();</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但是这些都无法保证，真正执行的时候，http连接还是好的（这个其实是无解的），但是也没什么太大问题，这种情况，retry一次基本上就ok了。</p>
+<p>怎么解这个问题呢？很简单，自己实现一个retry的逻辑，在<code>Connection reset</code>的情况下进行retry，不管是不是幂等的接口。</p>
+<p>改完，测试，确实ok了。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>挖坑鼓励奖</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechat-pay.jpeg" alt="Arthur Zhang WeChat Pay"/>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/25/redis-unexpected-end-of-stream/" rel="next" title="一次 Redis Unexpected end of stream 的除错分析记录">
+                <i class="fa fa-chevron-left"></i> 一次 Redis Unexpected end of stream 的除错分析记录
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview sidebar-panel sidebar-panel-active">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/default_avatar.jpg"
+               alt="Arthur Zhang" />
+          <p class="site-author-name" itemprop="name">Arthur Zhang</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/">
+                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Arthur Zhang</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

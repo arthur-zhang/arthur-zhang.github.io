@@ -82,25 +82,16 @@
 
 
 
-<meta name="description" content="我们在把数组转list时，最常看到的实用方式是Arrays.asList
-比如
-String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&quot;jerry&quot;        &amp;#125;;List&amp;lt;String&amp;gt; list =  Arrays.asList(receivers);
-然后看下Arrays.asList的源码">
+<meta name="description" content="我们在把数组转list时，最常看到的实用方式是Arrays.asList 比如 String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&quot;jerry&quot;        &amp;#125;;List&amp;lt;String&amp;gt; list =  Arrays.asList(receivers); 然后看下Arrays.asList的源码">
 <meta property="og:type" content="article">
 <meta property="og:title" content="重新认识Arrays.asList（冷知识）">
 <meta property="og:url" content="http://yoursite.com/2016/12/24/arrays-aslist/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="我们在把数组转list时，最常看到的实用方式是Arrays.asList
-比如
-String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&quot;jerry&quot;        &amp;#125;;List&amp;lt;String&amp;gt; list =  Arrays.asList(receivers);
-然后看下Arrays.asList的源码">
+<meta property="og:description" content="我们在把数组转list时，最常看到的实用方式是Arrays.asList 比如 String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&quot;jerry&quot;        &amp;#125;;List&amp;lt;String&amp;gt; list =  Arrays.asList(receivers); 然后看下Arrays.asList的源码">
 <meta property="og:updated_time" content="2017-01-17T09:50:07.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="重新认识Arrays.asList（冷知识）">
-<meta name="twitter:description" content="我们在把数组转list时，最常看到的实用方式是Arrays.asList
-比如
-String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&quot;jerry&quot;        &amp;#125;;List&amp;lt;String&amp;gt; list =  Arrays.asList(receivers);
-然后看下Arrays.asList的源码">
+<meta name="twitter:description" content="我们在把数组转list时，最常看到的实用方式是Arrays.asList 比如 String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&quot;jerry&quot;        &amp;#125;;List&amp;lt;String&amp;gt; list =  Arrays.asList(receivers); 然后看下Arrays.asList的源码">
 
 
 
@@ -362,7 +353,7 @@ String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&q
 <p>我都这么说了，肯定不是的啦，不信我们来测试一下。</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 正常</span></span><br><span class="line">    List&lt;String&gt; foo = foo();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 正常</span></span><br><span class="line">    List&lt;String&gt; bar = bar();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 正常</span></span><br><span class="line">    java.util.ArrayList&lt;String&gt; foo1 = (java.util.ArrayList&lt;String&gt;) foo();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 挂掉 java.lang.ClassCastException: java.util.Arrays$ArrayList cannot be cast to java.util.ArrayList</span></span><br><span class="line">    java.util.ArrayList&lt;String&gt; bar1 = (java.util.ArrayList&lt;String&gt;) bar();</span><br><span class="line"></span><br><span class="line">    System.out.println(foo().getClass()); <span class="comment">// class java.util.ArrayList</span></span><br><span class="line">    System.out.println(bar().getClass()); <span class="comment">// class java.util.Arrays$ArrayList</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;String&gt; <span class="title">foo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    List&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    list.add(<span class="string">"tom"</span>);</span><br><span class="line">    <span class="keyword">return</span> list;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;String&gt; <span class="title">bar</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Arrays.asList(<span class="string">"tom"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>现在我们知道了<code>Arrays.asList</code>返回的并不是<code>java.util.ArrayList</code>,而是Arrays的静态内部类<code>Arrays.ArrayList</code>，源码如下：</p>
-<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">Arrays</span> &#123;</span></span><br><span class="line">    public static &lt;<span class="type">T</span>&gt; <span class="type">List</span>&lt;<span class="type">T</span>&gt; asList(<span class="type">T</span>... a) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="type">ArrayList</span>&lt;&gt;(a);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> static <span class="class"><span class="keyword">class</span> <span class="title">ArrayList&lt;E&gt;</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">AbstractList&lt;E&gt;</span> &#123;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class Arrays &#123;</span><br><span class="line">    public static &lt;T&gt; List&lt;T&gt; asList(T... a) &#123;</span><br><span class="line">        return new ArrayList&lt;&gt;(a);</span><br><span class="line">    &#125;</span><br><span class="line">    private static class ArrayList&lt;E&gt; extends AbstractList&lt;E&gt; &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>可能你又要想了，有什么关系，不影响我使用。加入你想再add或删除一个元素，那么就悲剧了</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">List&lt;String&gt; bar = Arrays.asList(<span class="string">"hello"</span>);</span><br><span class="line">bar.add(<span class="string">"world"</span>); <span class="comment">// java.lang.UnsupportedOperationException</span></span><br></pre></td></tr></table></figure>
 <p>因为Arrays.ArrayList的内部实现是一个<code>固定大小</code>的数组，正如它文档所说</p>
@@ -485,7 +476,7 @@ String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&q
           
             <div class="site-state-item site-state-posts">
               <a href="/">
-                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-count">21</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -494,7 +485,7 @@ String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&q
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -536,7 +527,7 @@ String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&q
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2017</span>
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
