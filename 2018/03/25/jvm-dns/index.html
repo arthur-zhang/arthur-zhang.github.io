@@ -90,7 +90,7 @@
 <meta property="og:description" content="最近有一个MySQL主从切换会不会影响业务，以及影响业务多久的问题，从我们在网上google得到资料都会告诉你跟networkaddress.cache.ttl networkaddress.cache.negative.ttl这两个值有关，这两个值在jre/lib/security/java.security中进行定义，打开看一下，发现默认情况下networkaddress.cache.ttl被">
 <meta property="og:image" content="http://yoursite.com/images/15219572407358.jpg">
 <meta property="og:image" content="http://yoursite.com/images/15219574662441.jpg">
-<meta property="og:updated_time" content="2018-03-25T06:14:58.000Z">
+<meta property="og:updated_time" content="2018-03-25T11:41:20.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JVM DNS缓存的理解误区">
 <meta name="twitter:description" content="最近有一个MySQL主从切换会不会影响业务，以及影响业务多久的问题，从我们在网上google得到资料都会告诉你跟networkaddress.cache.ttl networkaddress.cache.negative.ttl这两个值有关，这两个值在jre/lib/security/java.security中进行定义，打开看一下，发现默认情况下networkaddress.cache.ttl被">
@@ -108,7 +108,7 @@
     motion: false,
     duoshuo: {
       userId: 'undefined',
-      author: 'Author'
+      author: '博主'
     },
     algolia: {
       applicationID: '',
@@ -197,7 +197,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
-            Home
+            首页
           </a>
         </li>
       
@@ -207,7 +207,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
             
-            Categories
+            分类
           </a>
         </li>
       
@@ -217,7 +217,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
             
-            About
+            关于
           </a>
         </li>
       
@@ -287,7 +287,7 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Posted on</span>
+                <span class="post-meta-item-text">发表于</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-03-25T14:17:43+08:00">
                 2018-03-25
@@ -308,7 +308,7 @@
                 <i class="fa fa-folder-o"></i>
               </span>
               
-                <span class="post-meta-item-text">In</span>
+                <span class="post-meta-item-text">分类于</span>
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
@@ -357,7 +357,7 @@
 <p><img src="/images/15219572407358.jpg" alt=""></p>
 <p>现在就很清楚了，policy等于30，也就是缓存30s过期</p>
 <p>从dns解析协议层面，我们再抓包看一下，到底是不是这样的。<br>这个时候我写了一个不带连接池的数据库代码，每次都去新建连接（未释放）</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyDataSource</span> <span class="keyword">implements</span> <span class="title">DataSource</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Connection <span class="title">getConnection</span><span class="params">()</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">        Properties properties = <span class="keyword">new</span> Properties();</span><br><span class="line">        properties.put(<span class="string">"username"</span>, <span class="string">"seewo"</span>);</span><br><span class="line">        properties.put(<span class="string">"password"</span>, <span class="string">"seewo@cvte"</span>);</span><br><span class="line">        Connection conn = DriverManager.getConnection(</span><br><span class="line">                <span class="string">"jdbc:mysql://test1.ya.me:3306/seewo_easi_pass?useUnicode=true&amp;characterEncoding=UTF-8&amp;rewriteBatchedStatements=true&amp;useSSL=false"</span>,</span><br><span class="line">                properties);</span><br><span class="line">        <span class="keyword">return</span> conn;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyDataSource</span> <span class="keyword">implements</span> <span class="title">DataSource</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Connection <span class="title">getConnection</span><span class="params">()</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">        Properties properties = <span class="keyword">new</span> Properties();</span><br><span class="line">        properties.put(<span class="string">"username"</span>, <span class="string">"masaike"</span>);</span><br><span class="line">        properties.put(<span class="string">"password"</span>, <span class="string">"masaike@me"</span>);</span><br><span class="line">        Connection conn = DriverManager.getConnection(</span><br><span class="line">                <span class="string">"jdbc:mysql://test1.ya.me:3306/masaike?useUnicode=true&amp;characterEncoding=UTF-8&amp;rewriteBatchedStatements=true&amp;useSSL=false"</span>,</span><br><span class="line">                properties);</span><br><span class="line">        <span class="keyword">return</span> conn;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><img src="/images/15219574662441.jpg" alt=""></p>
 <p>这下就很清楚了<br><code>30s，缓存会过期，如果需要新建连接的话，就会去解析DNS，拿到新的ip</code>。</p>
 <p>那个文档里其实有写这个</p>
@@ -471,10 +471,10 @@
       
         <ul class="sidebar-nav motion-element">
           <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            Table of Contents
+            文章目录
           </li>
           <li class="sidebar-nav-overview" data-target="site-overview">
-            Overview
+            站点概览
           </li>
         </ul>
       
@@ -493,7 +493,7 @@
             <div class="site-state-item site-state-posts">
               <a href="/">
                 <span class="site-state-item-count">22</span>
-                <span class="site-state-item-name">posts</span>
+                <span class="site-state-item-name">日志</span>
               </a>
             </div>
           
@@ -502,7 +502,7 @@
             <div class="site-state-item site-state-categories">
               <a href="/categories">
                 <span class="site-state-item-count">12</span>
-                <span class="site-state-item-name">categories</span>
+                <span class="site-state-item-name">分类</span>
               </a>
             </div>
           
