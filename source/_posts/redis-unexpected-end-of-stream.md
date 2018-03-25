@@ -169,6 +169,9 @@ Caused by: redis.clients.jedis.exceptions.JedisConnectionException: Unexpected e
     ... 7 more
 ```
 
+那我们线上的原因可能就是：
+
+峰值出现的时候，我们拿了很多的连接，这些连接在峰值过去以后，10min，被redis超时断掉了，但是我们commons-pool没有去检查这些连接的是否可用，导致拿到了断掉的连接
 
 我们怎么避免上面的情况出现呢？
 目前来看，牺牲一部分性能开启`testOnBorrow`是比较稳妥的，就是每次拿连接，都去ping一下，看连接是否可用，不可用就重建连接，我可以试一下，开了以后，程序完全正常
