@@ -82,19 +82,19 @@
 
 
 
-<meta name="description" content="最近有一个MySQL主从切换会不会影响业务，以及影响业务多久的问题，从我们在网上google得到资料都会告诉你跟networkaddress.cache.ttl networkaddress.cache.negative.ttl这两个值有关，这两个值在jre/lib/security/java.security中进行定义，打开看一下，发现默认情况下networkaddress.cache.ttl被">
+<meta name="description" content="线上出现了几次接口400的异常，排查起来比较有意思，通过nginx代理过去就会400，通过ip直连过去，就不会出现，机智的我用tcpdump抓了一个包，搞下来看了一下，居然没有发现两种请求有什么不同（当然是我没发现） 我猜可能是刚好触发了tomcat的header最大大小的限制了，放到我自己编译的tomcat中开启debug模式，果然出现了异常  看到是Request header is too">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JVM DNS缓存的理解误区">
-<meta property="og:url" content="http://yoursite.com/2018/03/25/jvm-dns/index.html">
+<meta property="og:title" content="一次 tomcat 400 异常">
+<meta property="og:url" content="http://yoursite.com/2018/04/27/tomcat-header-too-large/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="最近有一个MySQL主从切换会不会影响业务，以及影响业务多久的问题，从我们在网上google得到资料都会告诉你跟networkaddress.cache.ttl networkaddress.cache.negative.ttl这两个值有关，这两个值在jre/lib/security/java.security中进行定义，打开看一下，发现默认情况下networkaddress.cache.ttl被">
-<meta property="og:image" content="http://yoursite.com/images/15219572407358.jpg">
-<meta property="og:image" content="http://yoursite.com/images/15219574662441.jpg">
-<meta property="og:updated_time" content="2018-03-25T11:41:20.000Z">
+<meta property="og:description" content="线上出现了几次接口400的异常，排查起来比较有意思，通过nginx代理过去就会400，通过ip直连过去，就不会出现，机智的我用tcpdump抓了一个包，搞下来看了一下，居然没有发现两种请求有什么不同（当然是我没发现） 我猜可能是刚好触发了tomcat的header最大大小的限制了，放到我自己编译的tomcat中开启debug模式，果然出现了异常  看到是Request header is too">
+<meta property="og:image" content="http://yoursite.com/images/15248405028586.jpg">
+<meta property="og:image" content="http://yoursite.com/images/15248408539742.jpg">
+<meta property="og:updated_time" content="2018-04-27T15:05:08.024Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="JVM DNS缓存的理解误区">
-<meta name="twitter:description" content="最近有一个MySQL主从切换会不会影响业务，以及影响业务多久的问题，从我们在网上google得到资料都会告诉你跟networkaddress.cache.ttl networkaddress.cache.negative.ttl这两个值有关，这两个值在jre/lib/security/java.security中进行定义，打开看一下，发现默认情况下networkaddress.cache.ttl被">
-<meta name="twitter:image" content="http://yoursite.com/images/15219572407358.jpg">
+<meta name="twitter:title" content="一次 tomcat 400 异常">
+<meta name="twitter:description" content="线上出现了几次接口400的异常，排查起来比较有意思，通过nginx代理过去就会400，通过ip直连过去，就不会出现，机智的我用tcpdump抓了一个包，搞下来看了一下，居然没有发现两种请求有什么不同（当然是我没发现） 我猜可能是刚好触发了tomcat的header最大大小的限制了，放到我自己编译的tomcat中开启debug模式，果然出现了异常  看到是Request header is too">
+<meta name="twitter:image" content="http://yoursite.com/images/15248405028586.jpg">
 
 
 
@@ -122,13 +122,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/03/25/jvm-dns/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/04/27/tomcat-header-too-large/"/>
 
 
 
 
 
-  <title> JVM DNS缓存的理解误区 | Arthur Blog </title>
+  <title> 一次 tomcat 400 异常 | Arthur Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
@@ -250,7 +250,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/25/jvm-dns/">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/27/tomcat-header-too-large/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="Arthur Zhang">
@@ -274,7 +274,7 @@
             
             
               
-                JVM DNS缓存的理解误区
+                一次 tomcat 400 异常
               
             
           </h1>
@@ -289,8 +289,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-03-25T14:17:43+08:00">
-                2018-03-25
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-04-27T16:11:18+08:00">
+                2018-04-27
               </time>
             
 
@@ -312,8 +312,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JVM/" itemprop="url" rel="index">
-                    <span itemprop="name">JVM</span>
+                  <a href="/categories/Tomcat/" itemprop="url" rel="index">
+                    <span itemprop="name">Tomcat</span>
                   </a>
                 </span>
 
@@ -347,32 +347,21 @@
       
 
       
-        <p>最近有一个MySQL主从切换会不会影响业务，以及影响业务多久的问题，从我们在网上google得到资料都会告诉你跟<code>networkaddress.cache.ttl</code> <code>networkaddress.cache.negative.ttl</code>这两个值有关，这两个值在<code>jre/lib/security/java.security</code>中进行定义，打开看一下，发现默认情况下<br><code>networkaddress.cache.ttl</code>被注释掉了，<code>networkaddress.cache.negative.ttl</code>值是10</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#</span><br><span class="line"># The Java-level namelookup cache policy for successful lookups:</span><br><span class="line">#</span><br><span class="line"># any negative value: caching forever</span><br><span class="line"># any positive value: the number of seconds to cache an address for</span><br><span class="line"># zero: do not cache</span><br><span class="line">#</span><br><span class="line"># default value is forever (FOREVER). For security reasons, this</span><br><span class="line"># caching is made forever when a security manager is set. When a security</span><br><span class="line"># manager is not set, the default behavior in this implementation</span><br><span class="line"># is to cache for 30 seconds.</span><br><span class="line">#</span><br><span class="line"># NOTE: setting this to anything other than the default value can have</span><br><span class="line">#       serious security implications. Do not set it unless</span><br><span class="line">#       you are sure you are not exposed to DNS spoofing attack.</span><br><span class="line">#</span><br><span class="line">#networkaddress.cache.ttl=-1</span><br></pre></td></tr></table></figure>
-<p>我们看到第一句<code>default value is forever</code>，就以为会永久缓存，但是实际表现的行为并不是这样。我们切换DNS解析，断掉MySQL的连接，Java业务在不重启的情况下会自动重连新的ip，根本不是永久缓存。那到底缓存是不是永久缓存，如果不是，缓存多久，就值得我们去研究了。</p>
-<p><code>不然我们以后切DNS解析，都需要慎重考虑JVM对DNS缓存带来对业务方的的负面影响了</code></p>
-<h4 id="1-先来做一个实验，验证是不是永久缓存"><a href="#1-先来做一个实验，验证是不是永久缓存" class="headerlink" title="1.先来做一个实验，验证是不是永久缓存"></a>1.先来做一个实验，验证是不是永久缓存</h4><p>实验步骤是模拟主从切换。 在本机搭建dnsmasq服务（brew install 就好），写一个Java的查数据的程序使用域名<code>test1.ya.me:3306</code>去连接数据，2s查询一次数据库。<br>跑一段时间，切换DNS，并没有生效，因为是使用的连接池，后续并没有建连接，在MySQL那里kill连接以后，发现马上重连到了新的ip上。</p>
-<p>也就是<code>缓存策略一定不是永久缓存</code></p>
-<h4 id="2-到底是什么策略"><a href="#2-到底是什么策略" class="headerlink" title="2.到底是什么策略"></a>2.到底是什么策略</h4><p>经过debug，跟到了<code>java.net.InetAddress</code>里面这个函数</p>
-<p><img src="/images/15219572407358.jpg" alt=""></p>
-<p>现在就很清楚了，policy等于30，也就是缓存30s过期</p>
-<p>从dns解析协议层面，我们再抓包看一下，到底是不是这样的。<br>这个时候我写了一个不带连接池的数据库代码，每次都去新建连接（未释放）</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyDataSource</span> <span class="keyword">implements</span> <span class="title">DataSource</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Connection <span class="title">getConnection</span><span class="params">()</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">        Properties properties = <span class="keyword">new</span> Properties();</span><br><span class="line">        properties.put(<span class="string">"username"</span>, <span class="string">"masaike"</span>);</span><br><span class="line">        properties.put(<span class="string">"password"</span>, <span class="string">"masaike@me"</span>);</span><br><span class="line">        Connection conn = DriverManager.getConnection(</span><br><span class="line">                <span class="string">"jdbc:mysql://test1.ya.me:3306/masaike?useUnicode=true&amp;characterEncoding=UTF-8&amp;rewriteBatchedStatements=true&amp;useSSL=false"</span>,</span><br><span class="line">                properties);</span><br><span class="line">        <span class="keyword">return</span> conn;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img src="/images/15219574662441.jpg" alt=""></p>
-<p>这下就很清楚了<br><code>30s，缓存会过期，如果需要新建连接的话，就会去解析DNS，拿到新的ip</code>。</p>
-<p>那个文档里其实有写这个</p>
-<blockquote>
-<p>When a security manager is not set, the default behavior in this implementation is to cache for 30 seconds.</p>
-</blockquote>
-<p>只是我们不知道，到底这个if else会到哪一个。</p>
-<p>那么对于我们后续的工作的意义有如下几个</p>
-<ul>
-<li>所有网络请求，优先考虑使用连接池</li>
-</ul>
-<p>对于频繁建立连接、断开连接的应用，需要把DNS缓存时间设置长一点，避免频繁的DNS解析（比如不用连接池技术的http连接库，线上很多http调用慢，也有一部分可能是这个原因）</p>
-<ul>
-<li>切换DNS后，需要断掉以前的所有连接，以免因为连接池导致未连接到新的ip上</li>
-</ul>
+        <p>线上出现了几次接口400的异常，排查起来比较有意思，通过nginx代理过去就会400，通过ip直连过去，就不会出现，机智的我用tcpdump抓了一个包，搞下来看了一下，居然没有发现两种请求有什么不同（当然是我没发现）</p>
+<p>我猜可能是刚好触发了tomcat的header最大大小的限制了，放到我自己编译的tomcat中开启debug模式，果然出现了异常</p>
+<p><img src="/images/15248405028586.jpg" alt=""></p>
+<p>看到是Request header is too large异常，那到底是多大？</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">parseHeaders</span><span class="params">()</span></span></span><br><span class="line"><span class="function">       <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">       <span class="keyword">if</span> (!parsingHeader) &#123;</span><br><span class="line">           <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(</span><br><span class="line">                   sm.getString(<span class="string">"iib.parseheaders.ise.error"</span>));</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       HeaderParseStatus status = HeaderParseStatus.HAVE_MORE_HEADERS;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">do</span> &#123;</span><br><span class="line">           status = parseHeader();</span><br><span class="line">           <span class="comment">// Checking that</span></span><br><span class="line">           <span class="comment">// (1) Headers plus request line size does not exceed its limit</span></span><br><span class="line">           <span class="comment">// (2) There are enough bytes to avoid expanding the buffer when</span></span><br><span class="line">           <span class="comment">// reading body</span></span><br><span class="line">           <span class="comment">// Technically, (2) is technical limitation, (1) is logical</span></span><br><span class="line">           <span class="comment">// limitation to enforce the meaning of headerBufferSize</span></span><br><span class="line">           <span class="comment">// From the way how buf is allocated and how blank lines are being</span></span><br><span class="line">           <span class="comment">// read, it should be enough to check (1) only.</span></span><br><span class="line">           <span class="keyword">if</span> (pos &gt; headerBufferSize</span><br><span class="line">                   || buf.length - pos &lt; socketReadBufferSize) &#123;</span><br><span class="line">               <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(</span><br><span class="line">                       sm.getString(<span class="string">"iib.requestheadertoolarge.error"</span>));</span><br><span class="line">           &#125;</span><br><span class="line">       &#125; <span class="keyword">while</span> ( status == HeaderParseStatus.HAVE_MORE_HEADERS );</span><br><span class="line">       <span class="keyword">if</span> (status == HeaderParseStatus.DONE) &#123;</span><br><span class="line">           parsingHeader = <span class="keyword">false</span>;</span><br><span class="line">           end = pos;</span><br><span class="line">           <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">       &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">           <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>大小跟headerBufferSize有关，这个值最终是由决定</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">AbstractHttp11Protocol.java</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Maximum size of the HTTP message header.</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> maxHttpHeaderSize = <span class="number">8</span> * <span class="number">1024</span>;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getMaxHttpHeaderSize</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> maxHttpHeaderSize; &#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到是8192</p>
+<p>这个值可以通过tomcat的配置文件进行修改，因为我觉得没什么修改的必要，已经够大了，就不放出来了。</p>
+<p>那回到上面的问题，为什么经过了nginx就好出问题呢？</p>
+<p>仔细看了wireshark的包，发现了真相，原理nginx会增加一个<code>X-Forwarded-Url</code>的header，会重复一遍url，我们本来的header在7k左右，然后有了这个header，瞬间double到了14k，超过了tomcat的header最大大小，被tomcat直接拒绝了。</p>
+<p><img src="/images/15248408539742.jpg" alt=""></p>
+<p>如果你还不会从源码调试tomcat，那么这篇文章就对你有帮助啦</p>
+<p>下面这个链接是可以直接用Intellj打开并进行debug的，基于tomcat8.0，做了一些细微的修改以便编译可以通过。</p>
+<p><a href="https://github.com/arthur-zhang/tomcat-code-reading" target="_blank" rel="noopener">https://github.com/arthur-zhang/tomcat-code-reading</a></p>
 
       
     </div>
@@ -414,8 +403,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/01/30/http-client-connection-reset/" rel="next" title="一次 http client 偶发性Connection Reset的除错分析记录">
-                <i class="fa fa-chevron-left"></i> 一次 http client 偶发性Connection Reset的除错分析记录
+              <a href="/2018/03/25/jvm-dns/" rel="next" title="JVM DNS缓存的理解误区">
+                <i class="fa fa-chevron-left"></i> JVM DNS缓存的理解误区
               </a>
             
           </div>
@@ -423,10 +412,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/04/27/tomcat-header-too-large/" rel="prev" title="一次 tomcat 400 异常">
-                一次 tomcat 400 异常 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -473,17 +458,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview sidebar-panel">
+      <section class="site-overview sidebar-panel sidebar-panel-active">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/default_avatar.jpg"
@@ -532,22 +508,6 @@
 
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-先来做一个实验，验证是不是永久缓存"><span class="nav-number">1.</span> <span class="nav-text">1.先来做一个实验，验证是不是永久缓存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-到底是什么策略"><span class="nav-number">2.</span> <span class="nav-text">2.到底是什么策略</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
     </div>
