@@ -82,16 +82,24 @@
 
 
 
-<meta name="description" content="我们在把数组转list时，最常看到的实用方式是Arrays.asList 比如 String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&quot;jerry&quot;        &amp;#125;;List&amp;lt;String&amp;gt; list =  Arrays.asList(receivers); 然后看下Arrays.asList的源码">
+<meta name="description" content="Bloom过滤器它要解决什么问题假设我们有一个1000W行的手机号黑名单数据库，现在有一个需求，给一批用户发送短信推送，要求用户手机号不在黑名单数据库里面。 如何判断A在集合B中？  有哪些数据结构可以表示一个set？  Self-balancing binary search trees  Tries  Hash tables  Simple arrays  Linked lists of th">
 <meta property="og:type" content="article">
-<meta property="og:title" content="重新认识Arrays.asList（冷知识）">
-<meta property="og:url" content="http://yoursite.com/2016/12/24/arrays-aslist/index.html">
+<meta property="og:title" content="BloomFilter基础">
+<meta property="og:url" content="http://yoursite.com/2018/05/03/bloom-filter/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="我们在把数组转list时，最常看到的实用方式是Arrays.asList 比如 String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&quot;jerry&quot;        &amp;#125;;List&amp;lt;String&amp;gt; list =  Arrays.asList(receivers); 然后看下Arrays.asList的源码">
-<meta property="og:updated_time" content="2017-01-17T09:50:07.000Z">
+<meta property="og:description" content="Bloom过滤器它要解决什么问题假设我们有一个1000W行的手机号黑名单数据库，现在有一个需求，给一批用户发送短信推送，要求用户手机号不在黑名单数据库里面。 如何判断A在集合B中？  有哪些数据结构可以表示一个set？  Self-balancing binary search trees  Tries  Hash tables  Simple arrays  Linked lists of th">
+<meta property="og:image" content="http://yoursite.com/media/15252661702341/15252706234780.jpg">
+<meta property="og:image" content="http://yoursite.com/media/15252661702341/15252667059379.jpg">
+<meta property="og:image" content="http://yoursite.com/media/15252661702341/15252702421880.jpg">
+<meta property="og:image" content="http://yoursite.com/media/15252661702341/15253106809572.jpg">
+<meta property="og:image" content="http://yoursite.com/media/15252661702341/15253103089937.jpg">
+<meta property="og:image" content="http://yoursite.com/media/15252661702341/15253218057406.jpg">
+<meta property="og:image" content="http://yoursite.com/media/15252661702341/15253217865131.jpg">
+<meta property="og:updated_time" content="2018-05-03T04:47:09.458Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="重新认识Arrays.asList（冷知识）">
-<meta name="twitter:description" content="我们在把数组转list时，最常看到的实用方式是Arrays.asList 比如 String[] receivers  = new String [] &amp;#123;                &quot;tom&quot;,&quot;jerry&quot;        &amp;#125;;List&amp;lt;String&amp;gt; list =  Arrays.asList(receivers); 然后看下Arrays.asList的源码">
+<meta name="twitter:title" content="BloomFilter基础">
+<meta name="twitter:description" content="Bloom过滤器它要解决什么问题假设我们有一个1000W行的手机号黑名单数据库，现在有一个需求，给一批用户发送短信推送，要求用户手机号不在黑名单数据库里面。 如何判断A在集合B中？  有哪些数据结构可以表示一个set？  Self-balancing binary search trees  Tries  Hash tables  Simple arrays  Linked lists of th">
+<meta name="twitter:image" content="http://yoursite.com/media/15252661702341/15252706234780.jpg">
 
 
 
@@ -119,13 +127,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2016/12/24/arrays-aslist/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/05/03/bloom-filter/"/>
 
 
 
 
 
-  <title> 重新认识Arrays.asList（冷知识） | Arthur Blog </title>
+  <title> BloomFilter基础 | Arthur Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
@@ -247,7 +255,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/12/24/arrays-aslist/">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/03/bloom-filter/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="Arthur Zhang">
@@ -271,7 +279,7 @@
             
             
               
-                重新认识Arrays.asList（冷知识）
+                BloomFilter基础
               
             
           </h1>
@@ -286,8 +294,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-12-24T21:17:43+08:00">
-                2016-12-24
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-05-03T16:11:18+08:00">
+                2018-05-03
               </time>
             
 
@@ -309,8 +317,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java再入门/" itemprop="url" rel="index">
-                    <span itemprop="name">Java再入门</span>
+                  <a href="/categories/数据结构/" itemprop="url" rel="index">
+                    <span itemprop="name">数据结构</span>
                   </a>
                 </span>
 
@@ -344,24 +352,52 @@
       
 
       
-        <p>我们在把数组转list时，最常看到的实用方式是<code>Arrays.asList</code></p>
-<p>比如</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String[] receivers  = <span class="keyword">new</span> String [] &#123;</span><br><span class="line">                <span class="string">"tom"</span>,<span class="string">"jerry"</span></span><br><span class="line">        &#125;;</span><br><span class="line">List&lt;String&gt; list =  Arrays.asList(receivers);</span><br></pre></td></tr></table></figure>
-<p>然后看下<code>Arrays.asList</code>的源码</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">List&lt;T&gt; <span class="title">asList</span><span class="params">(T... a)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ArrayList&lt;&gt;(a);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>是不是跟你想的一样，这个方法把<code>array</code>转为了<code>java.util.ArrayList</code>？</p>
-<p>我都这么说了，肯定不是的啦，不信我们来测试一下。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 正常</span></span><br><span class="line">    List&lt;String&gt; foo = foo();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 正常</span></span><br><span class="line">    List&lt;String&gt; bar = bar();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 正常</span></span><br><span class="line">    java.util.ArrayList&lt;String&gt; foo1 = (java.util.ArrayList&lt;String&gt;) foo();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 挂掉 java.lang.ClassCastException: java.util.Arrays$ArrayList cannot be cast to java.util.ArrayList</span></span><br><span class="line">    java.util.ArrayList&lt;String&gt; bar1 = (java.util.ArrayList&lt;String&gt;) bar();</span><br><span class="line"></span><br><span class="line">    System.out.println(foo().getClass()); <span class="comment">// class java.util.ArrayList</span></span><br><span class="line">    System.out.println(bar().getClass()); <span class="comment">// class java.util.Arrays$ArrayList</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;String&gt; <span class="title">foo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    List&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    list.add(<span class="string">"tom"</span>);</span><br><span class="line">    <span class="keyword">return</span> list;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;String&gt; <span class="title">bar</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Arrays.asList(<span class="string">"tom"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>现在我们知道了<code>Arrays.asList</code>返回的并不是<code>java.util.ArrayList</code>,而是Arrays的静态内部类<code>Arrays.ArrayList</code>，源码如下：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public class Arrays &#123;</span><br><span class="line">    public static &lt;T&gt; List&lt;T&gt; asList(T... a) &#123;</span><br><span class="line">        return new ArrayList&lt;&gt;(a);</span><br><span class="line">    &#125;</span><br><span class="line">    private static class ArrayList&lt;E&gt; extends AbstractList&lt;E&gt; &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可能你又要想了，有什么关系，不影响我使用。加入你想再add或删除一个元素，那么就悲剧了</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">List&lt;String&gt; bar = Arrays.asList(<span class="string">"hello"</span>);</span><br><span class="line">bar.add(<span class="string">"world"</span>); <span class="comment">// java.lang.UnsupportedOperationException</span></span><br></pre></td></tr></table></figure>
-<p>因为Arrays.ArrayList的内部实现是一个<code>固定大小</code>的数组，正如它文档所说</p>
+        <h1 id="Bloom过滤器"><a href="#Bloom过滤器" class="headerlink" title="Bloom过滤器"></a>Bloom过滤器</h1><h1 id="它要解决什么问题"><a href="#它要解决什么问题" class="headerlink" title="它要解决什么问题"></a>它要解决什么问题</h1><p>假设我们有一个<code>1000W</code>行的手机号黑名单数据库，现在有一个需求，给一批用户发送短信推送，要求用户手机号不在黑名单数据库里面。</p>
+<p>如何判断<code>A</code>在集合<code>B</code>中？</p>
+<p><img src="/media/15252661702341/15252706234780.jpg" alt=""></p>
+<p>有哪些数据结构可以表示一个<code>set</code>？</p>
+<ul>
+<li>Self-balancing binary search trees </li>
+<li>Tries </li>
+<li>Hash tables </li>
+<li>Simple arrays </li>
+<li>Linked lists of the entries</li>
+</ul>
+<p>上面的数据结构大都要求把实际数据存储到数据节点中，有些不够快、有些太大了</p>
+<p><code>Bloom过滤器</code>粉墨登场</p>
+<p>核心原理是： </p>
 <blockquote>
-<p>Returns a fixed-size list backed by the specified array</p>
+<p>⼏个hash函数, 计算出n个结果, 并在<code>ﬁlter</code>数据中将对应的位置为1</p>
 </blockquote>
-<p>那么要把array转换为一个可变大小的list，要怎么处理？</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">ArrayList&lt;String&gt; arrayList = <span class="keyword">new</span> ArrayList&lt;String&gt;(Arrays.asList(arr));</span><br></pre></td></tr></table></figure>
+<p><img src="/media/15252661702341/15252667059379.jpg" alt=""></p>
+<h1 id="数据查询"><a href="#数据查询" class="headerlink" title="数据查询"></a>数据查询</h1><p>查询是否在结果集中, 要⽤同样的hash算法, ⽐对是否所有结果位都为<code>1</code></p>
+<ul>
+<li>如果返回<code>1</code>，数据<code>可能</code>在集合中</li>
+<li>如果返回<code>0</code>，数据<code>绝逼不可能</code>在集合中</li>
+</ul>
+<p><img src="/media/15252661702341/15252702421880.jpg" alt=""></p>
+<h1 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h1><p>看到下面这些，你就可以放心大胆的用啦</p>
+<ul>
+<li><code>Google BigTable</code>, <code>Apache HBase</code> 以及 <code>Apache Cassandra</code> 使⽤bloomﬁlter检查字段是否存在.</li>
+<li><code>Google Chrome</code> 浏览器, 使⽤bloomﬁlter检查恶意⽹址.</li>
+<li><code>Squid</code> 代理服务器使⽤bloomﬁlter检查缓存是否存在.</li>
+<li><code>Bitcoin</code> ⽐特币使⽤bloomﬁlter提升数据钱包的同步效率.</li>
+<li><code>MongoDB</code> 使⽤bloomﬁlter检查数据是否位于某个节点.</li>
+<li><code>Exim</code> 使⽤bloomﬁlter防范⾼频次的恶意邮件. </li>
+<li>许多搜索引擎⼚商使⽤bloomﬁlter帮助爬⾍防⽌多次爬取同⼀个url地址.</li>
+</ul>
+<h1 id="使用的局限性"><a href="#使用的局限性" class="headerlink" title="使用的局限性"></a>使用的局限性</h1><p>不支持删除操作，如要支持，需要使用<code>counting bloomﬁlter ﬁlters</code>的变种</p>
+<h1 id="误判的概率"><a href="#误判的概率" class="headerlink" title="误判的概率"></a>误判的概率</h1><ul>
+<li><code>m</code>是数组的位数</li>
+<li><code>k</code>是哈希函数的个数</li>
+<li><code>n</code>是要插入的原始的个数</li>
+</ul>
+<p>下面是一个神奇的公式</p>
+<p><img src="/media/15252661702341/15253106809572.jpg" alt=""></p>
+<p>合理的<code>k</code>值<br><img src="/media/15252661702341/15253103089937.jpg" alt=""></p>
+<p><img src="/media/15252661702341/15253218057406.jpg" alt=""></p>
+<p><img src="/media/15252661702341/15253217865131.jpg" alt=""></p>
+<h1 id="实际演示"><a href="#实际演示" class="headerlink" title="实际演示"></a>实际演示</h1><p><a href="http://billmill.org/bloomfilter-tutorial/" target="_blank" rel="noopener">http://billmill.org/bloomfilter-tutorial/</a></p>
 
       
     </div>
@@ -403,8 +439,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/12/23/try-with-resource-byte-code/" rel="next" title="有趣的try-with-resource实现">
-                <i class="fa fa-chevron-left"></i> 有趣的try-with-resource实现
+              <a href="/2018/04/27/tomcat-header-too-large/" rel="next" title="一次 tomcat 400 异常">
+                <i class="fa fa-chevron-left"></i> 一次 tomcat 400 异常
               </a>
             
           </div>
@@ -412,10 +448,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/12/24/int-class-vs-integer-class/" rel="prev" title="int.class和Integer.class">
-                int.class和Integer.class <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -462,8 +494,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/default_avatar.jpg"
@@ -512,6 +553,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Bloom过滤器"><span class="nav-number">1.</span> <span class="nav-text">Bloom过滤器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#它要解决什么问题"><span class="nav-number">2.</span> <span class="nav-text">它要解决什么问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据查询"><span class="nav-number">3.</span> <span class="nav-text">数据查询</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用场景"><span class="nav-number">4.</span> <span class="nav-text">使用场景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用的局限性"><span class="nav-number">5.</span> <span class="nav-text">使用的局限性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#误判的概率"><span class="nav-number">6.</span> <span class="nav-text">误判的概率</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实际演示"><span class="nav-number">7.</span> <span class="nav-text">实际演示</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
     </div>
