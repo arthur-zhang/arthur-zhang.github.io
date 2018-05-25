@@ -1,0 +1,650 @@
+<!doctype html>
+
+
+
+
+<html class="theme-next mist" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="今天有个长得不够帅的人，碰到了用有线网一个连接ZooKeeper每次都被断开连接的鬼故事，换无线网就没问题。报的异常如下： java.io.IOException: Connection reset by peer        at sun.nio.ch.FileDispatcher.read0(Native Method)        at sun.nio.ch.SocketDispatch">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一次ZooKeeper Connection reset的排查过程">
+<meta property="og:url" content="http://yoursite.com/2018/05/25/zookeeper-connection-reset/index.html">
+<meta property="og:site_name" content="Arthur Blog">
+<meta property="og:description" content="今天有个长得不够帅的人，碰到了用有线网一个连接ZooKeeper每次都被断开连接的鬼故事，换无线网就没问题。报的异常如下： java.io.IOException: Connection reset by peer        at sun.nio.ch.FileDispatcher.read0(Native Method)        at sun.nio.ch.SocketDispatch">
+<meta property="og:image" content="http://yoursite.com/media/15271761140187/15271762260957.jpg">
+<meta property="og:image" content="http://yoursite.com/media/15271761140187/15271764562147.jpg">
+<meta property="og:updated_time" content="2018-05-25T16:01:55.378Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一次ZooKeeper Connection reset的排查过程">
+<meta name="twitter:description" content="今天有个长得不够帅的人，碰到了用有线网一个连接ZooKeeper每次都被断开连接的鬼故事，换无线网就没问题。报的异常如下： java.io.IOException: Connection reset by peer        at sun.nio.ch.FileDispatcher.read0(Native Method)        at sun.nio.ch.SocketDispatch">
+<meta name="twitter:image" content="http://yoursite.com/media/15271761140187/15271762260957.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: false,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/05/25/zookeeper-connection-reset/"/>
+
+
+
+
+
+  <title> 一次ZooKeeper Connection reset的排查过程 | Arthur Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=60116635";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Arthur Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/25/zookeeper-connection-reset/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Arthur Zhang">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/default_avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Arthur Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Arthur Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                一次ZooKeeper Connection reset的排查过程
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-05-25T16:11:18+08:00">
+                2018-05-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/网络/" itemprop="url" rel="index">
+                    <span itemprop="name">网络</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>今天有个长得不够帅的人，碰到了用有线网一个连接ZooKeeper每次都被断开连接的鬼故事，换无线网就没问题。报的异常如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">java.io.IOException: Connection reset by peer</span><br><span class="line">        at sun.nio.ch.FileDispatcher.read0(Native Method)</span><br><span class="line">        at sun.nio.ch.SocketDispatcher.read(SocketDispatcher.java:<span class="number">21</span>)</span><br><span class="line">        at sun.nio.ch.IOUtil.readIntoNativeBuffer(IOUtil.java:<span class="number">233</span>)</span><br><span class="line">        at sun.nio.ch.IOUtil.read(IOUtil.java:<span class="number">200</span>)</span><br><span class="line">        at sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:<span class="number">236</span>)</span><br><span class="line">        at org.apache.zookeeper.ClientCnxnSocketNIO.doIO(ClientCnxnSocketNIO.java:<span class="number">68</span>)</span><br><span class="line">        at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:<span class="number">355</span>)</span><br><span class="line">        at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:<span class="number">1068</span>)</span><br></pre></td></tr></table></figure>
+<p>今天排查了一下，首先，为什么ZooKeeper会断开连接，wireshark在本地抓包得到的是这样的。<br>ZooKeeper的ip是<code>172.18.155.14</code></p>
+<p><img src="/media/15271761140187/15271762260957.jpg" alt=""></p>
+<p>在Zk的那台机器上<code>sudo lsof -nP  -p 36146| grep ESTABLISHED</code>查看，发现本机<code>172.18.155.24</code>与zk建立了很多连接，<code>wc -l</code>发现有<code>57</code>个</p>
+<p>因为ZooKeeper对每个客户端有一个连接的最大大小限制，默认是<code>60</code>，具体的值可以通过配置文件<code>conf/zoo.cfg</code>进行修改</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># the maximum number of client connections.</span><br><span class="line"># increase this if you need to handle more clients</span><br><span class="line">maxClientCnxns=60</span><br></pre></td></tr></table></figure>
+<p><img src="/media/15271761140187/15271764562147.jpg" alt=""></p>
+<p>那本机<code>172.18.155.24</code>要重新启动一个jar包的程序，需要建立几个连接，马上达到了60的限制，被zk拒绝掉了。</p>
+<p>事情发生的原因就这个。</p>
+<p>但是为什么会有这么多<code>ESTABLISHED</code>的连接呢？在本地查看都没有开启那些端口，这就非常诡异了。</p>
+<p>后来想到了tcp中有一个东西叫<code>half open</code>，极有可能是这个原因引起的。</p>
+<p>它说的是这么一个事情：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">TCP/IP详解卷一第二版449页</span><br><span class="line"></span><br><span class="line">如果在未告知另一端的情况下通信的一端关闭或终止连接，那么就认为该条TCP连接处于半开状态。</span><br><span class="line">这种情况发现在通信的一方的主机崩溃、电源断掉的情况下。</span><br><span class="line">只要不尝试通过半开连接来传输数据，正常工作的一端将不会检测出另外一端已经崩溃。</span><br></pre></td></tr></table></figure>
+<p>可以很容易的模拟，在机器<code>A</code>上启动ZooKeeper，虚拟机<code>B</code>上用telnet上去<code>10.211.55.2:2181</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo lsof -Pnl -p pid_of_zk | grep ESTABLISHED</span><br><span class="line">java    23738      502   28u    IPv6 0xbb2ca6140b2f1caf        0t0        TCP 10.211.55.2:2181-&gt;10.211.55.3:59486 (ESTABLISHED)</span><br></pre></td></tr></table></figure>
+<p>然后断掉虚拟机的网络，发现<code>A</code>机器上还是<code>ESTABLISHED</code>状态</p>
+<p>如何避免这种情况，最好的方式是业务方自己维持心跳包，一段时间对端无响应可以做对应的处理</p>
+<p>已经存在的连接怎么处理呢？</p>
+<p>这就需要退出一个强大的<code>kill tcp</code>连接的工具了 <a href="http://killcx.sourceforge.net/" target="_blank" rel="noopener">killcx</a></p>
+<p>centos上安装过程比较麻烦，大概的过程是：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum install  libpcap</span><br><span class="line">yum install libpcap-devel</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">shell&gt; perl -MCPAN -e shell</span><br><span class="line"></span><br><span class="line">cpan&gt; install Net::RawIP</span><br><span class="line">cpan&gt; install Net::Pcap</span><br><span class="line">cpan&gt; install NetPacket::Ethernet</span><br><span class="line"></span><br><span class="line">然后用killcx杀掉连接</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>挖坑鼓励奖</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechat-pay.jpeg" alt="Arthur Zhang WeChat Pay"/>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/03/bloom-filter/" rel="next" title="BloomFilter基础">
+                <i class="fa fa-chevron-left"></i> BloomFilter基础
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview sidebar-panel sidebar-panel-active">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/default_avatar.jpg"
+               alt="Arthur Zhang" />
+          <p class="site-author-name" itemprop="name">Arthur Zhang</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/">
+                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Arthur Zhang</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

@@ -1,0 +1,708 @@
+<!doctype html>
+
+
+
+
+<html class="theme-next mist" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="Bloom过滤器它要解决什么问题假设我们有一个1000W行的手机号黑名单数据库，现在有一个需求，给一批用户发送短信推送，要求用户手机号不在黑名单数据库里面。 如何判断A在集合B中？  有哪些数据结构可以表示一个set？  Self-balancing binary search trees  Tries  Hash tables  Simple arrays  Linked lists of th">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BloomFilter基础">
+<meta property="og:url" content="http://yoursite.com/2018/05/03/bloom-filter/index.html">
+<meta property="og:site_name" content="Arthur Blog">
+<meta property="og:description" content="Bloom过滤器它要解决什么问题假设我们有一个1000W行的手机号黑名单数据库，现在有一个需求，给一批用户发送短信推送，要求用户手机号不在黑名单数据库里面。 如何判断A在集合B中？  有哪些数据结构可以表示一个set？  Self-balancing binary search trees  Tries  Hash tables  Simple arrays  Linked lists of th">
+<meta property="og:image" content="http://yoursite.com/media/15252661702341/15252706234780.jpg">
+<meta property="og:image" content="http://yoursite.com/media/15252661702341/15252667059379.jpg">
+<meta property="og:image" content="http://yoursite.com/media/15252661702341/15252702421880.jpg">
+<meta property="og:image" content="http://yoursite.com/media/15252661702341/15253106809572.jpg">
+<meta property="og:image" content="http://yoursite.com/media/15252661702341/15253103089937.jpg">
+<meta property="og:image" content="http://yoursite.com/media/15252661702341/15253218057406.jpg">
+<meta property="og:image" content="http://yoursite.com/media/15252661702341/15253217865131.jpg">
+<meta property="og:updated_time" content="2018-05-03T04:47:09.458Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="BloomFilter基础">
+<meta name="twitter:description" content="Bloom过滤器它要解决什么问题假设我们有一个1000W行的手机号黑名单数据库，现在有一个需求，给一批用户发送短信推送，要求用户手机号不在黑名单数据库里面。 如何判断A在集合B中？  有哪些数据结构可以表示一个set？  Self-balancing binary search trees  Tries  Hash tables  Simple arrays  Linked lists of th">
+<meta name="twitter:image" content="http://yoursite.com/media/15252661702341/15252706234780.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: false,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/05/03/bloom-filter/"/>
+
+
+
+
+
+  <title> BloomFilter基础 | Arthur Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=60116635";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Arthur Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/03/bloom-filter/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Arthur Zhang">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/default_avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Arthur Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Arthur Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                BloomFilter基础
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-05-03T16:11:18+08:00">
+                2018-05-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/数据结构/" itemprop="url" rel="index">
+                    <span itemprop="name">数据结构</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Bloom过滤器"><a href="#Bloom过滤器" class="headerlink" title="Bloom过滤器"></a>Bloom过滤器</h1><h1 id="它要解决什么问题"><a href="#它要解决什么问题" class="headerlink" title="它要解决什么问题"></a>它要解决什么问题</h1><p>假设我们有一个<code>1000W</code>行的手机号黑名单数据库，现在有一个需求，给一批用户发送短信推送，要求用户手机号不在黑名单数据库里面。</p>
+<p>如何判断<code>A</code>在集合<code>B</code>中？</p>
+<p><img src="/media/15252661702341/15252706234780.jpg" alt=""></p>
+<p>有哪些数据结构可以表示一个<code>set</code>？</p>
+<ul>
+<li>Self-balancing binary search trees </li>
+<li>Tries </li>
+<li>Hash tables </li>
+<li>Simple arrays </li>
+<li>Linked lists of the entries</li>
+</ul>
+<p>上面的数据结构大都要求把实际数据存储到数据节点中，有些不够快、有些太大了</p>
+<p><code>Bloom过滤器</code>粉墨登场</p>
+<p>核心原理是： </p>
+<blockquote>
+<p>⼏个hash函数, 计算出n个结果, 并在<code>ﬁlter</code>数据中将对应的位置为1</p>
+</blockquote>
+<p><img src="/media/15252661702341/15252667059379.jpg" alt=""></p>
+<h1 id="数据查询"><a href="#数据查询" class="headerlink" title="数据查询"></a>数据查询</h1><p>查询是否在结果集中, 要⽤同样的hash算法, ⽐对是否所有结果位都为<code>1</code></p>
+<ul>
+<li>如果返回<code>1</code>，数据<code>可能</code>在集合中</li>
+<li>如果返回<code>0</code>，数据<code>绝逼不可能</code>在集合中</li>
+</ul>
+<p><img src="/media/15252661702341/15252702421880.jpg" alt=""></p>
+<h1 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h1><p>看到下面这些，你就可以放心大胆的用啦</p>
+<ul>
+<li><code>Google BigTable</code>, <code>Apache HBase</code> 以及 <code>Apache Cassandra</code> 使⽤bloomﬁlter检查字段是否存在.</li>
+<li><code>Google Chrome</code> 浏览器, 使⽤bloomﬁlter检查恶意⽹址.</li>
+<li><code>Squid</code> 代理服务器使⽤bloomﬁlter检查缓存是否存在.</li>
+<li><code>Bitcoin</code> ⽐特币使⽤bloomﬁlter提升数据钱包的同步效率.</li>
+<li><code>MongoDB</code> 使⽤bloomﬁlter检查数据是否位于某个节点.</li>
+<li><code>Exim</code> 使⽤bloomﬁlter防范⾼频次的恶意邮件. </li>
+<li>许多搜索引擎⼚商使⽤bloomﬁlter帮助爬⾍防⽌多次爬取同⼀个url地址.</li>
+</ul>
+<h1 id="使用的局限性"><a href="#使用的局限性" class="headerlink" title="使用的局限性"></a>使用的局限性</h1><p>不支持删除操作，如要支持，需要使用<code>counting bloomﬁlter ﬁlters</code>的变种</p>
+<h1 id="误判的概率"><a href="#误判的概率" class="headerlink" title="误判的概率"></a>误判的概率</h1><ul>
+<li><code>m</code>是数组的位数</li>
+<li><code>k</code>是哈希函数的个数</li>
+<li><code>n</code>是要插入的原始的个数</li>
+</ul>
+<p>下面是一个神奇的公式</p>
+<p><img src="/media/15252661702341/15253106809572.jpg" alt=""></p>
+<p>合理的<code>k</code>值<br><img src="/media/15252661702341/15253103089937.jpg" alt=""></p>
+<p><img src="/media/15252661702341/15253218057406.jpg" alt=""></p>
+<p><img src="/media/15252661702341/15253217865131.jpg" alt=""></p>
+<h1 id="实际演示"><a href="#实际演示" class="headerlink" title="实际演示"></a>实际演示</h1><p><a href="http://billmill.org/bloomfilter-tutorial/" target="_blank" rel="noopener">http://billmill.org/bloomfilter-tutorial/</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>挖坑鼓励奖</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechat-pay.jpeg" alt="Arthur Zhang WeChat Pay"/>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/27/tomcat-header-too-large/" rel="next" title="一次 tomcat 400 异常">
+                <i class="fa fa-chevron-left"></i> 一次 tomcat 400 异常
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/05/25/zookeeper-connection-reset/" rel="prev" title="一次ZooKeeper Connection reset的排查过程">
+                一次ZooKeeper Connection reset的排查过程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/default_avatar.jpg"
+               alt="Arthur Zhang" />
+          <p class="site-author-name" itemprop="name">Arthur Zhang</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/">
+                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Bloom过滤器"><span class="nav-number">1.</span> <span class="nav-text">Bloom过滤器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#它要解决什么问题"><span class="nav-number">2.</span> <span class="nav-text">它要解决什么问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据查询"><span class="nav-number">3.</span> <span class="nav-text">数据查询</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用场景"><span class="nav-number">4.</span> <span class="nav-text">使用场景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用的局限性"><span class="nav-number">5.</span> <span class="nav-text">使用的局限性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#误判的概率"><span class="nav-number">6.</span> <span class="nav-text">误判的概率</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实际演示"><span class="nav-number">7.</span> <span class="nav-text">实际演示</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Arthur Zhang</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
