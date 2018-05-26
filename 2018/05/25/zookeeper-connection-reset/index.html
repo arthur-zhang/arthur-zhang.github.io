@@ -90,7 +90,7 @@
 <meta property="og:description" content="今天有个长得不够帅的人，碰到了用有线网一个连接ZooKeeper每次都被断开连接的鬼故事，换无线网就没问题。报的异常如下： java.io.IOException: Connection reset by peer        at sun.nio.ch.FileDispatcher.read0(Native Method)        at sun.nio.ch.SocketDispatch">
 <meta property="og:image" content="http://yoursite.com/media/15271761140187/15271762260957.jpg">
 <meta property="og:image" content="http://yoursite.com/media/15271761140187/15271764562147.jpg">
-<meta property="og:updated_time" content="2018-05-25T16:01:55.378Z">
+<meta property="og:updated_time" content="2018-05-26T00:28:14.624Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一次ZooKeeper Connection reset的排查过程">
 <meta name="twitter:description" content="今天有个长得不够帅的人，碰到了用有线网一个连接ZooKeeper每次都被断开连接的鬼故事，换无线网就没问题。报的异常如下： java.io.IOException: Connection reset by peer        at sun.nio.ch.FileDispatcher.read0(Native Method)        at sun.nio.ch.SocketDispatch">
@@ -108,7 +108,7 @@
     motion: false,
     duoshuo: {
       userId: 'undefined',
-      author: 'Author'
+      author: '博主'
     },
     algolia: {
       applicationID: '',
@@ -197,7 +197,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
-            Home
+            首页
           </a>
         </li>
       
@@ -207,7 +207,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
             
-            Categories
+            分类
           </a>
         </li>
       
@@ -217,7 +217,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
             
-            About
+            关于
           </a>
         </li>
       
@@ -287,7 +287,7 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Posted on</span>
+                <span class="post-meta-item-text">发表于</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-05-25T16:11:18+08:00">
                 2018-05-25
@@ -308,7 +308,7 @@
                 <i class="fa fa-folder-o"></i>
               </span>
               
-                <span class="post-meta-item-text">In</span>
+                <span class="post-meta-item-text">分类于</span>
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
@@ -366,7 +366,7 @@
 <p>然后断掉虚拟机的网络，发现<code>A</code>机器上还是<code>ESTABLISHED</code>状态</p>
 <p>如何避免这种情况，最好的方式是业务方自己维持心跳包，一段时间对端无响应可以做对应的处理</p>
 <p>已经存在的连接怎么处理呢？</p>
-<p>这就需要退出一个强大的<code>kill tcp</code>连接的工具了 <a href="http://killcx.sourceforge.net/" target="_blank" rel="noopener">killcx</a></p>
+<p>这就需要推出一个强大的<code>kill tcp</code>连接的工具了 <a href="http://killcx.sourceforge.net/" target="_blank" rel="noopener">killcx</a></p>
 <p>centos上安装过程比较麻烦，大概的过程是：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum install  libpcap</span><br><span class="line">yum install libpcap-devel</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">shell&gt; perl -MCPAN -e shell</span><br><span class="line"></span><br><span class="line">cpan&gt; install Net::RawIP</span><br><span class="line">cpan&gt; install Net::Pcap</span><br><span class="line">cpan&gt; install NetPacket::Ethernet</span><br><span class="line"></span><br><span class="line">然后用killcx杀掉连接</span><br></pre></td></tr></table></figure>
 
@@ -480,7 +480,7 @@
             <div class="site-state-item site-state-posts">
               <a href="/">
                 <span class="site-state-item-count">25</span>
-                <span class="site-state-item-name">posts</span>
+                <span class="site-state-item-name">日志</span>
               </a>
             </div>
           
@@ -489,7 +489,7 @@
             <div class="site-state-item site-state-categories">
               <a href="/categories">
                 <span class="site-state-item-count">15</span>
-                <span class="site-state-item-name">categories</span>
+                <span class="site-state-item-name">分类</span>
               </a>
             </div>
           
