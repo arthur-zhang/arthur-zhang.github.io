@@ -82,16 +82,21 @@
 
 
 
-<meta name="description" content="用Intellij Idea创建一个kotlin项目，新建一个MainDemo.kt文件，输入main回车，就自动回生成main入口函数 MainDemo.ktpackage com.cvte.kt.basicfun main(args: Array&amp;lt;String&amp;gt;) &amp;#123;    print(&quot;Hello World&quot;)&amp;#125; 运行一下，就会输出Hello World 我">
+<meta name="description" content="阿里云WAF非幂等请求重试的坑这段时间遇到了一个诡异的问题，用curl或PostMan去调用阿里云（经过了WAF）上一个需要很长时间返回的后端接口（可能在半小时以上），发现后端居然会处理三次  这种问题，排查的思路是什么呢？  第一，当然是看客户端是不是有重试，wireshark抓包如下   发现并没有重试，事情就变得比较有意思了。 另外curl在默认情况下，只有connect的超时时间（2min">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Kotlin for Java Developer(1)—Main函数">
-<meta property="og:url" content="http://yoursite.com/2017/06/20/kotlin-for-java-1/index.html">
+<meta property="og:title" content="阿里云WAF非幂等请求重试的坑">
+<meta property="og:url" content="http://yoursite.com/2018/06/21/waf-non-idempotent-retry/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="用Intellij Idea创建一个kotlin项目，新建一个MainDemo.kt文件，输入main回车，就自动回生成main入口函数 MainDemo.ktpackage com.cvte.kt.basicfun main(args: Array&amp;lt;String&amp;gt;) &amp;#123;    print(&quot;Hello World&quot;)&amp;#125; 运行一下，就会输出Hello World 我">
-<meta property="og:updated_time" content="2017-06-20T01:08:11.000Z">
+<meta property="og:description" content="阿里云WAF非幂等请求重试的坑这段时间遇到了一个诡异的问题，用curl或PostMan去调用阿里云（经过了WAF）上一个需要很长时间返回的后端接口（可能在半小时以上），发现后端居然会处理三次  这种问题，排查的思路是什么呢？  第一，当然是看客户端是不是有重试，wireshark抓包如下   发现并没有重试，事情就变得比较有意思了。 另外curl在默认情况下，只有connect的超时时间（2min">
+<meta property="og:image" content="http://yoursite.com/media/15295844321816/15295874011181.jpg">
+<meta property="og:image" content="http://yoursite.com/media/15295844321816/15295869649989.jpg">
+<meta property="og:image" content="http://yoursite.com/media/15295844321816/15295874991093.jpg">
+<meta property="og:image" content="http://yoursite.com/media/15295844321816/15295876827707.jpg">
+<meta property="og:updated_time" content="2018-06-21T14:50:51.080Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Kotlin for Java Developer(1)—Main函数">
-<meta name="twitter:description" content="用Intellij Idea创建一个kotlin项目，新建一个MainDemo.kt文件，输入main回车，就自动回生成main入口函数 MainDemo.ktpackage com.cvte.kt.basicfun main(args: Array&amp;lt;String&amp;gt;) &amp;#123;    print(&quot;Hello World&quot;)&amp;#125; 运行一下，就会输出Hello World 我">
+<meta name="twitter:title" content="阿里云WAF非幂等请求重试的坑">
+<meta name="twitter:description" content="阿里云WAF非幂等请求重试的坑这段时间遇到了一个诡异的问题，用curl或PostMan去调用阿里云（经过了WAF）上一个需要很长时间返回的后端接口（可能在半小时以上），发现后端居然会处理三次  这种问题，排查的思路是什么呢？  第一，当然是看客户端是不是有重试，wireshark抓包如下   发现并没有重试，事情就变得比较有意思了。 另外curl在默认情况下，只有connect的超时时间（2min">
+<meta name="twitter:image" content="http://yoursite.com/media/15295844321816/15295874011181.jpg">
 
 
 
@@ -119,13 +124,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/06/20/kotlin-for-java-1/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/06/21/waf-non-idempotent-retry/"/>
 
 
 
 
 
-  <title> Kotlin for Java Developer(1)—Main函数 | Arthur Blog </title>
+  <title> 阿里云WAF非幂等请求重试的坑 | Arthur Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
@@ -247,7 +252,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/20/kotlin-for-java-1/">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/21/waf-non-idempotent-retry/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="Arthur Zhang">
@@ -271,7 +276,7 @@
             
             
               
-                Kotlin for Java Developer(1)—Main函数
+                阿里云WAF非幂等请求重试的坑
               
             
           </h1>
@@ -286,8 +291,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-06-20T21:17:43+08:00">
-                2017-06-20
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-06-21T16:11:18+08:00">
+                2018-06-21
               </time>
             
 
@@ -309,8 +314,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Kotlin-for-Java-Developer/" itemprop="url" rel="index">
-                    <span itemprop="name">Kotlin for Java Developer</span>
+                  <a href="/categories/网络/" itemprop="url" rel="index">
+                    <span itemprop="name">网络</span>
                   </a>
                 </span>
 
@@ -344,16 +349,33 @@
       
 
       
-        <p>用Intellij Idea创建一个kotlin项目，新建一个MainDemo.kt文件，输入<code>main</code>回车，就自动回生成main入口函数</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">MainDemo.kt</span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.cvte.kt.basic</span><br><span class="line"><span class="function">fun <span class="title">main</span><span class="params">(args: Array&lt;String&gt;)</span> </span>&#123;</span><br><span class="line">    print(<span class="string">"Hello World"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>运行一下，就会输出<code>Hello World</code></p>
-<p>我们来对比一下，Java版本的<code>Hello World</code></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">MainDemoJava.java</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainDemoJava</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Hello World"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们发现，kotlin版本的main函数没有包裹在类中，至少现在看起来如此。<br>那它是如何做到可以编译运行的呢？<br>我们看一下MainDemo.kt编译后的输出文件</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-rw-r--r--  1 Arthur  staff   1.0K  6 20 08:50 MainDemoKt.class</span><br></pre></td></tr></table></figure>
-<p>发现会生成<code>一个文件名+Kt+.class</code>的class文件，反编译一下看看</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">MainDemoKt</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(@NotNull <span class="keyword">final</span> String[] args)</span> </span>&#123;</span><br><span class="line">        Intrinsics.checkParameterIsNotNull((Object)args, <span class="string">"args"</span>);</span><br><span class="line">        System.out.print(<span class="string">"Hello World"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>那我们看到，kotlin其实就是一个语法糖嘛，没什么神奇的，但是又超级好用，后面会有一个系列讲，kotlin到底有哪些好用的语法，以及是如何是如何实现的</p>
+        <h1 id="阿里云WAF非幂等请求重试的坑"><a href="#阿里云WAF非幂等请求重试的坑" class="headerlink" title="阿里云WAF非幂等请求重试的坑"></a>阿里云WAF非幂等请求重试的坑</h1><p>这段时间遇到了一个诡异的问题，用<code>curl</code>或<code>PostMan</code>去调用阿里云（经过了WAF）上一个需要很长时间返回的后端接口（可能在半小时以上），发现后端居然会处理三次</p>
+<p><img src="/media/15295844321816/15295874011181.jpg" alt=""></p>
+<p>这种问题，排查的思路是什么呢？</p>
+<ul>
+<li>第一，当然是看客户端是不是有重试，wireshark抓包如下</li>
+</ul>
+<p><img src="/media/15295844321816/15295869649989.jpg" alt=""></p>
+<p>发现并没有重试，事情就变得比较有意思了。</p>
+<p>另外<br><code>curl</code>在默认情况下，只有<code>connect</code>的超时时间（2min），并没有<code>read</code>的超时时间，也就是<code>curl</code>在<code>connect</code>成功以后会永久等待。可以通过参数值来设置超时时间</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-m, --max-time &lt;seconds&gt;</span><br><span class="line">    Maximum  time  in  seconds that you allow the whole operation to</span><br><span class="line">    take.  This is useful for preventing your batch jobs from  hang‐</span><br><span class="line">    ing  for  hours due to slow networks or links going down.  Since</span><br><span class="line">    7.32.0, this option accepts decimal values, but the actual time‐</span><br><span class="line">    out will decrease in accuracy as the specified timeout increases</span><br><span class="line">    in decimal precision.  See also the --connect-timeout option.</span><br><span class="line"></span><br><span class="line">    If this option is used several times, the last one will be used.</span><br></pre></td></tr></table></figure>
+<p>另外，这里的<code>keepalive</code>心跳包也比较有意思，后面再讲</p>
+<ul>
+<li>第二，在<code>Nginx</code>机器抓包，验证，真的有请求多次</li>
+</ul>
+<p><img src="/media/15295844321816/15295874991093.jpg" alt=""></p>
+<p>发现每到2分钟<code>Nginx</code>就主动断掉了连接，重新建连接，发起请求</p>
+<ul>
+<li>第三，在不经过<code>WAF</code>的情况下，调用看会不会有问题</li>
+</ul>
+<p>怎么样不经过WAF呢？在阿里云内网，指定<code>care.cctv.com</code>到一台nginx上就可以了，主要通过<code>curl</code>的<code>--resolve</code>来实现</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">curl -v -X POST \</span><br><span class="line">http://care.cctv.com/init/daily \</span><br><span class="line">--resolve care.cctv.com:80:2.2.2.2</span><br></pre></td></tr></table></figure>
+<p><img src="/media/15295844321816/15295876827707.jpg" alt=""></p>
+<p>为什么是<code>900s</code>？</p>
+<p><code>Nginx</code>配置大概如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">upstream  express_server&#123;</span><br><span class="line">        server localhost:3000;</span><br><span class="line">        keepalive 16;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">        listen       80;</span><br><span class="line">        server_name test.ya.local;</span><br><span class="line"></span><br><span class="line">        access_log  /usr/local/var/log/nginx/host.test.ya.me.access.log  main buffer=64k flush=1s;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        location /&#123;</span><br><span class="line">                proxy_pass http://express_server;</span><br><span class="line">                proxy_redirect      off;</span><br><span class="line">                proxy_set_header                X-Forwarded-Url         &quot;$scheme://$host$request_uri&quot;;</span><br><span class="line">                proxy_http_version  1.1;</span><br><span class="line">                proxy_set_header    Connection &quot;&quot;;</span><br><span class="line">                proxy_set_header    Cookie $http_cookie;</span><br><span class="line">                proxy_set_header    Host $host;</span><br><span class="line">                proxy_set_header    X-Real-IP $remote_addr;</span><br><span class="line">                proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">                proxy_connect_timeout           900;</span><br><span class="line">                proxy_send_timeout              900;</span><br><span class="line">                proxy_read_timeout              900;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在<code>Nginx</code>配置这里，<code>read</code>的超时时间就是<code>900s</code></p>
+<p>阿里云<code>WAF</code>坑的地方，在于对于非幂等的<code>POST</code>请求，依然进行了重试，完全没有节操</p>
 
       
     </div>
@@ -395,8 +417,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/06/13/queue-batch-get-with-timeout/" rel="next" title="BlockingQueue带超时的批量取">
-                <i class="fa fa-chevron-left"></i> BlockingQueue带超时的批量取
+              <a href="/2018/06/19/node-5xx/" rel="next" title="keepalive导致NodeJS服务502问题排查">
+                <i class="fa fa-chevron-left"></i> keepalive导致NodeJS服务502问题排查
               </a>
             
           </div>
@@ -404,10 +426,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/06/21/kotlin-for-java-2/" rel="prev" title="Kotlin for Java Developer(2)—when语法">
-                Kotlin for Java Developer(2)—when语法 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -454,8 +472,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/default_avatar.jpg"
@@ -504,6 +531,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#阿里云WAF非幂等请求重试的坑"><span class="nav-number">1.</span> <span class="nav-text">阿里云WAF非幂等请求重试的坑</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
     </div>

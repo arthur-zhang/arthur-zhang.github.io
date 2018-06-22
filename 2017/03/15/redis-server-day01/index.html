@@ -88,7 +88,7 @@
 <meta property="og:url" content="http://yoursite.com/2017/03/15/redis-server-day01/index.html">
 <meta property="og:site_name" content="Arthur Blog">
 <meta property="og:description" content="我们来一步一步用Java写一个redis的服务器，短期目标是实现所有的单机版本功能，长期目标是实现集群、类codis proxy功能。纯业余学习项目，一起来看看网络编程、NIO、并发、分布式的一些知识。 github地址 https://github.com/arthur-zhang/redis-server 今天的目标实现用redis-cli连接我们的服务器，完成redis-cli发送ping命">
-<meta property="og:updated_time" content="2017-03-16T00:35:36.000Z">
+<meta property="og:updated_time" content="2018-06-22T00:43:12.126Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一起来写个redis server（day01）">
 <meta name="twitter:description" content="我们来一步一步用Java写一个redis的服务器，短期目标是实现所有的单机版本功能，长期目标是实现集群、类codis proxy功能。纯业余学习项目，一起来看看网络编程、NIO、并发、分布式的一些知识。 github地址 https://github.com/arthur-zhang/redis-server 今天的目标实现用redis-cli连接我们的服务器，完成redis-cli发送ping命">
@@ -359,10 +359,9 @@
 <li>错误回复（error reply）的第一个字节是 “-“</li>
 <li>整数回复（integer reply）的第一个字节是 “:”</li>
 <li>批量回复（bulk reply）的第一个字节是 “$”</li>
-<li>多条批量回复（multi bulk reply）的第一个字节是 “*”</li>
+<li>多条批量回复（multi bulk reply）的第一个字节是 “<em>“<br>这里的 </em>1\r\n$4\r\nping\r\n<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">┌───────────────┐</span><br><span class="line">│argument count │</span><br><span class="line">└───────────────┘</span><br><span class="line">        ▲</span><br><span class="line">        │</span><br><span class="line">        │</span><br><span class="line">  ┌───┬─┴─┬────┬───┬──┬────┬────┬────┐</span><br><span class="line">  │ * │ 1 │\r\n│ $ │4 │\r\n│ping│\r\n│</span><br><span class="line">  └───┴───┴────┴───┴┬─┴────┴────┴────┘</span><br><span class="line">                    │</span><br><span class="line">                    │</span><br><span class="line">                    │</span><br><span class="line">                    ▼</span><br><span class="line">        ┌──────────────────────────┐</span><br><span class="line">        │   argument#1 byte size   │</span><br><span class="line">        └──────────────────────────┘</span><br></pre></td></tr></table></figure>
+</li>
 </ul>
-<p>这里的 <code>*1\r\n$4\r\nping\r\n</code></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">┌───────────────┐</span><br><span class="line">│argument count │</span><br><span class="line">└───────────────┘</span><br><span class="line">        ▲</span><br><span class="line">        │</span><br><span class="line">        │</span><br><span class="line">  ┌───┬─┴─┬────┬───┬──┬────┬────┬────┐</span><br><span class="line">  │ * │ 1 │\r\n│ $ │4 │\r\n│ping│\r\n│</span><br><span class="line">  └───┴───┴────┴───┴┬─┴────┴────┴────┘</span><br><span class="line">                    │</span><br><span class="line">                    │</span><br><span class="line">                    │</span><br><span class="line">                    ▼</span><br><span class="line">        ┌──────────────────────────┐</span><br><span class="line">        │   argument#1 byte size   │</span><br><span class="line">        └──────────────────────────┘</span><br></pre></td></tr></table></figure>
 <p>基本代码如下，监听6397，顺序处理请求，用<code>redis-cli</code>请求我们的server</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">redis-cli -p 6397</span><br><span class="line">127.0.0.1:6397&gt; ping</span><br><span class="line">pong</span><br></pre></td></tr></table></figure>
 <p>部分代码如下</p>

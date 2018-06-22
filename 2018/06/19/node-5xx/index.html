@@ -84,7 +84,7 @@
 
 <meta name="description" content="最近加了http状态码的监控以后，发现线上有很多502的告警，这些请求并没有到后端node那里， Nginx的error日志报错如下 2018/06/13 23:57:59 [error] 21230#0: *90124956 recv() failed (104: Connection reset by peer) while reading response header from upstr">
 <meta property="og:type" content="article">
-<meta property="og:title" content="node服务502问题排查">
+<meta property="og:title" content="keepalive导致NodeJS服务502问题排查">
 <meta property="og:url" content="http://yoursite.com/2018/06/19/node-5xx/index.html">
 <meta property="og:site_name" content="Arthur Blog">
 <meta property="og:description" content="最近加了http状态码的监控以后，发现线上有很多502的告警，这些请求并没有到后端node那里， Nginx的error日志报错如下 2018/06/13 23:57:59 [error] 21230#0: *90124956 recv() failed (104: Connection reset by peer) while reading response header from upstr">
@@ -92,9 +92,9 @@
 <meta property="og:image" content="http://yoursite.com/media/15293339434072/15293783802240.jpg">
 <meta property="og:image" content="http://yoursite.com/media/15293339434072/15293783454467.jpg">
 <meta property="og:image" content="http://yoursite.com/media/15293339434072/15293777948818.jpg">
-<meta property="og:updated_time" content="2018-06-19T03:45:42.988Z">
+<meta property="og:updated_time" content="2018-06-21T14:52:02.468Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="node服务502问题排查">
+<meta name="twitter:title" content="keepalive导致NodeJS服务502问题排查">
 <meta name="twitter:description" content="最近加了http状态码的监控以后，发现线上有很多502的告警，这些请求并没有到后端node那里， Nginx的error日志报错如下 2018/06/13 23:57:59 [error] 21230#0: *90124956 recv() failed (104: Connection reset by peer) while reading response header from upstr">
 <meta name="twitter:image" content="http://yoursite.com/media/15293339434072/15293350477158.jpg">
 
@@ -130,7 +130,7 @@
 
 
 
-  <title> node服务502问题排查 | Arthur Blog </title>
+  <title> keepalive导致NodeJS服务502问题排查 | Arthur Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
@@ -276,7 +276,7 @@
             
             
               
-                node服务502问题排查
+                keepalive导致NodeJS服务502问题排查
               
             
           </h1>
@@ -363,6 +363,7 @@
 <ol>
 <li>为什么node keepalive的时间到了，没有发送FIN包给Nginx</li>
 <li>Nginx有没有参数可以解决后端keepalive超时的问题</li>
+<li>会不会对应用造成影响</li>
 </ol>
 <p>第一个问题，这里的没有出现FIN包，不代表所有的都没有，我抓的另外一个包是node先回了Nginx FIN包，后回的RST。这里没出现FIN包，我猜可能的原因是，在FIN报还没发出去之前，下一个HTTP请求到来，系统应该会发送FIN和RST，在这个情况下，FIN包可有可无。</p>
 <p>一般情况下，都是客户端想断开连接，这里的情况不太一样，是服务端主动断开的连接，这种情况下，会比较恶心，因为服务端发送FIN包以后，表示自己再也不会发送数据给客户端了，这种情况下，客户端再发送的请求，它是没有办法回应的，对它来说，回RST包是更好的选择，告诉客户端，放弃吧。</p>
@@ -380,6 +381,16 @@
 <p><img src="/media/15293339434072/15293777948818.jpg" alt=""></p>
 <p>过了3s，Nginx就主动先断掉了连接，防止了后续的悲剧</p>
 <p>就目前的情况来看，引入这个Nginx模块之前，暂时没有完美的办法解决。</p>
+<p>第三个问题，会不会对实际用户造成影响？</p>
+<p>it dependends</p>
+<p>实测在GET请求下，Nginx会进行重试</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">172.18.101.241 - - [19/Jun/2018:16:18:14 +0800] &quot;GET /node_keepalive_test?delay=488 HTTP/1.1&quot; 200 207 &quot;-&quot; &quot;okhttp/3.10.0&quot; &quot;-&quot; &quot;172.18.101.241:3000, 172.18.101.241:3000&quot; &quot;0.008&quot; &quot;0.001, 0.007&quot;</span><br></pre></td></tr></table></figure>
+<p>在POST请求下，Nginx会直接返回502</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">172.18.98.18 - - [20/Jun/2018:12:05:37 +0800] &quot;POST /users/?delay=477 HTTP/1.1&quot; 502 179 &quot;-&quot; &quot;okhttp/3.10.0&quot; &quot;-&quot; &quot;172.18.98.18:3000&quot; &quot;0.002&quot; &quot;0.002&quot; test.ya.psd010</span><br></pre></td></tr></table></figure>
+<p>Nginx文档：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Syntax: proxy_next_upstream error | timeout | invalid_header | http_500 | http_502 | http_503 | http_504 | http_403 | http_404 | non_idempotent | off ...;</span><br><span class="line">Default:    </span><br><span class="line">proxy_next_upstream error timeout;</span><br><span class="line">Context:    http, server, location</span><br><span class="line"></span><br><span class="line">error</span><br><span class="line">an error occurred while establishing a connection with the server, passing a request to it, or reading the response header;</span><br><span class="line">timeout</span><br><span class="line">a timeout has occurred while establishing a connection with the server, passing a request to it, or reading the response header</span><br></pre></td></tr></table></figure>
+<p>默认情况下它会在error和timeout的时候会重试，我们这个场景下，是一个error(reading response header from upstream)，但是只会重试幂等的请求（Nginx认为POST, LOCK, PATCH是非幂等的，其它的是幂等的）</p>
+<p>所以出现了上面的情况</p>
 
       
     </div>
@@ -430,6 +441,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/21/waf-non-idempotent-retry/" rel="prev" title="阿里云WAF非幂等请求重试的坑">
+                阿里云WAF非幂等请求重试的坑 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
