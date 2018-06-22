@@ -92,7 +92,7 @@
 <meta property="og:image" content="http://yoursite.com/media/15293339434072/15293783802240.jpg">
 <meta property="og:image" content="http://yoursite.com/media/15293339434072/15293783454467.jpg">
 <meta property="og:image" content="http://yoursite.com/media/15293339434072/15293777948818.jpg">
-<meta property="og:updated_time" content="2018-06-21T14:52:02.468Z">
+<meta property="og:updated_time" content="2018-06-22T04:49:27.613Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="keepalive导致NodeJS服务502问题排查">
 <meta name="twitter:description" content="最近加了http状态码的监控以后，发现线上有很多502的告警，这些请求并没有到后端node那里， Nginx的error日志报错如下 2018/06/13 23:57:59 [error] 21230#0: *90124956 recv() failed (104: Connection reset by peer) while reading response header from upstr">
@@ -391,7 +391,8 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Syntax: proxy_next_upstream error | timeout | invalid_header | http_500 | http_502 | http_503 | http_504 | http_403 | http_404 | non_idempotent | off ...;</span><br><span class="line">Default:    </span><br><span class="line">proxy_next_upstream error timeout;</span><br><span class="line">Context:    http, server, location</span><br><span class="line"></span><br><span class="line">error</span><br><span class="line">an error occurred while establishing a connection with the server, passing a request to it, or reading the response header;</span><br><span class="line">timeout</span><br><span class="line">a timeout has occurred while establishing a connection with the server, passing a request to it, or reading the response header</span><br></pre></td></tr></table></figure>
 <p>默认情况下它会在error和timeout的时候会重试，我们这个场景下，是一个error(reading response header from upstream)，但是只会重试幂等的请求（Nginx认为POST, LOCK, PATCH是非幂等的，其它的是幂等的）</p>
 <p>所以出现了上面的情况</p>
-
+<p>怎么样复现?</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">var client = OkHttpClient.Builder().connectionPool(ConnectionPool(<span class="number">1</span>, <span class="number">10</span>, TimeUnit.MINUTES))</span><br><span class="line">        .build()</span><br><span class="line"></span><br><span class="line"><span class="function">fun <span class="title">run</span><span class="params">(url: String, delay: Int)</span>: String </span>&#123;</span><br><span class="line">    val request = Request.Builder()</span><br><span class="line">            .url(url)</span><br><span class="line">            .build()</span><br><span class="line"></span><br><span class="line">    val response = client.newCall(request).execute()</span><br><span class="line">    println(<span class="string">"delay: $delay, status : $&#123;response.code()&#125;"</span>)</span><br><span class="line">    <span class="keyword">return</span> response.body()!!.string()</span><br><span class="line">&#125;</span><br><span class="line"><span class="function">fun <span class="title">runPost</span><span class="params">(url: String, delay: Int)</span>: String </span>&#123;</span><br><span class="line">    val request = Request.Builder()</span><br><span class="line">            .url(url)</span><br><span class="line">            .post(RequestBody.create(MediaType.parse(<span class="string">"application/json"</span>), <span class="string">"&#123;&#125;"</span>))</span><br><span class="line">            .build()</span><br><span class="line"></span><br><span class="line">    val response = client.newCall(request).execute()</span><br><span class="line">    println(<span class="string">"delay: $delay, status : $&#123;response.code()&#125;"</span>)</span><br><span class="line">    <span class="keyword">return</span> response.body()!!.string()</span><br><span class="line">&#125;</span><br><span class="line"><span class="function">fun <span class="title">main</span><span class="params">(args: Array&lt;String&gt;)</span> </span>&#123;</span><br><span class="line">    var delay = <span class="number">502</span></span><br><span class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">        runPost(<span class="string">"http://test.ya.psd010/users/?delay=$delay"</span>, delay)</span><br><span class="line"><span class="comment">//        run("http://test.ya.psd010/users/?delay=$delay", delay)</span></span><br><span class="line">        delay -= <span class="number">1</span></span><br><span class="line">        TimeUnit.MILLISECONDS.sleep(delay.toLong())</span><br><span class="line">        <span class="keyword">if</span> (delay &lt; <span class="number">470</span>) &#123;</span><br><span class="line">            delay = <span class="number">502</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
     </div>
 
@@ -514,7 +515,7 @@
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-count">14</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
