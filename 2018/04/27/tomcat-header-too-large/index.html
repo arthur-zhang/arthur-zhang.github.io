@@ -90,7 +90,8 @@
 <meta property="og:description" content="线上出现了几次接口400的异常，排查起来比较有意思，通过nginx代理过去就会400，通过ip直连过去，就不会出现，机智的我用tcpdump抓了一个包，搞下来看了一下，居然没有发现两种请求有什么不同（当然是我没发现） 我猜可能是刚好触发了tomcat的header最大大小的限制了，放到我自己编译的tomcat中开启debug模式，果然出现了异常  看到是Request header is too">
 <meta property="og:image" content="http://yoursite.com/images/15248405028586.jpg">
 <meta property="og:image" content="http://yoursite.com/images/15248408539742.jpg">
-<meta property="og:updated_time" content="2018-04-27T15:05:08.024Z">
+<meta property="og:image" content="http://yoursite.com/images/tomcat_url_3_times.png">
+<meta property="og:updated_time" content="2018-09-09T03:03:42.416Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一次 tomcat 400 异常">
 <meta name="twitter:description" content="线上出现了几次接口400的异常，排查起来比较有意思，通过nginx代理过去就会400，通过ip直连过去，就不会出现，机智的我用tcpdump抓了一个包，搞下来看了一下，居然没有发现两种请求有什么不同（当然是我没发现） 我猜可能是刚好触发了tomcat的header最大大小的限制了，放到我自己编译的tomcat中开启debug模式，果然出现了异常  看到是Request header is too">
@@ -362,6 +363,10 @@
 <p>如果你还不会从源码调试tomcat，那么这篇文章就对你有帮助啦</p>
 <p>下面这个链接是可以直接用Intellj打开并进行debug的，基于tomcat8.0，做了一些细微的修改以便编译可以通过。</p>
 <p><a href="https://github.com/arthur-zhang/tomcat-code-reading" target="_blank" rel="noopener">https://github.com/arthur-zhang/tomcat-code-reading</a></p>
+<p>续上</p>
+<p>近期发现 url 长度达到 2500 就跪了，跟我们之前看到的理论上支持 4000 左右（8192/2）相差比较远，抓包研究了一下，发现 Nginx 又丧心病狂的把 url 重复了三遍</p>
+<p><img src="/images/tomcat_url_3_times.png" alt=""></p>
+<p>导致最多支持的url长度大概为 2700 以下，本例中是 2500，因为要算上其它的 header</p>
 
       
     </div>
