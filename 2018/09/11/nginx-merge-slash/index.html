@@ -82,17 +82,17 @@
 
 
 
-<meta name="description" content="一次 Nginx 双斜杠问题排查背景前段时间出现了一个请求在测试环境签名政策，在线上环境签名失败的情况，排查原因是线上url中有双斜杠会被合并成一个传给后端，在测试环境中不会出现。这个就比较神奇了，Nginx 版本完全一样。 确认问题方式是抓包确认：在线上Nginx和测试Nginx抓包，对比以下例子中218.218.218.218是线上服务器Nginx的ip121.121.121.121是自己电脑">
+<meta name="description" content="一次 Nginx 双斜杠问题排查背景前段时间出现了一个请求在测试环境签名成功，在线上环境签名失败的情况，排查原因是线上url中有双斜杠会被合并成一个传给后端，在测试环境中不会出现。这个就比较神奇了，Nginx 版本完全一样。 确认问题方式是抓包确认：在线上Nginx和测试Nginx抓包，对比以下例子中218.218.218.218是线上服务器Nginx的ip121.121.121.121是自己电脑">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一次Nginx双斜杠问题排查">
 <meta property="og:url" content="http://yoursite.com/2018/09/11/nginx-merge-slash/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="一次 Nginx 双斜杠问题排查背景前段时间出现了一个请求在测试环境签名政策，在线上环境签名失败的情况，排查原因是线上url中有双斜杠会被合并成一个传给后端，在测试环境中不会出现。这个就比较神奇了，Nginx 版本完全一样。 确认问题方式是抓包确认：在线上Nginx和测试Nginx抓包，对比以下例子中218.218.218.218是线上服务器Nginx的ip121.121.121.121是自己电脑">
+<meta property="og:description" content="一次 Nginx 双斜杠问题排查背景前段时间出现了一个请求在测试环境签名成功，在线上环境签名失败的情况，排查原因是线上url中有双斜杠会被合并成一个传给后端，在测试环境中不会出现。这个就比较神奇了，Nginx 版本完全一样。 确认问题方式是抓包确认：在线上Nginx和测试Nginx抓包，对比以下例子中218.218.218.218是线上服务器Nginx的ip121.121.121.121是自己电脑">
 <meta property="og:image" content="http://yoursite.com/images/nginx-merge-slash-1.jpg">
-<meta property="og:updated_time" content="2018-09-11T07:28:53.742Z">
+<meta property="og:updated_time" content="2018-09-11T07:36:23.006Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一次Nginx双斜杠问题排查">
-<meta name="twitter:description" content="一次 Nginx 双斜杠问题排查背景前段时间出现了一个请求在测试环境签名政策，在线上环境签名失败的情况，排查原因是线上url中有双斜杠会被合并成一个传给后端，在测试环境中不会出现。这个就比较神奇了，Nginx 版本完全一样。 确认问题方式是抓包确认：在线上Nginx和测试Nginx抓包，对比以下例子中218.218.218.218是线上服务器Nginx的ip121.121.121.121是自己电脑">
+<meta name="twitter:description" content="一次 Nginx 双斜杠问题排查背景前段时间出现了一个请求在测试环境签名成功，在线上环境签名失败的情况，排查原因是线上url中有双斜杠会被合并成一个传给后端，在测试环境中不会出现。这个就比较神奇了，Nginx 版本完全一样。 确认问题方式是抓包确认：在线上Nginx和测试Nginx抓包，对比以下例子中218.218.218.218是线上服务器Nginx的ip121.121.121.121是自己电脑">
 <meta name="twitter:image" content="http://yoursite.com/images/nginx-merge-slash-1.jpg">
 
 
@@ -346,7 +346,7 @@
       
 
       
-        <h1 id="一次-Nginx-双斜杠问题排查"><a href="#一次-Nginx-双斜杠问题排查" class="headerlink" title="一次 Nginx 双斜杠问题排查"></a>一次 Nginx 双斜杠问题排查</h1><h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>前段时间出现了一个请求在测试环境签名政策，在线上环境签名失败的情况，排查原因是线上<code>url</code>中有双斜杠会被合并成一个传给后端，在测试环境中不会出现。这个就比较神奇了，Nginx 版本完全一样。</p>
+        <h1 id="一次-Nginx-双斜杠问题排查"><a href="#一次-Nginx-双斜杠问题排查" class="headerlink" title="一次 Nginx 双斜杠问题排查"></a>一次 Nginx 双斜杠问题排查</h1><h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>前段时间出现了一个请求在测试环境签名成功，在线上环境签名失败的情况，排查原因是线上<code>url</code>中有双斜杠会被合并成一个传给后端，在测试环境中不会出现。这个就比较神奇了，Nginx 版本完全一样。</p>
 <h3 id="确认问题"><a href="#确认问题" class="headerlink" title="确认问题"></a>确认问题</h3><p>方式是抓包确认：在线上<code>Nginx</code>和测试<code>Nginx</code>抓包，对比<br>以下例子中<br><code>218.218.218.218</code>是线上服务器<code>Nginx</code>的<code>ip</code><br><code>121.121.121.121</code>是自己电脑出口<code>ip</code><br><code>10.0.0.1</code>是线上<code>Nginx</code>的局域网<code>ip</code><br><code>10.0.0.2</code>是Java业务机的局域网ip</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1. 从自己电脑到线上Nginx的包如下：</span><br><span class="line"></span><br><span class="line">17:41:47.110728 IP 121.121.121.121.50935 &gt; 218.218.218.218.80: Flags [P.]</span><br><span class="line">GET /easicare/v1//subCourses/9952078022974031963e5d9a399e9958/text?subCourseId=9952078022974031963e5d9a399e9958 HTTP/1.1</span><br><span class="line">Host: masaike.seewo.com</span><br><span class="line">User-Agent: curl/7.54.0</span><br><span class="line">Accept: */*</span><br><span class="line"></span><br><span class="line">2. Nginx到后端的请求如下</span><br><span class="line"></span><br><span class="line">17:41:47.113138 IP 10.0.0.1.49610 &gt; 10.0.0.2.40088: Flags [P.]</span><br><span class="line"></span><br><span class="line">GET /easicare/v1/subCourses/9952078022974031963e5d9a399e9958/text?subCourseId=9952078022974031963e5d9a399e9958 HTTP/1.1</span><br><span class="line">x-ccloud-pre: 1</span><br><span class="line">X-Forwarded-Url: http://masaike.seewo.com/easicare/v1//subCourses/9952078022974031963e5d9a399e9958/text?subCourseId=9952078022974031963e5d9a399e9958</span><br><span class="line">Host: masaike.seewo.com</span><br><span class="line">X-Real-IP: 121.121.121.121</span><br><span class="line">X-Forwarded-For: 121.121.121.121</span><br><span class="line">X-Forwarded-Proto: http</span><br><span class="line">User-Agent: curl/7.54.0</span><br><span class="line">Accept: */*</span><br></pre></td></tr></table></figure>
 <p>可以看到<code>Nginx</code>转发到后端<code>Java</code>这里的时候，<code>/easicare/v1//subCourses/</code>已经没有两个斜杠了，但是测试环境转到后端的时候是有的，这里就不贴包内容了。</p>
