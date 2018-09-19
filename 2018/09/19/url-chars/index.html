@@ -82,21 +82,16 @@
 
 
 
-<meta name="description" content="阿里云WAF非幂等请求重试的坑这段时间遇到了一个诡异的问题，用curl或PostMan去调用阿里云（经过了WAF）上一个需要很长时间返回的后端接口（可能在半小时以上），发现后端居然会处理三次  这种问题，排查的思路是什么呢？  第一，当然是看客户端是不是有重试，wireshark抓包如下   发现并没有重试，事情就变得比较有意思了。 另外curl在默认情况下，只有connect的超时时间（2min">
+<meta name="description" content="url中出现大括号的有趣问题背景线上又出现了一起问题请求是： /easicar/v1/subCourses/{subCourseId}/comments/create因为node服务的有bug{subCourseId}，没有用值覆盖它，在线上不正常返回400，在测试环境正常（虽然没赋值，后端也没用到subCourseId这个值）原因还是因为上篇文章讲过的原因：http://arthur-zhang">
 <meta property="og:type" content="article">
-<meta property="og:title" content="阿里云WAF非幂等请求重试的坑">
-<meta property="og:url" content="http://yoursite.com/2018/06/21/waf-non-idempotent-retry/index.html">
+<meta property="og:title" content="url中出现大括号的有趣问题">
+<meta property="og:url" content="http://yoursite.com/2018/09/19/url-chars/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="阿里云WAF非幂等请求重试的坑这段时间遇到了一个诡异的问题，用curl或PostMan去调用阿里云（经过了WAF）上一个需要很长时间返回的后端接口（可能在半小时以上），发现后端居然会处理三次  这种问题，排查的思路是什么呢？  第一，当然是看客户端是不是有重试，wireshark抓包如下   发现并没有重试，事情就变得比较有意思了。 另外curl在默认情况下，只有connect的超时时间（2min">
-<meta property="og:image" content="http://yoursite.com/media/15295844321816/15295874011181.jpg">
-<meta property="og:image" content="http://yoursite.com/media/15295844321816/15295869649989.jpg">
-<meta property="og:image" content="http://yoursite.com/media/15295844321816/15295874991093.jpg">
-<meta property="og:image" content="http://yoursite.com/media/15295844321816/15295876827707.jpg">
-<meta property="og:updated_time" content="2018-06-21T14:50:51.080Z">
+<meta property="og:description" content="url中出现大括号的有趣问题背景线上又出现了一起问题请求是： /easicar/v1/subCourses/{subCourseId}/comments/create因为node服务的有bug{subCourseId}，没有用值覆盖它，在线上不正常返回400，在测试环境正常（虽然没赋值，后端也没用到subCourseId这个值）原因还是因为上篇文章讲过的原因：http://arthur-zhang">
+<meta property="og:updated_time" content="2018-09-19T08:55:44.749Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="阿里云WAF非幂等请求重试的坑">
-<meta name="twitter:description" content="阿里云WAF非幂等请求重试的坑这段时间遇到了一个诡异的问题，用curl或PostMan去调用阿里云（经过了WAF）上一个需要很长时间返回的后端接口（可能在半小时以上），发现后端居然会处理三次  这种问题，排查的思路是什么呢？  第一，当然是看客户端是不是有重试，wireshark抓包如下   发现并没有重试，事情就变得比较有意思了。 另外curl在默认情况下，只有connect的超时时间（2min">
-<meta name="twitter:image" content="http://yoursite.com/media/15295844321816/15295874011181.jpg">
+<meta name="twitter:title" content="url中出现大括号的有趣问题">
+<meta name="twitter:description" content="url中出现大括号的有趣问题背景线上又出现了一起问题请求是： /easicar/v1/subCourses/{subCourseId}/comments/create因为node服务的有bug{subCourseId}，没有用值覆盖它，在线上不正常返回400，在测试环境正常（虽然没赋值，后端也没用到subCourseId这个值）原因还是因为上篇文章讲过的原因：http://arthur-zhang">
 
 
 
@@ -124,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/06/21/waf-non-idempotent-retry/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/09/19/url-chars/"/>
 
 
 
 
 
-  <title> 阿里云WAF非幂等请求重试的坑 | Arthur Blog </title>
+  <title> url中出现大括号的有趣问题 | Arthur Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
@@ -252,7 +247,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/21/waf-non-idempotent-retry/">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/19/url-chars/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="Arthur Zhang">
@@ -276,7 +271,7 @@
             
             
               
-                阿里云WAF非幂等请求重试的坑
+                url中出现大括号的有趣问题
               
             
           </h1>
@@ -291,8 +286,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-06-21T16:11:18+08:00">
-                2018-06-21
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-19T16:11:18+08:00">
+                2018-09-19
               </time>
             
 
@@ -314,8 +309,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/网络/" itemprop="url" rel="index">
-                    <span itemprop="name">网络</span>
+                  <a href="/categories/Nginx/" itemprop="url" rel="index">
+                    <span itemprop="name">Nginx</span>
                   </a>
                 </span>
 
@@ -349,33 +344,20 @@
       
 
       
-        <h1 id="阿里云WAF非幂等请求重试的坑"><a href="#阿里云WAF非幂等请求重试的坑" class="headerlink" title="阿里云WAF非幂等请求重试的坑"></a>阿里云WAF非幂等请求重试的坑</h1><p>这段时间遇到了一个诡异的问题，用<code>curl</code>或<code>PostMan</code>去调用阿里云（经过了WAF）上一个需要很长时间返回的后端接口（可能在半小时以上），发现后端居然会处理三次</p>
-<p><img src="/media/15295844321816/15295874011181.jpg" alt=""></p>
-<p>这种问题，排查的思路是什么呢？</p>
-<ul>
-<li>第一，当然是看客户端是不是有重试，wireshark抓包如下</li>
-</ul>
-<p><img src="/media/15295844321816/15295869649989.jpg" alt=""></p>
-<p>发现并没有重试，事情就变得比较有意思了。</p>
-<p>另外<br><code>curl</code>在默认情况下，只有<code>connect</code>的超时时间（2min），并没有<code>read</code>的超时时间，也就是<code>curl</code>在<code>connect</code>成功以后会永久等待。可以通过参数值来设置超时时间</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-m, --max-time &lt;seconds&gt;</span><br><span class="line">    Maximum  time  in  seconds that you allow the whole operation to</span><br><span class="line">    take.  This is useful for preventing your batch jobs from  hang‐</span><br><span class="line">    ing  for  hours due to slow networks or links going down.  Since</span><br><span class="line">    7.32.0, this option accepts decimal values, but the actual time‐</span><br><span class="line">    out will decrease in accuracy as the specified timeout increases</span><br><span class="line">    in decimal precision.  See also the --connect-timeout option.</span><br><span class="line"></span><br><span class="line">    If this option is used several times, the last one will be used.</span><br></pre></td></tr></table></figure>
-<p>另外，这里的<code>keepalive</code>心跳包也比较有意思，后面再讲</p>
-<ul>
-<li>第二，在<code>Nginx</code>机器抓包，验证，真的有请求多次</li>
-</ul>
-<p><img src="/media/15295844321816/15295874991093.jpg" alt=""></p>
-<p>发现每到2分钟<code>Nginx</code>就主动断掉了连接，重新建连接，发起请求</p>
-<ul>
-<li>第三，在不经过<code>WAF</code>的情况下，调用看会不会有问题</li>
-</ul>
-<p>怎么样不经过WAF呢？在阿里云内网，指定<code>care.cctv.com</code>到一台nginx上就可以了，主要通过<code>curl</code>的<code>--resolve</code>来实现</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">curl -v -X POST \</span><br><span class="line">http://care.cctv.com/init/daily \</span><br><span class="line">--resolve care.cctv.com:80:2.2.2.2</span><br></pre></td></tr></table></figure>
-<p><img src="/media/15295844321816/15295876827707.jpg" alt=""></p>
-<p>为什么是<code>900s</code>？</p>
-<p><code>Nginx</code>配置大概如下：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">upstream  express_server&#123;</span><br><span class="line">        server localhost:3000;</span><br><span class="line">        keepalive 16;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">        listen       80;</span><br><span class="line">        server_name test.ya.local;</span><br><span class="line"></span><br><span class="line">        access_log  /usr/local/var/log/nginx/host.test.ya.me.access.log  main buffer=64k flush=1s;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        location /&#123;</span><br><span class="line">                proxy_pass http://express_server;</span><br><span class="line">                proxy_redirect      off;</span><br><span class="line">                proxy_set_header                X-Forwarded-Url         &quot;$scheme://$host$request_uri&quot;;</span><br><span class="line">                proxy_http_version  1.1;</span><br><span class="line">                proxy_set_header    Connection &quot;&quot;;</span><br><span class="line">                proxy_set_header    Cookie $http_cookie;</span><br><span class="line">                proxy_set_header    Host $host;</span><br><span class="line">                proxy_set_header    X-Real-IP $remote_addr;</span><br><span class="line">                proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">                proxy_connect_timeout           900;</span><br><span class="line">                proxy_send_timeout              900;</span><br><span class="line">                proxy_read_timeout              900;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在<code>Nginx</code>配置这里，<code>read</code>的超时时间就是<code>900s</code></p>
-<p>阿里云<code>WAF</code>坑的地方，在于对于非幂等的<code>POST</code>请求，依然进行了重试，完全没有节操</p>
+        <h1 id="url中出现大括号的有趣问题"><a href="#url中出现大括号的有趣问题" class="headerlink" title="url中出现大括号的有趣问题"></a>url中出现大括号的有趣问题</h1><h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>线上又出现了一起问题<br>请求是： /easicar/v1/subCourses/{subCourseId}/comments/create<br>因为node服务的有bug{subCourseId}，没有用值覆盖它，在线上不正常返回400，在测试环境正常（虽然没赋值，后端也没用到subCourseId这个值）<br>原因还是因为上篇文章讲过的原因：<a href="http://arthur-zhang.github.io/2018/09/11/nginx-merge-slash/" target="_blank" rel="noopener">http://arthur-zhang.github.io/2018/09/11/nginx-merge-slash/</a></p>
+<p>实验结果如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1. server 后面有内容的时候 (模拟线上情况)</span><br><span class="line">proxy_pass http://my-tomcat-server/nimei </span><br><span class="line"></span><br><span class="line">客户端请求到 Nginx</span><br><span class="line">19:03:01.396763 IP 127.0.0.1.61759 &gt; 127.0.0.1.8080: Flags [P.]</span><br><span class="line">POST /apm-demo-server/%7Bfoo%7D//bar HTTP/1.1</span><br><span class="line">Content-Type: text/plain; charset=utf-8</span><br><span class="line"></span><br><span class="line">Nginx请求到upstream</span><br><span class="line">19:03:01.398280 IP6 ::1.61760 &gt; ::1.8111: Flags [P.]</span><br><span class="line">POST /nimei/&#123;foo&#125;/bar HTTP/1.1</span><br><span class="line">X-Forwarded-Url: http://ya-dev.test.seewo.com/apm-demo-server/%7Bfoo%7D//bar</span><br><span class="line"></span><br><span class="line">可以看到转发到后端服务器那里的时候已经是解码过的&#123;foo&#125;</span><br><span class="line"></span><br><span class="line">2. server 后面没有内容的时候 (模拟测试环境)</span><br><span class="line"></span><br><span class="line">proxy_pass http://my-tomcat-server;</span><br><span class="line"></span><br><span class="line">客户端请求到 Nginx</span><br><span class="line">19:16:37.949701 IP 127.0.0.1.62054 &gt; 127.0.0.1.8080: Flags [P.]</span><br><span class="line">POST /apm-demo-server/%7Bfoo%7D//bar HTTP/1.1</span><br><span class="line"></span><br><span class="line">Nginx请求到upstream</span><br><span class="line">19:16:37.953191 IP6 ::1.62055 &gt; ::1.8111: Flags [P.]</span><br><span class="line">POST /apm-demo-server/%7Bfoo%7D//bar HTTP/1.1</span><br><span class="line">X-Forwarded-Url: http://ya-dev.test.seewo.com/apm-demo-server/%7Bfoo%7D//bar</span><br><span class="line">可以看到转发到后端服务器那里的时候已经是未解码过的%7Bfoo%7D</span><br></pre></td></tr></table></figure>
+<p>可以看到<code>Nginx</code>这个坑货，在<code>server</code>后面有内容的时候，会把<code>url</code>解码、合并斜杆后的<code>url</code>传给<code>upstream</code>服务器，但是<code>tomcat</code>会拒绝掉部分未经编码的他觉得不合法的字符。<br>无论发起方编码的多么好，都会有问题</p>
+<p>解决办法有两种：</p>
+<ol>
+<li>修改<code>Nginx</code>配置</li>
+<li>修改<code>tomcat</code>配置<code>Connector</code>中<code>relaxedQueryChars</code>属性，使之支持<code>{</code>这些特殊字符</li>
+</ol>
+<p>那么哪些是http协议认为的合法的字符呢？<br>写了一段代码，经过一层<code>Nginx</code>，转发到<code>tomcat</code>，遍历了0-127的所有字符，以下字符是一定不被<code>tomcat</code>允许的</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&quot; 0x22</span><br><span class="line">&lt; 0x3c</span><br><span class="line">&gt; 0x3e</span><br><span class="line">^ 0x5e</span><br><span class="line">` 0x60</span><br><span class="line">&#123; 0x7b</span><br><span class="line">| 0x7c</span><br><span class="line">&#125; 0x7d</span><br></pre></td></tr></table></figure>
+<p>看<code>tomcat</code>源码也可以知道</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">if (IS_CONTROL[i] || i &gt; 127 ||</span><br><span class="line">        i == &apos; &apos; || i == &apos;\&quot;&apos; || i == &apos;#&apos; || i == &apos;&lt;&apos; || i == &apos;&gt;&apos; || i == &apos;\\&apos; ||</span><br><span class="line">        i == &apos;^&apos; || i == &apos;`&apos;  || i == &apos;&#123;&apos; || i == &apos;|&apos; || i == &apos;&#125;&apos;) &#123;</span><br><span class="line">    if (!REQUEST_TARGET_ALLOW[i]) &#123;</span><br><span class="line">        IS_NOT_REQUEST_TARGET[i] = true;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>细心的人可以发现，没有完全对应上，可以留做下一篇文章</p>
 
       
     </div>
@@ -417,8 +399,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/06/19/node-5xx/" rel="next" title="keepalive导致NodeJS服务502问题排查">
-                <i class="fa fa-chevron-left"></i> keepalive导致NodeJS服务502问题排查
+              <a href="/2018/09/11/nginx-merge-slash/" rel="next" title="一次Nginx双斜杠问题排查">
+                <i class="fa fa-chevron-left"></i> 一次Nginx双斜杠问题排查
               </a>
             
           </div>
@@ -426,10 +408,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/09/11/nginx-merge-slash/" rel="prev" title="一次Nginx双斜杠问题排查">
-                一次Nginx双斜杠问题排查 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -545,7 +523,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#阿里云WAF非幂等请求重试的坑"><span class="nav-number">1.</span> <span class="nav-text">阿里云WAF非幂等请求重试的坑</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#url中出现大括号的有趣问题"><span class="nav-number">1.</span> <span class="nav-text">url中出现大括号的有趣问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#背景"><span class="nav-number">1.0.1.</span> <span class="nav-text">背景</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
