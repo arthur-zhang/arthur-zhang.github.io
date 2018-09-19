@@ -82,18 +82,20 @@
 
 
 
-<meta name="description" content="线上出现了几次接口400的异常，排查起来比较有意思，通过nginx代理过去就会400，通过ip直连过去，就不会出现，机智的我用tcpdump抓了一个包，搞下来看了一下，居然没有发现两种请求有什么不同（当然是我没发现） 我猜可能是刚好触发了tomcat的header最大大小的限制了，放到我自己编译的tomcat中开启debug模式，果然出现了异常  看到是Request header is too">
+<meta name="description" content="出现了两个案例：  接口返回400 接口返回414  先看第一个问题：状态码返回400线上出现了几次接口400的异常，排查起来比较有意思，通过nginx代理过去就会400，通过ip直连过去，就不会出现，机智的我用tcpdump抓了一个包，搞下来看了一下，居然没有发现两种请求有什么不同（当然是我没发现） 我猜可能是刚好触发了tomcat的header最大大小的限制了，放到我自己编译的tomcat中开">
 <meta property="og:type" content="article">
-<meta property="og:title" content="一次 tomcat 400 异常">
+<meta property="og:title" content="一次URL长度导致的414 400异常分析">
 <meta property="og:url" content="http://yoursite.com/2018/04/27/tomcat-header-too-large/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="线上出现了几次接口400的异常，排查起来比较有意思，通过nginx代理过去就会400，通过ip直连过去，就不会出现，机智的我用tcpdump抓了一个包，搞下来看了一下，居然没有发现两种请求有什么不同（当然是我没发现） 我猜可能是刚好触发了tomcat的header最大大小的限制了，放到我自己编译的tomcat中开启debug模式，果然出现了异常  看到是Request header is too">
+<meta property="og:description" content="出现了两个案例：  接口返回400 接口返回414  先看第一个问题：状态码返回400线上出现了几次接口400的异常，排查起来比较有意思，通过nginx代理过去就会400，通过ip直连过去，就不会出现，机智的我用tcpdump抓了一个包，搞下来看了一下，居然没有发现两种请求有什么不同（当然是我没发现） 我猜可能是刚好触发了tomcat的header最大大小的限制了，放到我自己编译的tomcat中开">
 <meta property="og:image" content="http://yoursite.com/images/15248405028586.jpg">
 <meta property="og:image" content="http://yoursite.com/images/15248408539742.jpg">
-<meta property="og:updated_time" content="2018-04-27T15:05:08.024Z">
+<meta property="og:image" content="http://yoursite.com/images/tomcat_url_3_times.png">
+<meta property="og:image" content="http://yoursite.com/images/nginx414-1.png">
+<meta property="og:updated_time" content="2018-09-09T05:50:15.093Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="一次 tomcat 400 异常">
-<meta name="twitter:description" content="线上出现了几次接口400的异常，排查起来比较有意思，通过nginx代理过去就会400，通过ip直连过去，就不会出现，机智的我用tcpdump抓了一个包，搞下来看了一下，居然没有发现两种请求有什么不同（当然是我没发现） 我猜可能是刚好触发了tomcat的header最大大小的限制了，放到我自己编译的tomcat中开启debug模式，果然出现了异常  看到是Request header is too">
+<meta name="twitter:title" content="一次URL长度导致的414 400异常分析">
+<meta name="twitter:description" content="出现了两个案例：  接口返回400 接口返回414  先看第一个问题：状态码返回400线上出现了几次接口400的异常，排查起来比较有意思，通过nginx代理过去就会400，通过ip直连过去，就不会出现，机智的我用tcpdump抓了一个包，搞下来看了一下，居然没有发现两种请求有什么不同（当然是我没发现） 我猜可能是刚好触发了tomcat的header最大大小的限制了，放到我自己编译的tomcat中开">
 <meta name="twitter:image" content="http://yoursite.com/images/15248405028586.jpg">
 
 
@@ -128,7 +130,7 @@
 
 
 
-  <title> 一次 tomcat 400 异常 | Arthur Blog </title>
+  <title> 一次URL长度导致的414 400异常分析 | Arthur Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
@@ -274,7 +276,7 @@
             
             
               
-                一次 tomcat 400 异常
+                一次URL长度导致的414 400异常分析
               
             
           </h1>
@@ -347,7 +349,12 @@
       
 
       
-        <p>线上出现了几次接口400的异常，排查起来比较有意思，通过nginx代理过去就会400，通过ip直连过去，就不会出现，机智的我用tcpdump抓了一个包，搞下来看了一下，居然没有发现两种请求有什么不同（当然是我没发现）</p>
+        <p>出现了两个案例：</p>
+<ol>
+<li>接口返回400</li>
+<li>接口返回414</li>
+</ol>
+<h1 id="先看第一个问题：状态码返回400"><a href="#先看第一个问题：状态码返回400" class="headerlink" title="先看第一个问题：状态码返回400"></a>先看第一个问题：状态码返回400</h1><p>线上出现了几次接口400的异常，排查起来比较有意思，通过nginx代理过去就会400，通过ip直连过去，就不会出现，机智的我用tcpdump抓了一个包，搞下来看了一下，居然没有发现两种请求有什么不同（当然是我没发现）</p>
 <p>我猜可能是刚好触发了tomcat的header最大大小的限制了，放到我自己编译的tomcat中开启debug模式，果然出现了异常</p>
 <p><img src="/images/15248405028586.jpg" alt=""></p>
 <p>看到是Request header is too large异常，那到底是多大？</p>
@@ -362,6 +369,19 @@
 <p>如果你还不会从源码调试tomcat，那么这篇文章就对你有帮助啦</p>
 <p>下面这个链接是可以直接用Intellj打开并进行debug的，基于tomcat8.0，做了一些细微的修改以便编译可以通过。</p>
 <p><a href="https://github.com/arthur-zhang/tomcat-code-reading" target="_blank" rel="noopener">https://github.com/arthur-zhang/tomcat-code-reading</a></p>
+<p>续上<br>近期发现 url 长度达到 2500 就跪了，跟我们之前看到的理论上支持 4000 左右（8192/2）相差比较远，抓包研究了一下，发现 Nginx 又丧心病狂的把 url 重复了三遍</p>
+<p><img src="/images/tomcat_url_3_times.png" alt=""></p>
+<p>导致最多支持的url长度大概为 2700 以下，本例中是 2500，因为要算上其它的 header</p>
+<h2 id="第二个问题，返回414状态码"><a href="#第二个问题，返回414状态码" class="headerlink" title="第二个问题，返回414状态码"></a>第二个问题，返回414状态码</h2><p>其实这个很好理解，一个请求到后端接口内部，经历了两层组件 <code>Nginx</code> 和 <code>Tomcat</code> 容器<br>上面那个是 <code>Tomcat</code> 限制了能处理的最大header大小，经过了一层 Nginx 导致 header 大了三倍左右，导致一个能经过 Nginx 的请求，在 Tomcat 层被拒绝掉，返回<code>400</code>状态码</p>
+<p>那么Nginx层大小是怎么样的呢？<br>默认值也是8k</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Syntax: large_client_header_buffers number size;</span><br><span class="line">Default:    </span><br><span class="line">large_client_header_buffers 4 8k;</span><br><span class="line">Context:    http, server</span><br><span class="line">Sets the maximum number and size of buffers used for reading large client request header. A request line cannot exceed the size of one buffer, or the 414 (Request-URI Too Large) error is returned to the client. A request header field cannot exceed the size of one buffer as well, or the 400 (Bad Request) error is returned to the client. Buffers are allocated only on demand. By default, the buffer size is equal to 8K bytes. If after the end of request processing a connection is transitioned into the keep-alive state, these buffers are released.</span><br></pre></td></tr></table></figure>
+<p>写一个代码从url长度8192往下找到第一个非414的请求，发现不太对</p>
+<p><img src="/images/nginx414-1.png" alt=""></p>
+<p>为啥是<code>8295</code>？而不是8k(8192)<br>仔细看一下文档<br><code>A request line cannot exceed the size of one buffer, or the 414 (Request-URI Too Large) error is returned to the client.</code></p>
+<p>意思是<code>request line</code>不能超过一个buffer的大小(8k)，否则会抛出 <code>414</code> 异常</p>
+<p>什么是request line？<br><code>http</code>的<code>RFC上</code>有写<br><code>Request-Line   = Method SP Request-URI SP HTTP-Version CRLF</code><br>也就是只包含 <code>method + uri + http-version CRLF</code></p>
+<p>我们把对应的部分拷贝出来，看下长度，不包含CRLF的长度是8190。<br>我们可以大致计算一下GET请求的URI在nginx上最大不能超过多少：<br><code>8192 - (GET ).length - ( HTTP/1.1).length - (CRLF).length = 8192 - 4 - 9 - 2 = 8177</code></p>
+<p>跟我们用代码试出来的大小一样</p>
 
       
     </div>
@@ -462,8 +482,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/default_avatar.jpg"
@@ -476,7 +505,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/">
-                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-count">18</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -485,7 +514,7 @@
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -512,6 +541,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#先看第一个问题：状态码返回400"><span class="nav-number">1.</span> <span class="nav-text">先看第一个问题：状态码返回400</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第二个问题，返回414状态码"><span class="nav-number">1.1.</span> <span class="nav-text">第二个问题，返回414状态码</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
     </div>
