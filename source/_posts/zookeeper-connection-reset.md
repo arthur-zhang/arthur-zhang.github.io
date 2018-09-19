@@ -66,11 +66,11 @@ java    23738      502   28u    IPv6 0xbb2ca6140b2f1caf        0t0        TCP 10
 
 然后断掉虚拟机的网络，发现`A`机器上还是`ESTABLISHED`状态
 
-如何避免这种情况，最好的方式是业务方自己维持心跳包，一段时间对端无响应可以做对应的处理
+复现了那个现象
 
 已经存在的连接怎么处理呢？
 
-这就需要退出一个强大的`kill tcp`连接的工具了 [killcx](http://killcx.sourceforge.net/)
+这就需要推出一个强大的`kill tcp`连接的工具了 [killcx](http://killcx.sourceforge.net/)
 
 centos上安装过程比较麻烦，大概的过程是：
 
@@ -87,6 +87,29 @@ cpan> install NetPacket::Ethernet
 
 然后用killcx杀掉连接
 ```
+
+那有人要有疑问了，tcp这么挫，连个连接保活机制都没有？不是有一个`keep-alive`是干这个事情的吗？
+
+实际上TCP确实有一种名为keep-alive的机制可以用来检测死连接，但这对应用程序来说通常没什么用处。
+对于需要连接丢失即时通知的程序来说，keep-alive机制的第一个问题就是`涉及的时间间隔`。RFC1122规定，如果TCP实现了keep-alive，在它开始发送keep-alive探测信息之前，必须有至少两个小时的空闲时间。其次由于其对等实体的ACK没有被可靠的传输，所以在放弃保持之前它必须不断的发送探测信号。BSD实现在放弃连接之前会发送9次探测信号，两次间隔75s
+
+这就意味着默认设置要经过2小时11分15秒才能发现连接已经丢失
+
+```
+Keep-alive packets MUST only be sent when no data or acknowledgement packets have been received for the connection within an interval.  This interval MUST be configurable and MUST default to no less than two hours.
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

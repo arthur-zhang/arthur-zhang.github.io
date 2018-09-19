@@ -47,6 +47,7 @@ $<参数 1 的字节数量> CR LF
 ...
 $<参数 N 的字节数量> CR LF
 <参数 N 的数据> CR LF
+
 ```
 redis的响应回复
 
@@ -55,9 +56,7 @@ redis的响应回复
 - 整数回复（integer reply）的第一个字节是 ":"
 - 批量回复（bulk reply）的第一个字节是 "$"
 - 多条批量回复（multi bulk reply）的第一个字节是 "*"
-
-这里的 `*1\r\n$4\r\nping\r\n`
-
+这里的 *1\r\n$4\r\nping\r\n
 ```
 ┌───────────────┐
 │argument count │
