@@ -2,7 +2,7 @@
 layout: post
 title:  "一个简单加锁顺序不一致导致 MySQL update 死锁异常"
 date:   2018-10-15 16:11:18
-categories: 数据结构
+categories: MySQL
 ---
 
 
