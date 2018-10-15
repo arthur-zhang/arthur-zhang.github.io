@@ -88,7 +88,7 @@
 <meta property="og:url" content="http://yoursite.com/2018/10/15/mysql-deadlock-01/index.html">
 <meta property="og:site_name" content="Arthur Blog">
 <meta property="og:description" content="一个简单加锁顺序不一致导致 MySQL update 死锁异常 死锁日志如下 2018-10-11T01:51:52.053896Z 7977662 [Note] InnoDB:*** (1) TRANSACTION:TRANSACTION 854095654, ACTIVE 1 sec starting index readmysql tables in use 1, locked 1LOCK">
-<meta property="og:updated_time" content="2018-10-15T02:58:54.968Z">
+<meta property="og:updated_time" content="2018-10-15T03:00:38.869Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一个简单加锁顺序不一致导致 MySQL update 死锁异常">
 <meta name="twitter:description" content="一个简单加锁顺序不一致导致 MySQL update 死锁异常 死锁日志如下 2018-10-11T01:51:52.053896Z 7977662 [Note] InnoDB:*** (1) TRANSACTION:TRANSACTION 854095654, ACTIVE 1 sec starting index readmysql tables in use 1, locked 1LOCK">
@@ -105,7 +105,7 @@
     motion: false,
     duoshuo: {
       userId: 'undefined',
-      author: '博主'
+      author: 'Author'
     },
     algolia: {
       applicationID: '',
@@ -194,7 +194,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
-            首页
+            Home
           </a>
         </li>
       
@@ -204,7 +204,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
             
-            分类
+            Categories
           </a>
         </li>
       
@@ -214,7 +214,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
             
-            关于
+            About
           </a>
         </li>
       
@@ -284,7 +284,7 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">发表于</span>
+                <span class="post-meta-item-text">Posted on</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-15T16:11:18+08:00">
                 2018-10-15
@@ -305,7 +305,7 @@
                 <i class="fa fa-folder-o"></i>
               </span>
               
-                <span class="post-meta-item-text">分类于</span>
+                <span class="post-meta-item-text">In</span>
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
@@ -346,7 +346,7 @@
       
         <p>一个简单加锁顺序不一致导致 MySQL update 死锁异常</p>
 <p>死锁日志如下</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">2018-10-11T01:51:52.053896Z 7977662 [Note] InnoDB:</span><br><span class="line">*** (1) TRANSACTION:</span><br><span class="line"></span><br><span class="line">TRANSACTION 854095654, ACTIVE 1 sec starting index read</span><br><span class="line">mysql tables in use 1, locked 1</span><br><span class="line">LOCK WAIT 5 lock struct(s), heap size 1136, 3 row lock(s), undo log entries 1</span><br><span class="line">MySQL thread id 7976601, OS thread handle 139858374461184, query id 11116500072 10.111.101.39 seewo updating</span><br><span class="line"></span><br><span class="line">update xx_dynamic_timeline set is_like=1, updated_at=&apos;2018-10-11 09:51:51.977&apos; where dynamic_uid=&apos;0da4341bff974ccab5a58a9af1a351a1&apos; and user_uid=&apos;8497721440b54fda903889a6270e6835&apos; and is_like&lt;&gt;1</span><br><span class="line"></span><br><span class="line">2018-10-11T01:51:52.053933Z 7977662 [Note] InnoDB: *** (1) WAITING FOR THIS LOCK TO BE GRANTED:</span><br><span class="line"></span><br><span class="line">RECORD LOCKS space id 427 page no 137513 n bits 288 index uni_dynamic_user of table `seewo_easi_care_broadcast`.`xx_dynamic_timeline` trx id 854095654 lock_mode X locks rec but not gap waiting</span><br><span class="line"></span><br><span class="line">2018-10-11T01:51:52.053974Z 7977662 [Note] InnoDB: *** (2) TRANSACTION:</span><br><span class="line"></span><br><span class="line">TRANSACTION 854095641, ACTIVE 1 sec starting index read</span><br><span class="line">mysql tables in use 1, locked 1</span><br><span class="line">1240 lock struct(s), heap size 123088, 110 row lock(s), undo log entries 55</span><br><span class="line">MySQL thread id 7977662, OS thread handle 139858575738624, query id 11116500504 10.111.101.36 seewo updating</span><br><span class="line">update xx_dynamic set created_at=&apos;2018-10-11 09:51:45&apos;, is_deleted=1, uid=&apos;0da4341bff974ccab5a58a9af1a351a1&apos;, updated_at=&apos;2018-10-11 09:51:51.921&apos;, audio_duration=0, audio_url=&apos;&apos;, content=&apos;5p6X6Zuo5qyj77yM546L5oWn546y77yM5ZGo5qKm55G2&apos;, creator_uid=&apos;758585f422b442128a9274b530826c55&apos;, like_count=0, need_reply=0, picture_url=&apos;https://store-g1.seewo.com/FuTb5kxrFCRyz_Z9TL0jldoNg0NM?imageMogr2/crop/1560x2080&apos;, reply_expired_time=&apos;2018-10-11 23:00:56&apos;, show_role=0, title=&apos;&apos;, type=1, web_content=&apos;&apos; where id=14079229</span><br><span class="line">2018-10-11T01:51:52.054007Z 7977662 [Note] InnoDB: *** (2) HOLDS THE LOCK(S):</span><br><span class="line"></span><br><span class="line">RECORD LOCKS space id 427 page no 137513 n bits 288 index uni_dynamic_user of table `seewo_easi_care_broadcast`.`xx_dynamic_timeline` trx id 854095641 lock_mode X locks rec but not gap</span><br><span class="line">2018-10-11T01:51:52.054023Z 7977662 [Note] InnoDB: *** (2) WAITING FOR THIS LOCK TO BE GRANTED:</span><br><span class="line"></span><br><span class="line">RECORD LOCKS space id 514 page no 594639 n bits 104 index PRIMARY of table `seewo_easi_care_broadcast`.`xx_dynamic` trx id 854095641 lock_mode X locks rec but not gap waiting</span><br><span class="line">2018-10-11T01:51:52.054042Z 7977662 [Note] InnoDB: *** WE ROLL BACK TRANSACTION (1)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">2018-10-11T01:51:52.053896Z 7977662 [Note] InnoDB:</span><br><span class="line">*** (1) TRANSACTION:</span><br><span class="line"></span><br><span class="line">TRANSACTION 854095654, ACTIVE 1 sec starting index read</span><br><span class="line">mysql tables in use 1, locked 1</span><br><span class="line">LOCK WAIT 5 lock struct(s), heap size 1136, 3 row lock(s), undo log entries 1</span><br><span class="line">MySQL thread id 7976601, OS thread handle 139858374461184, query id 11116500072 10.111.101.39 updating</span><br><span class="line"></span><br><span class="line">update xx_dynamic_timeline set is_like=1, updated_at=&apos;2018-10-11 09:51:51.977&apos; where dynamic_uid=&apos;0da4341bff974ccab5a58a9af1a351a1&apos; and user_uid=&apos;8497721440b54fda903889a6270e6835&apos; and is_like&lt;&gt;1</span><br><span class="line"></span><br><span class="line">2018-10-11T01:51:52.053933Z 7977662 [Note] InnoDB: *** (1) WAITING FOR THIS LOCK TO BE GRANTED:</span><br><span class="line"></span><br><span class="line">RECORD LOCKS space id 427 page no 137513 n bits 288 index uni_dynamic_user of table `masaike`.`xx_dynamic_timeline` trx id 854095654 lock_mode X locks rec but not gap waiting</span><br><span class="line"></span><br><span class="line">2018-10-11T01:51:52.053974Z 7977662 [Note] InnoDB: *** (2) TRANSACTION:</span><br><span class="line"></span><br><span class="line">TRANSACTION 854095641, ACTIVE 1 sec starting index read</span><br><span class="line">mysql tables in use 1, locked 1</span><br><span class="line">1240 lock struct(s), heap size 123088, 110 row lock(s), undo log entries 55</span><br><span class="line">MySQL thread id 7977662, OS thread handle 139858575738624, query id 11116500504 10.111.101.36 updating</span><br><span class="line">update xx_dynamic set created_at=&apos;2018-10-11 09:51:45&apos;, is_deleted=1, uid=&apos;0da4341bff974ccab5a58a9af1a351a1&apos;, updated_at=&apos;2018-10-11 09:51:51.921&apos;, audio_duration=0, audio_url=&apos;&apos;, content=&apos;5p6X6Zuo5qyj77yM546L5oWn546y77yM5ZGo5qKm55G2&apos;, creator_uid=&apos;758585f422b442128a9274b530826c55&apos;, like_count=0, need_reply=0, picture_url=&apos;https://store-g1.masaike.com/FuTb5kxrFCRyz_Z9TL0jldoNg0NM?imageMogr2/crop/1560x2080&apos;, reply_expired_time=&apos;2018-10-11 23:00:56&apos;, show_role=0, title=&apos;&apos;, type=1, web_content=&apos;&apos; where id=14079229</span><br><span class="line">2018-10-11T01:51:52.054007Z 7977662 [Note] InnoDB: *** (2) HOLDS THE LOCK(S):</span><br><span class="line"></span><br><span class="line">RECORD LOCKS space id 427 page no 137513 n bits 288 index uni_dynamic_user of table `masiake`.`xx_dynamic_timeline` trx id 854095641 lock_mode X locks rec but not gap</span><br><span class="line">2018-10-11T01:51:52.054023Z 7977662 [Note] InnoDB: *** (2) WAITING FOR THIS LOCK TO BE GRANTED:</span><br><span class="line"></span><br><span class="line">RECORD LOCKS space id 514 page no 594639 n bits 104 index PRIMARY of table `masaike`.`xx_dynamic` trx id 854095641 lock_mode X locks rec but not gap waiting</span><br><span class="line">2018-10-11T01:51:52.054042Z 7977662 [Note] InnoDB: *** WE ROLL BACK TRANSACTION (1)</span><br></pre></td></tr></table></figure>
 <p>对应代码</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">接口<span class="number">1</span></span><br><span class="line">PUT /api/v1/dynamics_masaike/<span class="number">0</span>da4341bff974ccab5a58a9af1a351a1/like</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setDynamicLikeCount</span><span class="params">(String uid, String dynamicUid, Long likeCount)</span> </span>&#123;</span><br><span class="line">    dynamicMapper.increaseLikeCountByUid(dynamicUid, likeCount);</span><br><span class="line">    dynamicTimelineDao.setLikeState(dynamicUid, uid, <span class="keyword">true</span>, <span class="keyword">new</span> Date());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">接口<span class="number">2</span>：<span class="number">09</span>:<span class="number">51</span>:<span class="number">51.911</span></span><br><span class="line"></span><br><span class="line">DELETE /api/v1/dynamics_masaike/<span class="number">0</span>da4341bff974ccab5a58a9af1a351a1</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">logicDeleteByUid</span><span class="params">(String uid)</span> </span>&#123;</span><br><span class="line">    Assert.hasText(uid, <span class="string">"uid must not be null, empty, or blank"</span>);</span><br><span class="line">    dynamicDao.logicDeleteByUid(uid);</span><br><span class="line">    dynamicTimelineDao.logicDeleteByDynamicUid(uid);</span><br><span class="line">    classHeadlineService.deleteClassHeadlineByDynamicId(uid);</span><br><span class="line">    dynamicClassDao.logicDeleteByDynamicUid(uid);</span><br><span class="line">    dynamicShareMapper.removeByDynamicUid(uid);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>数据准备<br>表结构<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">CREATE TABLE `xx_dynamic` (</span><br><span class="line">  `id` int(11) unsigned NOT NULL AUTO_INCREMENT ,</span><br><span class="line">  `uid` varchar(32) NOT NULL ,</span><br><span class="line">  `type` int(11) NOT NULL DEFAULT &apos;1&apos; ,</span><br><span class="line">  `title` varchar(256) NOT NULL DEFAULT &apos;&apos;,</span><br><span class="line">  `content` varchar(8192) DEFAULT NULL,</span><br><span class="line">  `picture_url` varchar(2048) NOT NULL DEFAULT &apos;&apos; ,</span><br><span class="line">  `audio_url` varchar(128) NOT NULL DEFAULT &apos;&apos; ,</span><br><span class="line">  `audio_duration` bigint(20) unsigned NOT NULL DEFAULT &apos;0&apos; ,</span><br><span class="line">  `web_content` varchar(1024) NOT NULL DEFAULT &apos;&apos;,</span><br><span class="line">  `need_reply` tinyint(1) unsigned NOT NULL DEFAULT &apos;0&apos;,</span><br><span class="line">  `reply_expired_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ,</span><br><span class="line">  `show_role` tinyint(2) unsigned NOT NULL DEFAULT &apos;0&apos; ,</span><br><span class="line">  `creator_uid` varchar(32) NOT NULL DEFAULT &apos;&apos; ,</span><br><span class="line">  `created_at` datetime NOT NULL ,</span><br><span class="line">  `updated_at` datetime NOT NULL ,</span><br><span class="line">  `is_deleted` tinyint(1) NOT NULL DEFAULT &apos;0&apos; ,</span><br><span class="line">  `like_count` bigint(20) unsigned NOT NULL DEFAULT &apos;0&apos; ,</span><br><span class="line">  `deadline` date NOT NULL DEFAULT &apos;2017-06-01&apos; ,</span><br><span class="line">  `isDeleted` tinyint(1) NOT NULL DEFAULT &apos;0&apos;,</span><br><span class="line">  PRIMARY KEY (`id`),</span><br><span class="line">  UNIQUE KEY `idx_uid` (`uid`) USING BTREE,</span><br><span class="line">  KEY `idx_type` (`type`)</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">CREATE TABLE `xx_dynamic_timeline` (</span><br><span class="line">  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,</span><br><span class="line">  `uid` varchar(32) NOT NULL,</span><br><span class="line">  `user_uid` varchar(32) NOT NULL DEFAULT &apos;&apos;,</span><br><span class="line">  `dynamic_uid` varchar(32) NOT NULL DEFAULT &apos;&apos;,</span><br><span class="line">  `is_like` tinyint(1) NOT NULL DEFAULT &apos;0&apos;,</span><br><span class="line">  `is_read` tinyint(1) NOT NULL DEFAULT &apos;0&apos;,</span><br><span class="line">  `read_time` datetime DEFAULT NULL ,</span><br><span class="line">  `type` int(11) NOT NULL DEFAULT &apos;1&apos;,</span><br><span class="line">  `creator_uid` varchar(32) NOT NULL,</span><br><span class="line">  `created_at` datetime NOT NULL</span><br><span class="line">  `updated_at` datetime NOT NULL</span><br><span class="line">  `is_deleted` tinyint(1) NOT NULL DEFAULT &apos;0&apos;,</span><br><span class="line">  `replied` tinyint(1) unsigned NOT NULL DEFAULT &apos;0&apos;,</span><br><span class="line">  `replied_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,</span><br><span class="line">  PRIMARY KEY (`id`),</span><br><span class="line">  UNIQUE KEY `idx_uid` (`uid`) USING BTREE,</span><br><span class="line">  UNIQUE KEY `uni_dynamic_user` (`dynamic_uid`,`user_uid`),</span><br><span class="line">  KEY `idx_user_uid_type` (`user_uid`,`type`) USING BTREE,</span><br><span class="line">  KEY `indx_user_id_id` (`user_uid`,`id`)</span><br><span class="line">)</span><br></pre></td></tr></table></figure></p>
@@ -482,10 +482,10 @@
       
         <ul class="sidebar-nav motion-element">
           <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            文章目录
+            Table of Contents
           </li>
           <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
+            Overview
           </li>
         </ul>
       
@@ -504,7 +504,7 @@
             <div class="site-state-item site-state-posts">
               <a href="/">
                 <span class="site-state-item-count">20</span>
-                <span class="site-state-item-name">日志</span>
+                <span class="site-state-item-name">posts</span>
               </a>
             </div>
           
@@ -513,7 +513,7 @@
             <div class="site-state-item site-state-categories">
               <a href="/categories">
                 <span class="site-state-item-count">13</span>
-                <span class="site-state-item-name">分类</span>
+                <span class="site-state-item-name">categories</span>
               </a>
             </div>
           
