@@ -11,7 +11,7 @@ categories: Nginx
 
 线上又出现了一起问题
 请求是： /easicar/v1/subCourses/{subCourseId}/comments/create
-因为node服务的有bug{subCourseId}，没有用值覆盖它，在线上不正常返回400，在测试环境正常（虽然没赋值，后端也没用到subCourseId这个值）
+因为node服务的有bug，{subCourseId}，没有用值覆盖它，在线上不正常返回400，在测试环境正常（虽然没赋值，后端也没用到subCourseId这个值）
 原因还是因为上篇文章讲过的原因：http://arthur-zhang.github.io/2018/09/11/nginx-merge-slash/
 
 实验结果如下
@@ -82,5 +82,11 @@ if (IS_CONTROL[i] || i > 127 ||
     }
 }
 ```
+
+具体可以参考：RFC 7230 和 RFC 3986
+
+参考链接：
+https://stackoverflow.com/questions/1547899/which-characters-make-a-url-invalid/13500078#13500078
+
 
 细心的人可以发现，没有完全对应上，可以留做下一篇文章
