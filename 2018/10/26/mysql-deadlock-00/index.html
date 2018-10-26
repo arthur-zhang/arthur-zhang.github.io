@@ -82,12 +82,12 @@
 
 
 
-<meta name="description" content="通过艰难的单步调试，终于找到了一个理想的断点，可以看到所有的获取锁的过程 代码在lock0lock.c的static enum db_err lock_rec_lock() 函数中，这个函数会显示，获取锁的过程，以及获取锁成功与否的情况 以一个实际的死锁例子来看 INSERT IGNORE INTO xx_dynamic_student_relation (id, dynamic_uid, stu">
+<meta name="description" content="通过艰难的单步调试，终于找到了一个理想的断点，可以看到所有的获取锁的过程 具体方式：使用CLion+MySQL官方源码 代码在lock0lock.c的static enum db_err lock_rec_lock() 函数中，这个函数会显示，获取锁的过程，以及获取锁成功与否的情况 以一个实际的死锁例子来看 INSERT IGNORE INTO xx_dynamic_student_relatio">
 <meta property="og:type" content="article">
 <meta property="og:title" content="如何通过调试MySQL源码的方式来理解加锁过程和死锁">
 <meta property="og:url" content="http://yoursite.com/2018/10/26/mysql-deadlock-00/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="通过艰难的单步调试，终于找到了一个理想的断点，可以看到所有的获取锁的过程 代码在lock0lock.c的static enum db_err lock_rec_lock() 函数中，这个函数会显示，获取锁的过程，以及获取锁成功与否的情况 以一个实际的死锁例子来看 INSERT IGNORE INTO xx_dynamic_student_relation (id, dynamic_uid, stu">
+<meta property="og:description" content="通过艰难的单步调试，终于找到了一个理想的断点，可以看到所有的获取锁的过程 具体方式：使用CLion+MySQL官方源码 代码在lock0lock.c的static enum db_err lock_rec_lock() 函数中，这个函数会显示，获取锁的过程，以及获取锁成功与否的情况 以一个实际的死锁例子来看 INSERT IGNORE INTO xx_dynamic_student_relatio">
 <meta property="og:image" content="http://yoursite.com/media/15405380720231/15405441529754.jpg">
 <meta property="og:image" content="http://yoursite.com/media/15405380720231/15405513861581.jpg">
 <meta property="og:image" content="http://yoursite.com/media/15405380720231/15405514551399.jpg">
@@ -95,10 +95,10 @@
 <meta property="og:image" content="http://yoursite.com/media/15405380720231/15405688422552.jpg">
 <meta property="og:image" content="http://yoursite.com/media/15405380720231/15405689179406.jpg">
 <meta property="og:image" content="http://yoursite.com/media/15405380720231/15405689547518.jpg">
-<meta property="og:updated_time" content="2018-10-26T16:08:21.288Z">
+<meta property="og:updated_time" content="2018-10-26T16:12:15.227Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="如何通过调试MySQL源码的方式来理解加锁过程和死锁">
-<meta name="twitter:description" content="通过艰难的单步调试，终于找到了一个理想的断点，可以看到所有的获取锁的过程 代码在lock0lock.c的static enum db_err lock_rec_lock() 函数中，这个函数会显示，获取锁的过程，以及获取锁成功与否的情况 以一个实际的死锁例子来看 INSERT IGNORE INTO xx_dynamic_student_relation (id, dynamic_uid, stu">
+<meta name="twitter:description" content="通过艰难的单步调试，终于找到了一个理想的断点，可以看到所有的获取锁的过程 具体方式：使用CLion+MySQL官方源码 代码在lock0lock.c的static enum db_err lock_rec_lock() 函数中，这个函数会显示，获取锁的过程，以及获取锁成功与否的情况 以一个实际的死锁例子来看 INSERT IGNORE INTO xx_dynamic_student_relatio">
 <meta name="twitter:image" content="http://yoursite.com/media/15405380720231/15405441529754.jpg">
 
 
@@ -113,7 +113,7 @@
     motion: false,
     duoshuo: {
       userId: 'undefined',
-      author: 'Author'
+      author: '博主'
     },
     algolia: {
       applicationID: '',
@@ -202,7 +202,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
-            Home
+            首页
           </a>
         </li>
       
@@ -212,7 +212,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
             
-            Categories
+            分类
           </a>
         </li>
       
@@ -222,7 +222,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
             
-            About
+            关于
           </a>
         </li>
       
@@ -292,7 +292,7 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Posted on</span>
+                <span class="post-meta-item-text">发表于</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-26T16:11:18+08:00">
                 2018-10-26
@@ -313,7 +313,7 @@
                 <i class="fa fa-folder-o"></i>
               </span>
               
-                <span class="post-meta-item-text">In</span>
+                <span class="post-meta-item-text">分类于</span>
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
@@ -353,6 +353,7 @@
 
       
         <p>通过艰难的单步调试，终于找到了一个理想的断点，可以看到所有的获取锁的过程</p>
+<p>具体方式：使用CLion+MySQL官方源码</p>
 <p>代码在<code>lock0lock.c</code>的<code>static enum db_err lock_rec_lock()</code> 函数中，这个函数会显示，获取锁的过程，以及获取锁成功与否的情况</p>
 <p>以一个实际的死锁例子来看</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">INSERT IGNORE INTO xx_dynamic_student_relation (id, dynamic_uid, student_uid, parent_uids, parent_names , state, create_time, update_time, is_deleted, performance_id) VALUES (NULL, &apos;11c62d70d69743118d6f382e43df4bec&apos;, &apos;f91792488255466aa00971fa78306c5f&apos;, &apos;[&quot;3d08530b61d3465eb9e9e1079c5da773&quot;]&apos;,          &apos;[&quot;凌秋燕&quot;]&apos; , 1, &apos;2018-10-23 21:03:46.193&apos;, &apos;2018-10-23 00:00:00.333&apos;, 0, NULL) ;</span><br><span class="line"></span><br><span class="line">UPDATE xx_dynamic_student_relation SET state = 2, update_time = now() WHERE student_uid IN (&apos;f91792488255466aa00971fa78306c5f&apos;) AND dynamic_uid =      &apos;11c62d70d69743118d6f382e43df4bec&apos; AND state = 1 AND is_deleted = 0 and 1=1;</span><br><span class="line"></span><br><span class="line">表结构</span><br><span class="line">CREATE TABLE `xx_dynamic_student_relation` (</span><br><span class="line">  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,</span><br><span class="line">  `dynamic_uid` char(32) NOT NULL DEFAULT &apos;&apos; ,</span><br><span class="line">  `student_uid` char(32) NOT NULL DEFAULT &apos;&apos;,</span><br><span class="line">  `parent_uids` varchar(1000) DEFAULT NULL ,</span><br><span class="line">  `parent_names` varchar(1000) DEFAULT NULL ,</span><br><span class="line">  `state` tinyint(2) unsigned NOT NULL DEFAULT &apos;0&apos;,</span><br><span class="line">  `performance_id` varchar(1000) DEFAULT NULL,</span><br><span class="line">  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,</span><br><span class="line">  `update_time` timestamp NOT NULL DEFAULT &apos;0000-00-00 00:00:00&apos; ,</span><br><span class="line">  `is_deleted` tinyint(4) NOT NULL DEFAULT &apos;0&apos; ,</span><br><span class="line">  PRIMARY KEY (`id`),</span><br><span class="line">  UNIQUE KEY `uidx_dynamic_student` (`dynamic_uid`,`student_uid`)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
@@ -619,10 +620,10 @@
       
         <ul class="sidebar-nav motion-element">
           <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            Table of Contents
+            文章目录
           </li>
           <li class="sidebar-nav-overview" data-target="site-overview">
-            Overview
+            站点概览
           </li>
         </ul>
       
@@ -641,7 +642,7 @@
             <div class="site-state-item site-state-posts">
               <a href="/">
                 <span class="site-state-item-count">21</span>
-                <span class="site-state-item-name">posts</span>
+                <span class="site-state-item-name">日志</span>
               </a>
             </div>
           
@@ -650,7 +651,7 @@
             <div class="site-state-item site-state-categories">
               <a href="/categories">
                 <span class="site-state-item-count">13</span>
-                <span class="site-state-item-name">categories</span>
+                <span class="site-state-item-name">分类</span>
               </a>
             </div>
           
