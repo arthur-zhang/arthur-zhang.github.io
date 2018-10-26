@@ -1,0 +1,707 @@
+<!doctype html>
+
+
+
+
+<html class="theme-next mist" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="如何通过调试MySQL源码的方式来理解加锁过程和死锁通过艰难的单步调试，终于找到了一个理想的断点，可以看到所有的获取锁的过程 代码在lock0lock.c的static enum db_err lock_rec_lock() 函数中，这个函数会显示，获取锁的过程，以及获取锁成功与否的情况 以一个实际的死锁例子来看 INSERT IGNORE INTO ep_dynamic_student_rela">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何通过调试MySQL源码的方式来理解加锁过程和死锁">
+<meta property="og:url" content="http://yoursite.com/2018/10/26/mysql-deadlock-00/index.html">
+<meta property="og:site_name" content="Arthur Blog">
+<meta property="og:description" content="如何通过调试MySQL源码的方式来理解加锁过程和死锁通过艰难的单步调试，终于找到了一个理想的断点，可以看到所有的获取锁的过程 代码在lock0lock.c的static enum db_err lock_rec_lock() 函数中，这个函数会显示，获取锁的过程，以及获取锁成功与否的情况 以一个实际的死锁例子来看 INSERT IGNORE INTO ep_dynamic_student_rela">
+<meta property="og:image" content="http://yoursite.com/media/15405380720231/15405441529754.jpg">
+<meta property="og:image" content="http://yoursite.com/media/15405380720231/15405513861581.jpg">
+<meta property="og:image" content="http://yoursite.com/media/15405380720231/15405514551399.jpg">
+<meta property="og:updated_time" content="2018-10-26T11:28:45.250Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何通过调试MySQL源码的方式来理解加锁过程和死锁">
+<meta name="twitter:description" content="如何通过调试MySQL源码的方式来理解加锁过程和死锁通过艰难的单步调试，终于找到了一个理想的断点，可以看到所有的获取锁的过程 代码在lock0lock.c的static enum db_err lock_rec_lock() 函数中，这个函数会显示，获取锁的过程，以及获取锁成功与否的情况 以一个实际的死锁例子来看 INSERT IGNORE INTO ep_dynamic_student_rela">
+<meta name="twitter:image" content="http://yoursite.com/media/15405380720231/15405441529754.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: false,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/10/26/mysql-deadlock-00/"/>
+
+
+
+
+
+  <title> 如何通过调试MySQL源码的方式来理解加锁过程和死锁 | Arthur Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=60116635";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Arthur Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/26/mysql-deadlock-00/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Arthur Zhang">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/default_avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Arthur Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Arthur Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                如何通过调试MySQL源码的方式来理解加锁过程和死锁
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-26T16:11:18+08:00">
+                2018-10-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySQL/" itemprop="url" rel="index">
+                    <span itemprop="name">MySQL</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="如何通过调试MySQL源码的方式来理解加锁过程和死锁"><a href="#如何通过调试MySQL源码的方式来理解加锁过程和死锁" class="headerlink" title="如何通过调试MySQL源码的方式来理解加锁过程和死锁"></a>如何通过调试MySQL源码的方式来理解加锁过程和死锁</h1><p>通过艰难的单步调试，终于找到了一个理想的断点，可以看到所有的获取锁的过程</p>
+<p>代码在<code>lock0lock.c</code>的<code>static enum db_err lock_rec_lock()</code> 函数中，这个函数会显示，获取锁的过程，以及获取锁成功与否的情况</p>
+<p>以一个实际的死锁例子来看</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">INSERT IGNORE INTO ep_dynamic_student_relation (id, dynamic_uid, student_uid, parent_uids, parent_names , state, create_time, update_time, is_deleted, performance_id) VALUES (NULL, &apos;11c62d70d69743118d6f382e43df4bec&apos;, &apos;f91792488255466aa00971fa78306c5f&apos;, &apos;[&quot;3d08530b61d3465eb9e9e1079c5da773&quot;]&apos;,          &apos;[&quot;凌秋燕&quot;]&apos; , 1, &apos;2018-10-23 21:03:46.193&apos;, &apos;2018-10-23 00:00:00.333&apos;, 0, NULL) ;</span><br><span class="line"></span><br><span class="line">UPDATE ep_dynamic_student_relation SET state = 2, update_time = now() WHERE student_uid IN (&apos;f91792488255466aa00971fa78306c5f&apos;) AND dynamic_uid =      &apos;11c62d70d69743118d6f382e43df4bec&apos; AND state = 1 AND is_deleted = 0 and 1=1;</span><br></pre></td></tr></table></figure>
+<p>我们先来思考一个问题，普通索引，怎么保证插入的数据没有重复值（问题来自MySQL大神姜承尧）</p>
+<p>可以来实验一下唯一索引冲突的情况下，<code>INSERT IGNORE</code>在大多数情况下会加什么锁（有一些特殊情况，需要特殊讨论）</p>
+<p>可以看到<code>mode=2(LOCK_S)</code>，对<code>uidx_dynamic_student</code>加了<code>LOCK_S</code>锁（哈哈，不要信网上的各种猜测文章，实测最靠谱</p>
+<p><img src="/media/15405380720231/15405441529754.jpg" alt=""></p>
+<p>那<code>UPDATE ep_dynamic_student_relation</code>会加哪些锁？<br>第一步：<br><img src="/media/15405380720231/15405513861581.jpg" alt=""></p>
+<p>第二步：<br><img src="/media/15405380720231/15405514551399.jpg" alt=""></p>
+<p>可以看到，跟网上说的差不多，<br>对唯一索引<code>uidx_dynamic_student</code>加<code>X</code>锁（1027=LOCK_REC_NOT_GAP + LOCK_X)，对主键索引<code>PRIMARY</code>加<code>X</code>锁</p>
+<p>现在就非常清楚了</p>
+<table>
+<thead>
+<tr>
+<th>t1</th>
+<th>t2</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>INSERT IGNORE INTO</td>
+<td></td>
+<td>t1获得uk的S锁</td>
+</tr>
+<tr>
+<td></td>
+<td>INSERT IGNORE INTO</td>
+<td>t2获得uk的S锁</td>
+</tr>
+<tr>
+<td>UPDATE</td>
+<td></td>
+<td>t1尝试获得uk的X锁，处于等待状态</td>
+</tr>
+<tr>
+<td></td>
+<td>UPDATE</td>
+<td>t2尝试获得uk的X锁，发现死锁产生</td>
+</tr>
+<tr>
+<td></td>
+<td>Deadlock</td>
+<td>t2释放S锁</td>
+</tr>
+<tr>
+<td>成功</td>
+</tr>
+</tbody>
+</table>
+<p>备注：锁有关的常量<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">LOCK_IS 0</span><br><span class="line">LOCK_IX 1</span><br><span class="line">LOCK_S 2</span><br><span class="line">LOCK_X 3</span><br><span class="line"></span><br><span class="line">LOCK_REC_NOT_GAP 1024</span><br></pre></td></tr></table></figure></p>
+<p>相关源代码</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*********************************************************************/</span><span class="comment">/**</span></span><br><span class="line"><span class="comment">Tries to lock the specified record in the mode requested. If not immediately</span></span><br><span class="line"><span class="comment">possible, enqueues a waiting lock request. This is a low-level function</span></span><br><span class="line"><span class="comment">which does NOT look at implicit locks! Checks lock compatibility within</span></span><br><span class="line"><span class="comment">explicit locks. This function sets a normal next-key lock, or in the case</span></span><br><span class="line"><span class="comment">of a page supremum record, a gap type lock.</span></span><br><span class="line"><span class="comment">@return	DB_SUCCESS, DB_SUCCESS_LOCKED_REC, DB_LOCK_WAIT, DB_DEADLOCK,</span></span><br><span class="line"><span class="comment">or DB_QUE_THR_SUSPENDED */</span></span><br><span class="line"><span class="keyword">static</span></span><br><span class="line"><span class="keyword">enum</span> db_err</span><br><span class="line">lock_rec_lock(</span><br><span class="line"><span class="comment">/*==========*/</span></span><br><span class="line">	ibool			impl,	<span class="comment">/*!&lt; in: if TRUE, no lock is set</span></span><br><span class="line"><span class="comment">					if no wait is necessary: we</span></span><br><span class="line"><span class="comment">					assume that the caller will</span></span><br><span class="line"><span class="comment">					set an implicit lock */</span></span><br><span class="line">	ulint			mode,	<span class="comment">/*!&lt; in: lock mode: LOCK_X or</span></span><br><span class="line"><span class="comment">					LOCK_S possibly ORed to either</span></span><br><span class="line"><span class="comment">					LOCK_GAP or LOCK_REC_NOT_GAP */</span></span><br><span class="line">	<span class="keyword">const</span> <span class="keyword">buf_block_t</span>*	block,	<span class="comment">/*!&lt; in: buffer block containing</span></span><br><span class="line"><span class="comment">					the record */</span></span><br><span class="line">	ulint			heap_no,<span class="comment">/*!&lt; in: heap number of record */</span></span><br><span class="line">	<span class="keyword">dict_index_t</span>*		index,	<span class="comment">/*!&lt; in: index of record */</span></span><br><span class="line">	<span class="keyword">que_thr_t</span>*		thr)	<span class="comment">/*!&lt; in: query thread */</span></span><br><span class="line">&#123;</span><br><span class="line">	ut_ad(mutex_own(&amp;kernel_mutex));</span><br><span class="line">	ut_ad((LOCK_MODE_MASK &amp; mode) != LOCK_S</span><br><span class="line">	      || lock_table_has(thr_get_trx(thr), index-&gt;table, LOCK_IS));</span><br><span class="line">	ut_ad((LOCK_MODE_MASK &amp; mode) != LOCK_X</span><br><span class="line">	      || lock_table_has(thr_get_trx(thr), index-&gt;table, LOCK_IX));</span><br><span class="line">	ut_ad((LOCK_MODE_MASK &amp; mode) == LOCK_S</span><br><span class="line">	      || (LOCK_MODE_MASK &amp; mode) == LOCK_X);</span><br><span class="line">	ut_ad(mode - (LOCK_MODE_MASK &amp; mode) == LOCK_GAP</span><br><span class="line">	      || mode - (LOCK_MODE_MASK &amp; mode) == LOCK_REC_NOT_GAP</span><br><span class="line">	      || mode - (LOCK_MODE_MASK &amp; mode) == <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* We try a simplified and faster subroutine for the most</span></span><br><span class="line"><span class="comment">	common cases */</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">enum</span> db_err	err;</span><br><span class="line">	<span class="comment">/* We try a simplified and faster subroutine for the most</span></span><br><span class="line"><span class="comment">	common cases */</span></span><br><span class="line">	<span class="keyword">switch</span> (lock_rec_lock_fast(impl, mode, block, heap_no, index, thr)) &#123;</span><br><span class="line">		<span class="keyword">case</span> LOCK_REC_SUCCESS:</span><br><span class="line">			err = DB_SUCCESS;</span><br><span class="line">			<span class="keyword">return</span>(err);</span><br><span class="line">		<span class="keyword">case</span> LOCK_REC_SUCCESS_CREATED:</span><br><span class="line">			err = DB_SUCCESS_LOCKED_REC;</span><br><span class="line">			<span class="keyword">return</span>(err);</span><br><span class="line">		<span class="keyword">case</span> LOCK_REC_FAIL:</span><br><span class="line">			err = (lock_rec_lock_slow(impl, mode, block,</span><br><span class="line">									  heap_no, index, thr));</span><br><span class="line">			<span class="keyword">return</span> (err);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	ut_error;</span><br><span class="line">	err=DB_ERROR;</span><br><span class="line">	<span class="keyword">return</span>(err);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>挖坑鼓励奖</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechat-pay.jpeg" alt="Arthur Zhang WeChat Pay"/>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/15/mysql-deadlock-01/" rel="next" title="一个简单加锁顺序不一致导致 MySQL update 死锁异常">
+                <i class="fa fa-chevron-left"></i> 一个简单加锁顺序不一致导致 MySQL update 死锁异常
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/default_avatar.jpg"
+               alt="Arthur Zhang" />
+          <p class="site-author-name" itemprop="name">Arthur Zhang</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/">
+                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#如何通过调试MySQL源码的方式来理解加锁过程和死锁"><span class="nav-number">1.</span> <span class="nav-text">如何通过调试MySQL源码的方式来理解加锁过程和死锁</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Arthur Zhang</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
