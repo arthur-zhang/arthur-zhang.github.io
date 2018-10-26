@@ -82,19 +82,23 @@
 
 
 
-<meta name="description" content="如何通过调试MySQL源码的方式来理解加锁过程和死锁通过艰难的单步调试，终于找到了一个理想的断点，可以看到所有的获取锁的过程 代码在lock0lock.c的static enum db_err lock_rec_lock() 函数中，这个函数会显示，获取锁的过程，以及获取锁成功与否的情况 以一个实际的死锁例子来看 INSERT IGNORE INTO xx_dynamic_student_rela">
+<meta name="description" content="通过艰难的单步调试，终于找到了一个理想的断点，可以看到所有的获取锁的过程 代码在lock0lock.c的static enum db_err lock_rec_lock() 函数中，这个函数会显示，获取锁的过程，以及获取锁成功与否的情况 以一个实际的死锁例子来看 INSERT IGNORE INTO xx_dynamic_student_relation (id, dynamic_uid, stu">
 <meta property="og:type" content="article">
 <meta property="og:title" content="如何通过调试MySQL源码的方式来理解加锁过程和死锁">
 <meta property="og:url" content="http://yoursite.com/2018/10/26/mysql-deadlock-00/index.html">
 <meta property="og:site_name" content="Arthur Blog">
-<meta property="og:description" content="如何通过调试MySQL源码的方式来理解加锁过程和死锁通过艰难的单步调试，终于找到了一个理想的断点，可以看到所有的获取锁的过程 代码在lock0lock.c的static enum db_err lock_rec_lock() 函数中，这个函数会显示，获取锁的过程，以及获取锁成功与否的情况 以一个实际的死锁例子来看 INSERT IGNORE INTO xx_dynamic_student_rela">
+<meta property="og:description" content="通过艰难的单步调试，终于找到了一个理想的断点，可以看到所有的获取锁的过程 代码在lock0lock.c的static enum db_err lock_rec_lock() 函数中，这个函数会显示，获取锁的过程，以及获取锁成功与否的情况 以一个实际的死锁例子来看 INSERT IGNORE INTO xx_dynamic_student_relation (id, dynamic_uid, stu">
 <meta property="og:image" content="http://yoursite.com/media/15405380720231/15405441529754.jpg">
 <meta property="og:image" content="http://yoursite.com/media/15405380720231/15405513861581.jpg">
 <meta property="og:image" content="http://yoursite.com/media/15405380720231/15405514551399.jpg">
-<meta property="og:updated_time" content="2018-10-26T11:32:50.173Z">
+<meta property="og:image" content="http://yoursite.com/media/15405380720231/15405687503875.jpg">
+<meta property="og:image" content="http://yoursite.com/media/15405380720231/15405688422552.jpg">
+<meta property="og:image" content="http://yoursite.com/media/15405380720231/15405689179406.jpg">
+<meta property="og:image" content="http://yoursite.com/media/15405380720231/15405689547518.jpg">
+<meta property="og:updated_time" content="2018-10-26T16:08:21.288Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="如何通过调试MySQL源码的方式来理解加锁过程和死锁">
-<meta name="twitter:description" content="如何通过调试MySQL源码的方式来理解加锁过程和死锁通过艰难的单步调试，终于找到了一个理想的断点，可以看到所有的获取锁的过程 代码在lock0lock.c的static enum db_err lock_rec_lock() 函数中，这个函数会显示，获取锁的过程，以及获取锁成功与否的情况 以一个实际的死锁例子来看 INSERT IGNORE INTO xx_dynamic_student_rela">
+<meta name="twitter:description" content="通过艰难的单步调试，终于找到了一个理想的断点，可以看到所有的获取锁的过程 代码在lock0lock.c的static enum db_err lock_rec_lock() 函数中，这个函数会显示，获取锁的过程，以及获取锁成功与否的情况 以一个实际的死锁例子来看 INSERT IGNORE INTO xx_dynamic_student_relation (id, dynamic_uid, stu">
 <meta name="twitter:image" content="http://yoursite.com/media/15405380720231/15405441529754.jpg">
 
 
@@ -348,17 +352,16 @@
       
 
       
-        <h1 id="如何通过调试MySQL源码的方式来理解加锁过程和死锁"><a href="#如何通过调试MySQL源码的方式来理解加锁过程和死锁" class="headerlink" title="如何通过调试MySQL源码的方式来理解加锁过程和死锁"></a>如何通过调试MySQL源码的方式来理解加锁过程和死锁</h1><p>通过艰难的单步调试，终于找到了一个理想的断点，可以看到所有的获取锁的过程</p>
+        <p>通过艰难的单步调试，终于找到了一个理想的断点，可以看到所有的获取锁的过程</p>
 <p>代码在<code>lock0lock.c</code>的<code>static enum db_err lock_rec_lock()</code> 函数中，这个函数会显示，获取锁的过程，以及获取锁成功与否的情况</p>
 <p>以一个实际的死锁例子来看</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">INSERT IGNORE INTO xx_dynamic_student_relation (id, dynamic_uid, student_uid, parent_uids, parent_names , state, create_time, update_time, is_deleted, performance_id) VALUES (NULL, &apos;11c62d70d69743118d6f382e43df4bec&apos;, &apos;f91792488255466aa00971fa78306c5f&apos;, &apos;[&quot;3d08530b61d3465eb9e9e1079c5da773&quot;]&apos;,          &apos;[&quot;凌秋燕&quot;]&apos; , 1, &apos;2018-10-23 21:03:46.193&apos;, &apos;2018-10-23 00:00:00.333&apos;, 0, NULL) ;</span><br><span class="line"></span><br><span class="line">UPDATE xx_dynamic_student_relation SET state = 2, update_time = now() WHERE student_uid IN (&apos;f91792488255466aa00971fa78306c5f&apos;) AND dynamic_uid =      &apos;11c62d70d69743118d6f382e43df4bec&apos; AND state = 1 AND is_deleted = 0 and 1=1;</span><br><span class="line"></span><br><span class="line">表结构</span><br><span class="line">CREATE TABLE `xx_dynamic_student_relation` (</span><br><span class="line">  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,</span><br><span class="line">  `dynamic_uid` char(32) NOT NULL DEFAULT &apos;&apos; ,</span><br><span class="line">  `student_uid` char(32) NOT NULL DEFAULT &apos;&apos;,</span><br><span class="line">  `parent_uids` varchar(1000) DEFAULT NULL ,</span><br><span class="line">  `parent_names` varchar(1000) DEFAULT NULL ,</span><br><span class="line">  `state` tinyint(2) unsigned NOT NULL DEFAULT &apos;0&apos;,</span><br><span class="line">  `performance_id` varchar(1000) DEFAULT NULL,</span><br><span class="line">  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,</span><br><span class="line">  `update_time` timestamp NOT NULL DEFAULT &apos;0000-00-00 00:00:00&apos; ,</span><br><span class="line">  `is_deleted` tinyint(4) NOT NULL DEFAULT &apos;0&apos; ,</span><br><span class="line">  PRIMARY KEY (`id`),</span><br><span class="line">  UNIQUE KEY `uidx_dynamic_student` (`dynamic_uid`,`student_uid`)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-<p>我们先来思考一个问题，普通索引，怎么保证插入的数据没有重复值（问题来自MySQL大神姜承尧）</p>
 <p>可以来实验一下唯一索引冲突的情况下，<code>INSERT IGNORE</code>在大多数情况下会加什么锁（有一些特殊情况，需要特殊讨论）</p>
-<p>可以看到<code>mode=2(LOCK_S)</code>，对<code>uidx_dynamic_student</code>加了<code>LOCK_S</code>锁（哈哈，不要信网上的各种猜测文章，实测最靠谱</p>
+<p>可以看到<code>mode=2(LOCK_S)</code>，对<code>uidx_dynamic_student</code>加了<code>LOCK_S</code>锁（哈哈，不要信网上的各种猜测文章，实测最靠谱）</p>
 <p><img src="/media/15405380720231/15405441529754.jpg" alt=""></p>
 <p>那<code>UPDATE xx_dynamic_student_relation</code>会加哪些锁？<br>第一步：<br><img src="/media/15405380720231/15405513861581.jpg" alt=""></p>
 <p>第二步：<br><img src="/media/15405380720231/15405514551399.jpg" alt=""></p>
-<p>可以看到，跟网上说的差不多，<br>对唯一索引<code>uidx_dynamic_student</code>加<code>X</code>锁（1027=LOCK_REC_NOT_GAP + LOCK_X)，对主键索引<code>PRIMARY</code>加<code>X</code>锁</p>
+<p>可以看到，跟网上说的差不多，<br>对唯一索引<code>uidx_dynamic_student</code>加<code>X</code>锁（1027=LOCK_REC_NOT_GAP + LOCK_X)，然后对主键索引<code>PRIMARY</code>加<code>X</code>锁</p>
 <p>现在就非常清楚了</p>
 <table>
 <thead>
@@ -371,35 +374,152 @@
 <tbody>
 <tr>
 <td>INSERT IGNORE INTO</td>
-<td></td>
-<td>t1获得uk的S锁</td>
+<td>-</td>
+<td>t1成功获得uk的S锁 DB_SUCCESS</td>
 </tr>
 <tr>
-<td></td>
+<td>-</td>
 <td>INSERT IGNORE INTO</td>
-<td>t2获得uk的S锁</td>
+<td>t2成功获得uk的S锁 DB_SUCCESS</td>
 </tr>
 <tr>
 <td>UPDATE</td>
-<td></td>
-<td>t1尝试获得uk的X锁，处于等待状态</td>
+<td>-</td>
+<td>t1尝试获得uk的X锁，但没有成功，处于等待状态 DB_LOCK_WAIT</td>
 </tr>
 <tr>
-<td></td>
+<td>-</td>
 <td>UPDATE</td>
-<td>t2尝试获得uk的X锁，发现死锁产生</td>
+<td>t2尝试获得uk的X锁，发现死锁产生 DB_DEADLOCK</td>
 </tr>
 <tr>
-<td></td>
+<td>-</td>
 <td>Deadlock</td>
 <td>t2释放S锁</td>
 </tr>
 <tr>
 <td>成功</td>
+<td>-</td>
+<td>-</td>
 </tr>
 </tbody>
 </table>
-<p>备注：锁有关的常量<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">LOCK_IS 0</span><br><span class="line">LOCK_IX 1</span><br><span class="line">LOCK_S 2</span><br><span class="line">LOCK_X 3</span><br><span class="line"></span><br><span class="line">LOCK_REC_NOT_GAP 1024</span><br></pre></td></tr></table></figure></p>
+<p>对于之前何登成大神博客里面的内容(<a href="http://hedengcheng.com/?p=771)，" target="_blank" rel="noopener">http://hedengcheng.com/?p=771)，</a> 可以做实验逐个验证</p>
+<hr>
+<h4 id="id主键-RC"><a href="#id主键-RC" class="headerlink" title="id主键+RC"></a>id主键+RC</h4><p>结论： <code>只对主键加X锁</code></p>
+<p><code>delete from table_1 where id = 10;</code><br><img src="/media/15405380720231/15405687503875.jpg" alt=""></p>
+<p>加锁过程如下：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>值</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mode</td>
+<td>1027</td>
+<td>LOCK_REC_NOT_GAP + LOCK_X</td>
+</tr>
+<tr>
+<td>index</td>
+<td>primary</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h4 id="id唯一索引-RC"><a href="#id唯一索引-RC" class="headerlink" title="id唯一索引+RC"></a>id唯一索引+RC</h4><p>结论：<code>对唯一索引加X锁，对主键索引加X锁</code></p>
+<p><code>delete from t1 where id = 10</code></p>
+<p><img src="/media/15405380720231/15405688422552.jpg" alt=""></p>
+<p>加锁过程如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">序号</th>
+<th>heap_no</th>
+<th>变量值</th>
+<th>锁状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">1</td>
+<td>7</td>
+<td>uk_id X锁</td>
+<td>DB_SUCCESS_LOCKED_REC</td>
+</tr>
+<tr>
+<td style="text-align:left">2</td>
+<td>5</td>
+<td>PRIMARY X锁</td>
+<td>DB_SUCCESS_LOCKED_REC</td>
+</tr>
+<tr>
+<td style="text-align:left">3</td>
+<td>7</td>
+<td>uk_id X锁</td>
+<td>DB_SUCCESS</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h4 id="id非唯一索引-RC"><a href="#id非唯一索引-RC" class="headerlink" title="id非唯一索引+RC"></a>id非唯一索引+RC</h4><p>结论：<code>对普通索引加X锁，对主键加X锁</code><br><code>delete from table_3 where id = 10</code>;</p>
+<p><img src="/media/15405380720231/15405689179406.jpg" alt=""></p>
+<p>加锁过程如下：</p>
+<table>
+<thead>
+<tr>
+<th>index</th>
+<th>heap_no</th>
+<th>mode</th>
+<th>锁类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>idx_id</td>
+<td>7</td>
+<td>1027</td>
+<td>X</td>
+</tr>
+<tr>
+<td>primary</td>
+<td>3</td>
+<td>1027</td>
+<td>X</td>
+</tr>
+<tr>
+<td>idx_id</td>
+<td>7</td>
+<td>1027</td>
+<td>X</td>
+</tr>
+<tr>
+<td>idx_id</td>
+<td>8</td>
+<td>1027</td>
+<td>X</td>
+</tr>
+<tr>
+<td>primary</td>
+<td>2</td>
+<td>1027</td>
+<td>X</td>
+</tr>
+<tr>
+<td>idx_id</td>
+<td>8</td>
+<td>1027</td>
+<td>X</td>
+</tr>
+</tbody>
+</table>
+<h4 id="id无索引-RC"><a href="#id无索引-RC" class="headerlink" title="id无索引+RC"></a>id无索引+RC</h4><p>作为练习题，不列举了<br><img src="/media/15405380720231/15405689547518.jpg" alt=""></p>
+<hr>
+<h4 id="备注"><a href="#备注" class="headerlink" title="备注"></a>备注</h4><p>锁有关的常量</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">LOCK_IS 0</span><br><span class="line">LOCK_IX 1</span><br><span class="line">LOCK_S 2</span><br><span class="line">LOCK_X 3</span><br><span class="line"></span><br><span class="line">LOCK_REC_NOT_GAP 1024</span><br></pre></td></tr></table></figure>
 <p>相关源代码</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*********************************************************************/</span><span class="comment">/**</span></span><br><span class="line"><span class="comment">Tries to lock the specified record in the mode requested. If not immediately</span></span><br><span class="line"><span class="comment">possible, enqueues a waiting lock request. This is a low-level function</span></span><br><span class="line"><span class="comment">which does NOT look at implicit locks! Checks lock compatibility within</span></span><br><span class="line"><span class="comment">explicit locks. This function sets a normal next-key lock, or in the case</span></span><br><span class="line"><span class="comment">of a page supremum record, a gap type lock.</span></span><br><span class="line"><span class="comment">@return	DB_SUCCESS, DB_SUCCESS_LOCKED_REC, DB_LOCK_WAIT, DB_DEADLOCK,</span></span><br><span class="line"><span class="comment">or DB_QUE_THR_SUSPENDED */</span></span><br><span class="line"><span class="keyword">static</span></span><br><span class="line"><span class="keyword">enum</span> db_err</span><br><span class="line">lock_rec_lock(</span><br><span class="line"><span class="comment">/*==========*/</span></span><br><span class="line">	ibool			impl,	<span class="comment">/*!&lt; in: if TRUE, no lock is set</span></span><br><span class="line"><span class="comment">					if no wait is necessary: we</span></span><br><span class="line"><span class="comment">					assume that the caller will</span></span><br><span class="line"><span class="comment">					set an implicit lock */</span></span><br><span class="line">	ulint			mode,	<span class="comment">/*!&lt; in: lock mode: LOCK_X or</span></span><br><span class="line"><span class="comment">					LOCK_S possibly ORed to either</span></span><br><span class="line"><span class="comment">					LOCK_GAP or LOCK_REC_NOT_GAP */</span></span><br><span class="line">	<span class="keyword">const</span> <span class="keyword">buf_block_t</span>*	block,	<span class="comment">/*!&lt; in: buffer block containing</span></span><br><span class="line"><span class="comment">					the record */</span></span><br><span class="line">	ulint			heap_no,<span class="comment">/*!&lt; in: heap number of record */</span></span><br><span class="line">	<span class="keyword">dict_index_t</span>*		index,	<span class="comment">/*!&lt; in: index of record */</span></span><br><span class="line">	<span class="keyword">que_thr_t</span>*		thr)	<span class="comment">/*!&lt; in: query thread */</span></span><br><span class="line">&#123;</span><br><span class="line">	ut_ad(mutex_own(&amp;kernel_mutex));</span><br><span class="line">	ut_ad((LOCK_MODE_MASK &amp; mode) != LOCK_S</span><br><span class="line">	      || lock_table_has(thr_get_trx(thr), index-&gt;table, LOCK_IS));</span><br><span class="line">	ut_ad((LOCK_MODE_MASK &amp; mode) != LOCK_X</span><br><span class="line">	      || lock_table_has(thr_get_trx(thr), index-&gt;table, LOCK_IX));</span><br><span class="line">	ut_ad((LOCK_MODE_MASK &amp; mode) == LOCK_S</span><br><span class="line">	      || (LOCK_MODE_MASK &amp; mode) == LOCK_X);</span><br><span class="line">	ut_ad(mode - (LOCK_MODE_MASK &amp; mode) == LOCK_GAP</span><br><span class="line">	      || mode - (LOCK_MODE_MASK &amp; mode) == LOCK_REC_NOT_GAP</span><br><span class="line">	      || mode - (LOCK_MODE_MASK &amp; mode) == <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* We try a simplified and faster subroutine for the most</span></span><br><span class="line"><span class="comment">	common cases */</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">enum</span> db_err	err;</span><br><span class="line">	<span class="comment">/* We try a simplified and faster subroutine for the most</span></span><br><span class="line"><span class="comment">	common cases */</span></span><br><span class="line">	<span class="keyword">switch</span> (lock_rec_lock_fast(impl, mode, block, heap_no, index, thr)) &#123;</span><br><span class="line">		<span class="keyword">case</span> LOCK_REC_SUCCESS:</span><br><span class="line">			err = DB_SUCCESS;</span><br><span class="line">			<span class="keyword">return</span>(err);</span><br><span class="line">		<span class="keyword">case</span> LOCK_REC_SUCCESS_CREATED:</span><br><span class="line">			err = DB_SUCCESS_LOCKED_REC;</span><br><span class="line">			<span class="keyword">return</span>(err);</span><br><span class="line">		<span class="keyword">case</span> LOCK_REC_FAIL:</span><br><span class="line">			err = (lock_rec_lock_slow(impl, mode, block,</span><br><span class="line">									  heap_no, index, thr));</span><br><span class="line">			<span class="keyword">return</span> (err);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	ut_error;</span><br><span class="line">	err=DB_ERROR;</span><br><span class="line">	<span class="keyword">return</span>(err);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
@@ -566,7 +686,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#如何通过调试MySQL源码的方式来理解加锁过程和死锁"><span class="nav-number">1.</span> <span class="nav-text">如何通过调试MySQL源码的方式来理解加锁过程和死锁</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#id主键-RC"><span class="nav-number">1.</span> <span class="nav-text">id主键+RC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#id唯一索引-RC"><span class="nav-number">2.</span> <span class="nav-text">id唯一索引+RC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#id非唯一索引-RC"><span class="nav-number">3.</span> <span class="nav-text">id非唯一索引+RC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#id无索引-RC"><span class="nav-number">4.</span> <span class="nav-text">id无索引+RC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#备注"><span class="nav-number">5.</span> <span class="nav-text">备注</span></a></li></ol></div>
             
 
           </div>
