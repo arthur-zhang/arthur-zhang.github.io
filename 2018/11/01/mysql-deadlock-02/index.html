@@ -1,0 +1,844 @@
+<!doctype html>
+
+
+
+
+<html class="theme-next mist" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="线上最近出现了批量insert的死锁，百思不得姐。死锁记录如下 2018-10-26T11:04:41.759589Z 8530809 [Note] InnoDB: *** (1) TRANSACTION:TRANSACTION 1202026765, ACTIVE 0 sec insertingmysql tables in use 1, locked 1LOCK WAIT 3 lock str">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一次批量插入死锁问题分析记录">
+<meta property="og:url" content="http://yoursite.com/2018/11/01/mysql-deadlock-02/index.html">
+<meta property="og:site_name" content="Arthur Blog">
+<meta property="og:description" content="线上最近出现了批量insert的死锁，百思不得姐。死锁记录如下 2018-10-26T11:04:41.759589Z 8530809 [Note] InnoDB: *** (1) TRANSACTION:TRANSACTION 1202026765, ACTIVE 0 sec insertingmysql tables in use 1, locked 1LOCK WAIT 3 lock str">
+<meta property="og:image" content="http://yoursite.com/media/15406248994609/15410360059022.jpg">
+<meta property="og:image" content="http://yoursite.com/media/15406248994609/15410362344198.jpg">
+<meta property="og:updated_time" content="2018-11-01T15:47:06.996Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一次批量插入死锁问题分析记录">
+<meta name="twitter:description" content="线上最近出现了批量insert的死锁，百思不得姐。死锁记录如下 2018-10-26T11:04:41.759589Z 8530809 [Note] InnoDB: *** (1) TRANSACTION:TRANSACTION 1202026765, ACTIVE 0 sec insertingmysql tables in use 1, locked 1LOCK WAIT 3 lock str">
+<meta name="twitter:image" content="http://yoursite.com/media/15406248994609/15410360059022.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: false,
+    duoshuo: {
+      userId: 'undefined',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/11/01/mysql-deadlock-02/"/>
+
+
+
+
+
+  <title> 一次批量插入死锁问题分析记录 | Arthur Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=60116635";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Arthur Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/01/mysql-deadlock-02/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Arthur Zhang">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/default_avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Arthur Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Arthur Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                一次批量插入死锁问题分析记录
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-11-01T16:11:18+08:00">
+                2018-11-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySQL/" itemprop="url" rel="index">
+                    <span itemprop="name">MySQL</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>线上最近出现了批量<code>insert</code>的死锁，百思不得姐。死锁记录如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">2018-10-26T11:04:41.759589Z 8530809 [Note] InnoDB: </span><br><span class="line">*** (1) TRANSACTION:</span><br><span class="line"></span><br><span class="line">TRANSACTION 1202026765, ACTIVE 0 sec inserting</span><br><span class="line">mysql tables in use 1, locked 1</span><br><span class="line">LOCK WAIT 3 lock struct(s), heap size 1136, 3 row lock(s), undo log entries 1</span><br><span class="line">MySQL thread id 8532863, OS thread handle 139858337453824, query id 16231472122 10.111.10.143 seewo update</span><br><span class="line">INSERT IGNORE INTO xx_performance_type_label_relation(label_id, performance_type_id, type, create_time)</span><br><span class="line">    VALUES</span><br><span class="line">      </span><br><span class="line">      (&apos;bb0394e670644168a998a93a3ed521bc&apos;, &apos;06b96ee0bab84d71bb17bf9645d3aa54&apos;, 1, now())</span><br><span class="line">     , </span><br><span class="line">      (&apos;bb0394e670644168a998a93a3ed521bc&apos;, &apos;27d82e2331b241e1a9c9c0a74ec21099&apos;, -1, now())</span><br><span class="line">     , </span><br><span class="line">      (&apos;bb0394e670644168a998a93a3ed521bc&apos;, &apos;3100b5978fb24f56b327d25732a7d7a7&apos;, 1, now())</span><br><span class="line">     , </span><br><span class="line">      (&apos;bb0394e670644168a998a93a3ed521bc&apos;, &apos;435a1e19ce6e4e5bbb84240b3b34cf03&apos;, 1, now())</span><br><span class="line">     , </span><br><span class="line">      (&apos;bb0394e670644168a998a93a3ed521bc&apos;, &apos;447fe27199ca40e289ef2834469d9a78&apos;, 1, now())</span><br><span class="line">     , </span><br><span class="line">      (&apos;bb0394e670644168a998a93a3ed521bc&apos;, &apos;87a52c4d00844b5bb9eb75e8fe34202a&apos;, 1, now())</span><br><span class="line">     , </span><br><span class="line">      (&apos;bb0394e670644168a998a93a3ed521bc&apos;, &apos;c6a0e26983bd4fae837d5ee2f4efeef8&apos;, 1, now())</span><br><span class="line">2018-10-26T11:04:41.759635Z 8530809 [Note] InnoDB: *** (1) WAITING FOR THIS LOCK TO BE GRANTED:</span><br><span class="line"></span><br><span class="line">RECORD LOCKS space id 505 page no 9912 n bits 288 index uk_performance_type_id_label_id of table `masaike`.`xx_performance_type_label_relation` trx id 1202026765 lock_mode X locks gap before rec insert intention waiting</span><br><span class="line">2018-10-26T11:04:41.759674Z 8530809 [Note] InnoDB: *** (2) TRANSACTION:</span><br><span class="line"></span><br><span class="line">TRANSACTION 1202026764, ACTIVE 0 sec inserting</span><br><span class="line">mysql tables in use 1, locked 1</span><br><span class="line">3 lock struct(s), heap size 1136, 3 row lock(s), undo log entries 1</span><br><span class="line">MySQL thread id 8530809, OS thread handle 139858469242624, query id 16231472119 10.111.10.153 seewo update</span><br><span class="line">INSERT IGNORE INTO xx_performance_type_label_relation(label_id, performance_type_id, type, create_time)</span><br><span class="line">    VALUES</span><br><span class="line">      </span><br><span class="line">      (&apos;bb0394e670644168a998a93a3ed521bc&apos;, &apos;06b96ee0bab84d71bb17bf9645d3aa54&apos;, 1, now())</span><br><span class="line">     , </span><br><span class="line">      (&apos;bb0394e670644168a998a93a3ed521bc&apos;, &apos;27d82e2331b241e1a9c9c0a74ec21099&apos;, -1, now())</span><br><span class="line">     , </span><br><span class="line">      (&apos;bb0394e670644168a998a93a3ed521bc&apos;, &apos;3100b5978fb24f56b327d25732a7d7a7&apos;, 1, now())</span><br><span class="line">     , </span><br><span class="line">      (&apos;bb0394e670644168a998a93a3ed521bc&apos;, &apos;435a1e19ce6e4e5bbb84240b3b34cf03&apos;, 1, now())</span><br><span class="line">     , </span><br><span class="line">      (&apos;bb0394e670644168a998a93a3ed521bc&apos;, &apos;447fe27199ca40e289ef2834469d9a78&apos;, 1, now())</span><br><span class="line">     , </span><br><span class="line">      (&apos;bb0394e670644168a998a93a3ed521bc&apos;, &apos;87a52c4d00844b5bb9eb75e8fe34202a&apos;, 1, now())</span><br><span class="line">     , </span><br><span class="line">      (&apos;bb0394e670644168a998a93a3ed521bc&apos;, &apos;c6a0e26983bd4fae837d5ee2f4efeef8&apos;, 1, now())</span><br><span class="line">2018-10-26T11:04:41.759713Z 8530809 [Note] InnoDB: *** (2) HOLDS THE LOCK(S):</span><br><span class="line"></span><br><span class="line">RECORD LOCKS space id 505 page no 9912 n bits 288 index uk_performance_type_id_label_id of table `masaike`.`xx_performance_type_label_relation` trx id 1202026764 lock mode S</span><br><span class="line">2018-10-26T11:04:41.759753Z 8530809 [Note] InnoDB: *** (2) WAITING FOR THIS LOCK TO BE GRANTED:</span><br><span class="line"></span><br><span class="line">RECORD LOCKS space id 505 page no 9912 n bits 288 index uk_performance_type_id_label_id of table `masaike`.`xx_performance_type_label_relation` trx id 1202026764 lock_mode X locks gap before rec insert intention waiting</span><br><span class="line">2018-10-26T11:04:41.759784Z 8530809 [Note] InnoDB: *** WE ROLL BACK TRANSACTION (2)</span><br></pre></td></tr></table></figure>
+<p>第一反应是批量insert，insert的顺序不一样导致的死锁。但是这个在这里是不成立的。原因有两点</p>
+<ol>
+<li>出现问题的批量插入SQL中顺序是一模一样的，在顺序一样的情况下，只会进行插入等待（implicit lock转explicit X锁）下面有实验</li>
+<li>如果是因为批量插入顺序不一致带来的死锁日志，打印的结果不是等待插入意向锁（insert intention waiting），下面有实验</li>
+</ol>
+<p>现在采用一个简化的表，做实验</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">CREATE TABLE `t1` (</span><br><span class="line">  `id` int(11) NOT NULL AUTO_INCREMENT,</span><br><span class="line">  `a` varchar(5)  NOT NULL DEFAULT &apos;&apos;,</span><br><span class="line">  `b` varchar(5)  NOT NULL DEFAULT &apos;&apos;,</span><br><span class="line">  PRIMARY KEY (`id`),</span><br><span class="line">  UNIQUE KEY `uk_name` (`a`,`b`)</span><br><span class="line">) ENGINE=InnoDB;</span><br></pre></td></tr></table></figure>
+<h3 id="实验-01"><a href="#实验-01" class="headerlink" title="实验 01"></a>实验 01</h3><blockquote>
+<p>在记录不存在的情况下，两个同样顺序的批量insert同时执行，第二个会进行锁等待状态</p>
+</blockquote>
+<p>首先<code>truncate t1;</code></p>
+<table>
+<thead>
+<tr>
+<th>t1</th>
+<th>t2</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>begin;</td>
+<td>begin;</td>
+<td></td>
+</tr>
+<tr>
+<td>insert ignore into t1(a, b)values(“1”, “1”);</td>
+<td></td>
+<td>成功</td>
+</tr>
+<tr>
+<td></td>
+<td>insert ignore into t1(a, b)values(“1”, “1”);</td>
+<td>锁等待状态</td>
+</tr>
+</tbody>
+</table>
+<p>可以看到目前锁的状态</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysql&gt; select * from information_schema.innodb_locks;</span><br><span class="line">+-------------+-------------+-----------+-----------+------------+------------+------------+-----------+----------+-----------+</span><br><span class="line">| lock_id     | lock_trx_id | lock_mode | lock_type | lock_table | lock_index | lock_space | lock_page | lock_rec | lock_data |</span><br><span class="line">+-------------+-------------+-----------+-----------+------------+------------+------------+-----------+----------+-----------+</span><br><span class="line">| 31AE:54:4:2 | 31AE        | S         | RECORD    | `d1`.`t1`  | `uk_name`  |         54 |         4 |        2 | &apos;1&apos;, &apos;1&apos;  |</span><br><span class="line">| 31AD:54:4:2 | 31AD        | X         | RECORD    | `d1`.`t1`  | `uk_name`  |         54 |         4 |        2 | &apos;1&apos;, &apos;1&apos;  |</span><br><span class="line">+-------------+-------------+-----------+-----------+------------+------------+------------+-----------+----------+-----------+</span><br></pre></td></tr></table></figure>
+<p>在我们执行事务<code>t1</code>的insert时，没有在任何锁的断点处出现，这跟MySQL插入的原理有关系</p>
+<blockquote>
+<p><code>insert 加的是隐式锁。什么是隐式锁？隐式锁的意思就是没有锁</code></p>
+</blockquote>
+<p>在t1插入记录时，是不加锁的。这个时候事务t1还未提交的情况下，事务t2尝试插入的时候，发现有这条记录，t2尝试获取S锁，会判定记录上的事务id是否活跃，如果活跃的话，说明事务未结束，会帮t1把它的隐式锁提升为显式锁（X锁）</p>
+<p>源码如下<br><img src="/media/15406248994609/15410360059022.jpg" alt=""></p>
+<p>t2获取<code>S</code>锁的结果:<code>DB_LOCK_WAIT</code></p>
+<p><img src="/media/15406248994609/15410362344198.jpg" alt=""></p>
+<h3 id="实验02"><a href="#实验02" class="headerlink" title="实验02"></a>实验02</h3><blockquote>
+<p>批量插入顺序不一致的导致的死锁日志不是等待插入意向锁</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>t1</th>
+<th>t2</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>begin</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>insert into t1(a, b)values(“1”, “1”);</td>
+<td></td>
+<td>成功</td>
+</tr>
+<tr>
+<td></td>
+<td>insert into t1(a, b)values(“2”, “2”);</td>
+<td>成功</td>
+</tr>
+<tr>
+<td>insert into t1(a, b)values(“2”, “2”);</td>
+<td></td>
+<td>t1尝试获取S锁，把t2的隐式锁提升为显式X锁，进入DB_LOCK_WAIT</td>
+</tr>
+<tr>
+<td></td>
+<td>insert into t1(a, b)values(“1”, “1”);</td>
+<td>t2尝试获取S锁，把t1的隐式锁提升为显式X锁，产生死锁</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">------------------------</span><br><span class="line">LATEST DETECTED DEADLOCK</span><br><span class="line">------------------------</span><br><span class="line">181101  9:48:36</span><br><span class="line">*** (1) TRANSACTION:</span><br><span class="line">TRANSACTION 3309, ACTIVE 215 sec inserting</span><br><span class="line">mysql tables in use 1, locked 1</span><br><span class="line">LOCK WAIT 3 lock struct(s), heap size 376, 2 row lock(s), undo log entries 2</span><br><span class="line">MySQL thread id 2, OS thread handle 0x70000a845000, query id 58 localhost root update</span><br><span class="line">insert into t1(a, b)values(&quot;2&quot;, &quot;2&quot;)</span><br><span class="line">*** (1) WAITING FOR THIS LOCK TO BE GRANTED:</span><br><span class="line">RECORD LOCKS space id 55 page no 4 n bits 72 index `uk_name` of table `d1`.`t1` trx id 3309 lock mode S waiting</span><br><span class="line">Record lock, heap no 3 PHYSICAL RECORD: n_fields 3; compact format; info bits 0</span><br><span class="line"> 0: len 1; hex 32; asc 2;;</span><br><span class="line"> 1: len 1; hex 32; asc 2;;</span><br><span class="line"> 2: len 4; hex 80000002; asc     ;;</span><br><span class="line"></span><br><span class="line">*** (2) TRANSACTION:</span><br><span class="line">TRANSACTION 330A, ACTIVE 163 sec inserting</span><br><span class="line">mysql tables in use 1, locked 1</span><br><span class="line">3 lock struct(s), heap size 376, 2 row lock(s), undo log entries 2</span><br><span class="line">MySQL thread id 3, OS thread handle 0x70000a888000, query id 59 localhost root update</span><br><span class="line">insert into t1(a, b)values(&quot;1&quot;, &quot;1&quot;)</span><br><span class="line">*** (2) HOLDS THE LOCK(S):</span><br><span class="line">RECORD LOCKS space id 55 page no 4 n bits 72 index `uk_name` of table `d1`.`t1` trx id 330A lock_mode X locks rec but not gap</span><br><span class="line">Record lock, heap no 3 PHYSICAL RECORD: n_fields 3; compact format; info bits 0</span><br><span class="line"> 0: len 1; hex 32; asc 2;;</span><br><span class="line"> 1: len 1; hex 32; asc 2;;</span><br><span class="line"> 2: len 4; hex 80000002; asc     ;;</span><br><span class="line"></span><br><span class="line">*** (2) WAITING FOR THIS LOCK TO BE GRANTED:</span><br><span class="line">RECORD LOCKS space id 55 page no 4 n bits 72 index `uk_name` of table `d1`.`t1` trx id 330A lock mode S waiting</span><br><span class="line">Record lock, heap no 2 PHYSICAL RECORD: n_fields 3; compact format; info bits 0</span><br><span class="line"> 0: len 1; hex 31; asc 1;;</span><br><span class="line"> 1: len 1; hex 31; asc 1;;</span><br><span class="line"> 2: len 4; hex 80000001; asc     ;;</span><br><span class="line"></span><br><span class="line">*** WE ROLL BACK TRANSACTION (2)</span><br></pre></td></tr></table></figure>
+<p>到目前为止，已经陷入了僵局，完全没法复现死锁的情况。看了代码，发现在insert之前有一个delete，但是delete与insert不在一个事务里面，也就是delete提交以后，才进行批量insert，真正出问题的地方在批量insert的地方。一开始就排除了delete对后面的影响，难道不在一个事务，也会有影响？</p>
+<p>写了一个代码去模拟，有很大概率会复现</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function">fun <span class="title">test</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    dao.delete() <span class="comment">// 对应delete from</span></span><br><span class="line">    <span class="comment">// sleep for 10ms</span></span><br><span class="line">    dao.insert() <span class="comment">// 对应insert ignore</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">begin;</span><br><span class="line">delete from t1 where a = &apos;25&apos;</span><br><span class="line">commit;</span><br><span class="line"></span><br><span class="line">begin;</span><br><span class="line">INSERT ignore INTO `t1` (`a`, `b`) VALUES(&apos;25&apos;,&apos;1&apos;)</span><br><span class="line">commit</span><br></pre></td></tr></table></figure>
+<p>这个代码在两个线程同时调用的时候，非常容易死锁。</p>
+<p>后来翻遍了网上先关的死锁案例，有一个关于purge删除的过程，好像有一点启发。</p>
+<blockquote>
+<p>如果标记为删除，说明事务已经提交，还没来得及 purge，这时后面的事务加<code>S</code>锁等待；</p>
+</blockquote>
+<p>在源码中打印一些日志。<br>1.在<code>storage/innobase/row/row0ins.c</code>的<code>row_ins_set_shared_rec_lock</code>增加日志，可以看到对唯一索引增加<code>S</code>锁的过程</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">if (dict_index_is_clust(index)) &#123;</span><br><span class="line">    err = lock_clust_rec_read_check_and_lock(</span><br><span class="line">        0, block, rec, index, offsets, LOCK_S, type, thr);</span><br><span class="line">&#125; else &#123;</span><br><span class="line">    err = lock_sec_rec_read_check_and_lock(</span><br><span class="line">        0, block, rec, index, offsets, LOCK_S, type, thr);</span><br><span class="line">    // 增加如下日志</span><br><span class="line">    fprintf(stderr, &quot;row_ins_set_shared_rec_lock %s %lu %d\n&quot; , index-&gt;name, type, err);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>2.在<code>lock_rec_enqueue_waiting</code>增加日志，可以看到锁等待的情况</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">static</span><br><span class="line">enum db_err</span><br><span class="line">lock_rec_enqueue_waiting(</span><br><span class="line">&#123;</span><br><span class="line">	fprintf(stderr, &quot;lock_rec_enqueue_waiting::::: %s %lu\n&quot; , index-&gt;name, type_mode);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>日志大概如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">row_ins_set_shared_rec_lock uk_name 0 9 (t1获取S锁成功）</span><br><span class="line">row_ins_set_shared_rec_lock uk_name 0 9 (t2获取S锁成功）</span><br><span class="line"></span><br><span class="line">lock_rec_enqueue_waiting::::: uk_name 2563（t1 X锁进如锁等待）</span><br><span class="line">lock_rec_enqueue_waiting::::: uk_name 2563（t2 X锁进如锁等待）</span><br></pre></td></tr></table></figure>
+<p>其中2563=2048+512+3=LOCK_INSERT_INTENTION+LOCK_GAP+LOCK_X</p>
+<p>这个过程跟非常经典的三个事务同时insert，一个回滚，剩下的两个事务一个成功，一个死锁，其实是一模一样的原理。</p>
+<h3 id="实验03"><a href="#实验03" class="headerlink" title="实验03"></a>实验03</h3><blockquote>
+<p>三个insert，一个回滚造成的死锁</p>
+</blockquote>
+<p>insert语句都是<code>insert ignore into t1(a, b)values(&quot;1&quot;, &quot;1&quot;);</code>以下省略</p>
+<table>
+<thead>
+<tr>
+<th>t1</th>
+<th>t2</th>
+<th>t3</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>begin</td>
+<td>begin</td>
+<td>begin</td>
+<td></td>
+</tr>
+<tr>
+<td>insert</td>
+<td></td>
+<td></td>
+<td>成功</td>
+</tr>
+<tr>
+<td></td>
+<td>insert</td>
+<td></td>
+<td>把t1的隐式锁提升为X锁，t2进入进入S锁等待</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>insert</td>
+<td>t3进入进入S锁等待</td>
+</tr>
+<tr>
+<td>rollback;</td>
+<td></td>
+<td></td>
+<td>t1回滚以后，释放X锁，t2和t3同时拿到了S锁</td>
+</tr>
+<tr>
+<td></td>
+<td>ok</td>
+<td>deadlock</td>
+<td>t2和t3都想拿插入意向锁X锁，造成死锁条件</td>
+</tr>
+</tbody>
+</table>
+<p>死锁日志，跟我们案例中的一模一样<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">------------------------</span><br><span class="line">LATEST DETECTED DEADLOCK</span><br><span class="line">------------------------</span><br><span class="line">181101 23:22:59</span><br><span class="line">*** (1) TRANSACTION:</span><br><span class="line">TRANSACTION 5032, ACTIVE 11 sec inserting</span><br><span class="line">mysql tables in use 1, locked 1</span><br><span class="line">LOCK WAIT 4 lock struct(s), heap size 1248, 2 row lock(s), undo log entries 1</span><br><span class="line">MySQL thread id 5, OS thread handle 0x70000d736000, query id 125 localhost root update</span><br><span class="line">insert ignore into t1(a, b)values(&quot;1&quot;, &quot;1&quot;)</span><br><span class="line">*** (1) WAITING FOR THIS LOCK TO BE GRANTED:</span><br><span class="line">RECORD LOCKS space id 56 page no 4 n bits 584 index `uk_name` of table `d1`.`t1` trx id 5032 lock_mode X locks gap before rec insert intention waiting</span><br><span class="line">Record lock, heap no 139 PHYSICAL RECORD: n_fields 3; compact format; info bits 0</span><br><span class="line"> 0: len 3; hex 313031; asc 101;;</span><br><span class="line"> 1: len 3; hex 313031; asc 101;;</span><br><span class="line"> 2: len 4; hex 800007b1; asc     ;;</span><br><span class="line"></span><br><span class="line">*** (2) TRANSACTION:</span><br><span class="line">TRANSACTION 5033, ACTIVE 6 sec inserting</span><br><span class="line">mysql tables in use 1, locked 1</span><br><span class="line">4 lock struct(s), heap size 1248, 2 row lock(s), undo log entries 1</span><br><span class="line">MySQL thread id 6, OS thread handle 0x70000d779000, query id 126 localhost root update</span><br><span class="line">insert ignore into t1(a, b)values(&quot;1&quot;, &quot;1&quot;)</span><br><span class="line">*** (2) HOLDS THE LOCK(S):</span><br><span class="line">RECORD LOCKS space id 56 page no 4 n bits 584 index `uk_name` of table `d1`.`t1` trx id 5033 lock mode S locks gap before rec</span><br><span class="line">Record lock, heap no 139 PHYSICAL RECORD: n_fields 3; compact format; info bits 0</span><br><span class="line"> 0: len 3; hex 313031; asc 101;;</span><br><span class="line"> 1: len 3; hex 313031; asc 101;;</span><br><span class="line"> 2: len 4; hex 800007b1; asc     ;;</span><br><span class="line"></span><br><span class="line">*** (2) WAITING FOR THIS LOCK TO BE GRANTED:</span><br><span class="line">RECORD LOCKS space id 56 page no 4 n bits 584 index `uk_name` of table `d1`.`t1` trx id 5033 lock_mode X locks gap before rec insert intention waiting</span><br><span class="line">Record lock, heap no 139 PHYSICAL RECORD: n_fields 3; compact format; info bits 0</span><br><span class="line"> 0: len 3; hex 313031; asc 101;;</span><br><span class="line"> 1: len 3; hex 313031; asc 101;;</span><br><span class="line"> 2: len 4; hex 800007b1; asc     ;;</span><br><span class="line"></span><br><span class="line">*** WE ROLL BACK TRANSACTION (2)</span><br></pre></td></tr></table></figure></p>
+<p>目前来看，得到的结论是：</p>
+<blockquote>
+<p>一个已提交但是未purge掉的记录会造成后续插入获取S共享锁，两个事务同时获取S锁，然后尝试获取插入意向锁，造成死锁</p>
+</blockquote>
+<p>网上大神梳理的insert流程</p>
+<ul>
+<li><p>首先对插入的间隙加插入意向锁（Insert Intension Locks）</p>
+<ul>
+<li>如果该间隙已被加上了 GAP 锁或 Next-Key 锁，则加锁失败进入等待；</li>
+<li>如果没有，则加锁成功，表示可以插入；</li>
+</ul>
+</li>
+<li><p>然后判断插入记录是否有唯一键，如果有，则进行唯一性约束检查</p>
+<ul>
+<li>如果不存在相同键值，则完成插入</li>
+<li>如果存在相同键值，则判断该键值是否加锁<ul>
+<li>如果没有锁， 判断该记录是否被标记为删除</li>
+<li>如果标记为删除，说明事务已经提交，还没来得及 purge，这时加 S 锁等待；</li>
+<li>如果没有标记删除，则报 1062 duplicate key 错误；</li>
+</ul>
+</li>
+<li>如果有锁，说明该记录正在处理（新增、删除或更新），且事务还未提交，加 S 锁等待；</li>
+</ul>
+</li>
+<li>插入记录并对记录加 X 记录锁；</li>
+</ul>
+<p>以下为参考文档</p>
+<ul>
+<li><a href="http://www.aneasystone.com/archives/2017/12/solving-dead-locks-three.html" target="_blank" rel="noopener">http://www.aneasystone.com/archives/2017/12/solving-dead-locks-three.html</a></li>
+<li><a href="http://www.aneasystone.com/archives/2018/06/insert-locks-via-mysql-source-code.html" target="_blank" rel="noopener">http://www.aneasystone.com/archives/2018/06/insert-locks-via-mysql-source-code.html</a></li>
+<li><a href="http://hedengcheng.com/?p=844#_Toc378337498" target="_blank" rel="noopener">http://hedengcheng.com/?p=844#_Toc378337498</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>挖坑鼓励奖</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechat-pay.jpeg" alt="Arthur Zhang WeChat Pay"/>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/26/mysql-deadlock-00/" rel="next" title="如何通过调试MySQL源码的方式来理解加锁过程和死锁">
+                <i class="fa fa-chevron-left"></i> 如何通过调试MySQL源码的方式来理解加锁过程和死锁
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/default_avatar.jpg"
+               alt="Arthur Zhang" />
+          <p class="site-author-name" itemprop="name">Arthur Zhang</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/">
+                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#实验-01"><span class="nav-number">1.</span> <span class="nav-text">实验 01</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验02"><span class="nav-number">2.</span> <span class="nav-text">实验02</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验03"><span class="nav-number">3.</span> <span class="nav-text">实验03</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Arthur Zhang</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

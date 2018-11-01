@@ -95,7 +95,7 @@
 <meta property="og:image" content="http://yoursite.com/media/15405380720231/15405688422552.jpg">
 <meta property="og:image" content="http://yoursite.com/media/15405380720231/15405689179406.jpg">
 <meta property="og:image" content="http://yoursite.com/media/15405380720231/15405689547518.jpg">
-<meta property="og:updated_time" content="2018-10-27T01:35:11.744Z">
+<meta property="og:updated_time" content="2018-10-27T01:43:14.052Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="如何通过调试MySQL源码的方式来理解加锁过程和死锁">
 <meta name="twitter:description" content="这篇文章主要讲的是如何通过调试MySQL源码，知道一条SQL真正会拿哪些锁，不再抓虾，瞎猜或者何登成大神没写过的场景就不知道如何处理了。 通过好多个深夜艰难的单步调试，终于找到了一个理想的断点，可以看到所有的获取锁的过程 具体方式：使用CLion+MySQL官方源码 代码在lock0lock.c的static enum db_err lock_rec_lock() 函数中，这个函数会显示，获取锁">
@@ -569,8 +569,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/10/15/mysql-deadlock-01/" rel="next" title="一个简单加锁顺序不一致导致 MySQL update 死锁异常">
-                <i class="fa fa-chevron-left"></i> 一个简单加锁顺序不一致导致 MySQL update 死锁异常
+              <a href="/2018/09/19/url-chars/" rel="next" title="url中出现大括号的有趣问题">
+                <i class="fa fa-chevron-left"></i> url中出现大括号的有趣问题
               </a>
             
           </div>
@@ -578,6 +578,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/11/01/mysql-deadlock-02/" rel="prev" title="一次批量插入死锁问题分析记录">
+                一次批量插入死锁问题分析记录 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
