@@ -1,0 +1,670 @@
+<!doctype html>
+
+
+
+
+<html class="theme-next mist" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="url中出现大括号的有趣问题背景线上又出现了一起问题请求是： /easicar/v1/subCourses/{subCourseId}/comments/create因为node服务的有bug，{subCourseId}，没有用值覆盖它，在线上不正常返回400，在测试环境正常（虽然没赋值，后端也没用到subCourseId这个值）原因还是因为上篇文章讲过的原因：http://arthur-zhan">
+<meta property="og:type" content="article">
+<meta property="og:title" content="url中出现大括号的有趣问题">
+<meta property="og:url" content="http://yoursite.com/2018/09/19/url-chars/index.html">
+<meta property="og:site_name" content="Arthur Blog">
+<meta property="og:description" content="url中出现大括号的有趣问题背景线上又出现了一起问题请求是： /easicar/v1/subCourses/{subCourseId}/comments/create因为node服务的有bug，{subCourseId}，没有用值覆盖它，在线上不正常返回400，在测试环境正常（虽然没赋值，后端也没用到subCourseId这个值）原因还是因为上篇文章讲过的原因：http://arthur-zhan">
+<meta property="og:updated_time" content="2018-09-19T09:03:20.679Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="url中出现大括号的有趣问题">
+<meta name="twitter:description" content="url中出现大括号的有趣问题背景线上又出现了一起问题请求是： /easicar/v1/subCourses/{subCourseId}/comments/create因为node服务的有bug，{subCourseId}，没有用值覆盖它，在线上不正常返回400，在测试环境正常（虽然没赋值，后端也没用到subCourseId这个值）原因还是因为上篇文章讲过的原因：http://arthur-zhan">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: false,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: "",
+      labels: ""
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/09/19/url-chars/"/>
+
+
+
+
+
+  <title> url中出现大括号的有趣问题 | Arthur Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=60116635";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Arthur Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/19/url-chars/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Arthur Zhang">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/default_avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Arthur Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Arthur Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                url中出现大括号的有趣问题
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-19T16:11:18+08:00">
+                2018-09-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Nginx/" itemprop="url" rel="index">
+                    <span itemprop="name">Nginx</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="url中出现大括号的有趣问题"><a href="#url中出现大括号的有趣问题" class="headerlink" title="url中出现大括号的有趣问题"></a>url中出现大括号的有趣问题</h1><h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>线上又出现了一起问题<br>请求是： /easicar/v1/subCourses/{subCourseId}/comments/create<br>因为node服务的有bug，{subCourseId}，没有用值覆盖它，在线上不正常返回400，在测试环境正常（虽然没赋值，后端也没用到subCourseId这个值）<br>原因还是因为上篇文章讲过的原因：<a href="http://arthur-zhang.github.io/2018/09/11/nginx-merge-slash/" target="_blank" rel="noopener">http://arthur-zhang.github.io/2018/09/11/nginx-merge-slash/</a></p>
+<p>实验结果如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1. server 后面有内容的时候 (模拟线上情况)</span><br><span class="line">proxy_pass http://my-tomcat-server/nimei </span><br><span class="line"></span><br><span class="line">客户端请求到 Nginx</span><br><span class="line">19:03:01.396763 IP 127.0.0.1.61759 &gt; 127.0.0.1.8080: Flags [P.]</span><br><span class="line">POST /apm-demo-server/%7Bfoo%7D//bar HTTP/1.1</span><br><span class="line">Content-Type: text/plain; charset=utf-8</span><br><span class="line"></span><br><span class="line">Nginx请求到upstream</span><br><span class="line">19:03:01.398280 IP6 ::1.61760 &gt; ::1.8111: Flags [P.]</span><br><span class="line">POST /nimei/&#123;foo&#125;/bar HTTP/1.1</span><br><span class="line">X-Forwarded-Url: http://ya-dev.test.seewo.com/apm-demo-server/%7Bfoo%7D//bar</span><br><span class="line"></span><br><span class="line">可以看到转发到后端服务器那里的时候已经是解码过的&#123;foo&#125;</span><br><span class="line"></span><br><span class="line">2. server 后面没有内容的时候 (模拟测试环境)</span><br><span class="line"></span><br><span class="line">proxy_pass http://my-tomcat-server;</span><br><span class="line"></span><br><span class="line">客户端请求到 Nginx</span><br><span class="line">19:16:37.949701 IP 127.0.0.1.62054 &gt; 127.0.0.1.8080: Flags [P.]</span><br><span class="line">POST /apm-demo-server/%7Bfoo%7D//bar HTTP/1.1</span><br><span class="line"></span><br><span class="line">Nginx请求到upstream</span><br><span class="line">19:16:37.953191 IP6 ::1.62055 &gt; ::1.8111: Flags [P.]</span><br><span class="line">POST /apm-demo-server/%7Bfoo%7D//bar HTTP/1.1</span><br><span class="line">X-Forwarded-Url: http://ya-dev.test.seewo.com/apm-demo-server/%7Bfoo%7D//bar</span><br><span class="line">可以看到转发到后端服务器那里的时候已经是未解码过的%7Bfoo%7D</span><br></pre></td></tr></table></figure>
+<p>可以看到<code>Nginx</code>这个坑货，在<code>server</code>后面有内容的时候，会把<code>url</code>解码、合并斜杆后的<code>url</code>传给<code>upstream</code>服务器，但是<code>tomcat</code>会拒绝掉部分未经编码的他觉得不合法的字符。<br>无论发起方编码的多么好，都会有问题</p>
+<p>解决办法有两种：</p>
+<ol>
+<li>修改<code>Nginx</code>配置</li>
+<li>修改<code>tomcat</code>配置<code>Connector</code>中<code>relaxedQueryChars</code>属性，使之支持<code>{</code>这些特殊字符</li>
+</ol>
+<p>那么哪些是http协议认为的合法的字符呢？<br>写了一段代码，经过一层<code>Nginx</code>，转发到<code>tomcat</code>，遍历了0-127的所有字符，以下字符是一定不被<code>tomcat</code>允许的</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&quot; 0x22</span><br><span class="line">&lt; 0x3c</span><br><span class="line">&gt; 0x3e</span><br><span class="line">^ 0x5e</span><br><span class="line">` 0x60</span><br><span class="line">&#123; 0x7b</span><br><span class="line">| 0x7c</span><br><span class="line">&#125; 0x7d</span><br></pre></td></tr></table></figure>
+<p>看<code>tomcat</code>源码也可以知道</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">if (IS_CONTROL[i] || i &gt; 127 ||</span><br><span class="line">        i == &apos; &apos; || i == &apos;\&quot;&apos; || i == &apos;#&apos; || i == &apos;&lt;&apos; || i == &apos;&gt;&apos; || i == &apos;\\&apos; ||</span><br><span class="line">        i == &apos;^&apos; || i == &apos;`&apos;  || i == &apos;&#123;&apos; || i == &apos;|&apos; || i == &apos;&#125;&apos;) &#123;</span><br><span class="line">    if (!REQUEST_TARGET_ALLOW[i]) &#123;</span><br><span class="line">        IS_NOT_REQUEST_TARGET[i] = true;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>具体可以参考：RFC 7230 和 RFC 3986</p>
+<p>参考链接：<br><a href="https://stackoverflow.com/questions/1547899/which-characters-make-a-url-invalid/13500078#13500078" target="_blank" rel="noopener">https://stackoverflow.com/questions/1547899/which-characters-make-a-url-invalid/13500078#13500078</a></p>
+<p>细心的人可以发现，没有完全对应上，可以留做下一篇文章</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>挖坑鼓励奖</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechat-pay.jpeg" alt="Arthur Zhang WeChat Pay"/>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/11/nginx-merge-slash/" rel="next" title="一次Nginx双斜杠问题排查">
+                <i class="fa fa-chevron-left"></i> 一次Nginx双斜杠问题排查
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/10/26/mysql-deadlock-00/" rel="prev" title="如何通过调试MySQL源码的方式来理解加锁过程和死锁">
+                如何通过调试MySQL源码的方式来理解加锁过程和死锁 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/default_avatar.jpg"
+               alt="Arthur Zhang" />
+          <p class="site-author-name" itemprop="name">Arthur Zhang</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/">
+                <span class="site-state-item-count">22</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#url中出现大括号的有趣问题"><span class="nav-number">1.</span> <span class="nav-text">url中出现大括号的有趣问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#背景"><span class="nav-number">1.0.1.</span> <span class="nav-text">背景</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Arthur Zhang</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
